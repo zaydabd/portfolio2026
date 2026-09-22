@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# PostToolUse hook for the brainstorm plugin.
+# After a write to a brainstorm artifact, validate it and feed any problems back to Claude.
+# Exit 0 = silent pass (or not a brainstorm file). Exit 2 = stderr is fed back to Claude.
+
+set -uo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+payload=$(cat)
+
+# Pull the edited path out of the tool input without requiring jq.
+file_path=$(printf '%s' "$payload" | python3 -c '
+import json, sys
+try:
+    data = json.load(sys.stdin)
+except Exception:
+    sys.exit(0)
+ti = data.get("tool_input") or {}
+print(ti.get("file_path") or ti.get("path") or "")
+' 2>/dev/null)
+
+[ -z "$file_path" ] && exit 0
+
+# Only act on brainstorm artifacts.
+case "$file_path" in
+    *brainstorm/proposal.md|*brainstorm/specs/*.md|*brainstorm/status.json|*brainstorm/HANDOFF.md) ;;
+    *) exit 0 ;;
+esac
+
+[ -f "$file_path" ] || exit 0
+
+output=$(python3 "${PLUGIN_ROOT}/scripts/check.py" "$file_path" 2>&1)
+status=$?
+
+if [ "$status" -ne 0 ]; then
+    printf 'brainstorm: %s fails its format check. Fix these before continuing:\n%s\n' \
+        "$file_path" "$output" >&2
+    exit 2
+fi
+
+exit 0
