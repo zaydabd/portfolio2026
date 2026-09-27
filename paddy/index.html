@@ -21,11 +21,28 @@ const BULB_TEXTS = [
 ];
 
 const CONFIG = {
-  sway: {
-    cable: 1,        // how much the cable moves (0 = still, 2 = double)
-    bulbs: 1,        // how far each bulb swings on its wire
-    grass: 1,        // grass wave strength
-    speed: 1         // wind speed for cable, bulbs and grass
+  // One wind moves everything. Gusts roll across the screen from left to right.
+  wind: {
+    strength: 1,     // overall wind (0 = still, 2 = double)
+    breeze: 0.2,     // gentle sway between gusts
+    gustSpeed: 240,  // how fast a gust crosses the screen, in picture pixels per second
+    gustSize: 380,   // how wide a gust is, in picture pixels
+    gustEvery: 8     // seconds between gusts
+  },
+  sway: {            // how strongly each thing answers the wind (0 = still, 2 = double)
+    cable: 1,
+    bulbs: 1,
+    grass: 1,
+    speed: 1         // wind clock: 2 = everything happens twice as fast
+  },
+  grass: {           // grass blades built in code, across the front of the picture
+    count: 2400,     // blades on desktop
+    phoneCount: 1000,// blades on phones
+    height: 1,       // blade height (1 = about 0.5 to 1 m)
+    seedHeads: 0.04, // share of front blades that are tall stalks with seed heads
+    depth: 10,       // how far back the blades reach, in metres; the painted field takes over after that
+    floorShade: 0.6, // painted grass under the blades is darkened to this (1 = unchanged)
+    lampWarmth: 1    // extra warm tint on blades near the lamps
   },
   glow: {
     size: 5.5,       // glow diameter, in bulb widths
@@ -138,8 +155,46 @@ const PLATE_DEPTH = 60, GRASS_DEPTH = 59;
 // Bulb and cable sizes in metres
 const GLASS_R = 0.0222, GLASS_H = 0.061, SOCKET_H = 0.0278, CABLE_R = 0.0033;
 
+// The field: flat ground 1.6 m below the camera. With that height, blades about 0.9 m tall
+// put their tips where the tall grass tips are in grass.png. Blades start just behind the pole.
+const EYE_HEIGHT = 1.6, BLADE_NEAR = 2.6;
+
 const toWorld = (x, y, d) => new THREE.Vector3((x - CX) * d / FOCAL, -(y - CY) * d / FOCAL, -d);
 const smooth = (dt, tau) => 1 - Math.exp(-dt / Math.max(tau, 1e-4));
+const frac = v => v - Math.floor(v);
+
+/* ---------- The wind: one function for grass, cable and bulbs ---------- */
+// x = position across the picture in pixels, t = wind clock in seconds.
+// A light breeze everywhere, plus gusts that travel left to right at gustSpeed.
+// windAt() runs in JavaScript for the cable and bulbs; WIND_GLSL is the same maths for the grass.
+function windAt(x, t) {
+  const W = CONFIG.wind;
+  const breeze = 0.55 * Math.sin(0.9 * t - 0.0042 * x) + 0.30 * Math.sin(1.73 * t - 0.0091 * x + 1.3)
+               + 0.15 * Math.sin(2.9 * t - 0.017 * x + 0.4);
+  const period = W.gustEvery * W.gustSpeed;   // pixels between two gusts
+  const u = t * W.gustSpeed - x;              // how far the gusts have travelled past x
+  const k = Math.floor(u / period);           // which gust
+  const s = (u - k * period) / W.gustSize;    // 0 to 1 while that gust passes x
+  const gust = s < 1 ? (0.55 + 0.45 * frac(k * 0.618034)) * Math.sin(Math.PI * s) ** 2 : 0;
+  return W.strength * (W.breeze * breeze + gust);
+}
+const windUniforms = {
+  uWindTime: { value: 0 }, uWindStrength: { value: 1 }, uBreeze: { value: 0.35 },
+  uGustSpeed: { value: 240 }, uGustSize: { value: 380 }, uGustEvery: { value: 8 }
+};
+const WIND_GLSL = /* glsl */`
+  uniform float uWindTime, uWindStrength, uBreeze, uGustSpeed, uGustSize, uGustEvery;
+  float windAt(float x, float t) {
+    float breeze = 0.55 * sin(0.9 * t - 0.0042 * x) + 0.30 * sin(1.73 * t - 0.0091 * x + 1.3)
+                 + 0.15 * sin(2.9 * t - 0.017 * x + 0.4);
+    float period = uGustEvery * uGustSpeed;
+    float u = t * uGustSpeed - x;
+    float k = floor(u / period);
+    float s = (u - k * period) / uGustSize;
+    float p = sin(3.14159265 * s);
+    float gust = s < 1.0 ? (0.55 + 0.45 * fract(k * 0.618034)) * p * p : 0.0;
+    return uWindStrength * (uBreeze * breeze + gust);
+  }`;
 
 const canvas = document.getElementById('scene');
 const credits = document.getElementById('credits');
@@ -172,6 +227,7 @@ const camera = new THREE.PerspectiveCamera(
   2 * THREE.MathUtils.radToDeg(Math.atan(HALF_H / FOCAL)), HALF_W / HALF_H, 0.05, 200);
 
 /* ---------- Fit the picture to the window like CSS "cover" ---------- */
+const view = { x: 0, w: IMG_W };   // the part of the picture on screen, in picture pixels
 function fitView() {
   const W = window.innerWidth, H = window.innerHeight;
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -183,6 +239,8 @@ function fitView() {
   const vx = m + (aw - vw) * CONFIG.crop.x;
   const vy = m + (ah - vh) * CONFIG.crop.y;
   camera.setViewOffset(2 * HALF_W, 2 * HALF_H, vx - (CX - HALF_W), vy - (CY - HALF_H), vw, vh);
+  view.x = vx;
+  view.w = vw;
 }
 
 /* ---------- Layer 1 and 2: plate and grass ---------- */
@@ -203,32 +261,34 @@ const plateMaterial = new THREE.ShaderMaterial({
   depthWrite: false
 });
 
+// Painted grass: the far field waves in the same wind; under the 3D blades it is darkened
+// so it reads as the shade beneath them.
 const grassMaterial = new THREE.ShaderMaterial({
   uniforms: {
+    ...windUniforms,
     map: { value: null },
-    uTime: { value: 0 },
-    uAmp: { value: 0 },                       // tip movement, in picture widths
+    uSway: { value: 0 },                      // tip movement at full wind, in picture pixels
     uHorizon: { value: CY / IMG_H },          // no movement at the horizon
     uTip: { value: 870 / IMG_H },             // row where the tall blades have their tips
-    uBaseDamp: { value: 0.55 }                // bases move this much less than tips
+    uBaseDamp: { value: 0.55 },               // bases move this much less than tips
+    uShadeFrom: { value: 1 }, uShadeTo: { value: 1 }, uFloorShade: { value: 1 }
   },
   vertexShader: pictureVertex,
   fragmentShader: /* glsl */`
     uniform sampler2D map;
-    uniform float uTime, uAmp, uHorizon, uTip, uBaseDamp;
+    uniform float uSway, uHorizon, uTip, uBaseDamp, uShadeFrom, uShadeTo, uFloorShade;
     varying vec2 vUv;
+    ${WIND_GLSL}
     void main() {
       vec2 uv = vUv;
       float y = 1.0 - uv.y;                                     // 0 = top, 1 = bottom
       float rise = smoothstep(uHorizon, uTip, y);               // still at the horizon, full at the tips
       float fall = 1.0 - uBaseDamp * smoothstep(uTip, 1.0, y);  // bases sway less than tips
-      float phase = uv.x * 4.5 - uTime * 0.32 + y * 1.4;        // waves roll left to right
-      float wave = 0.60 * sin(6.2832 * phase)
-                 + 0.25 * sin(6.2832 * phase * 2.1 + 1.3)
-                 + 0.30 * sin(6.2832 * phase * 0.45 - 0.7);
-      float gust = 0.65 + 0.35 * sin(uTime * 0.21 + uv.x * 2.0);
-      uv.x -= wave * gust * rise * fall * uAmp;
-      gl_FragColor = texture2D(map, uv);
+      float w = windAt(uv.x * ${IMG_W}.0, uWindTime);
+      uv.x -= w * uSway * rise * fall / ${IMG_W}.0;
+      vec4 c = texture2D(map, uv);
+      c.rgb *= mix(1.0, uFloorShade, smoothstep(uShadeFrom, uShadeTo, y));
+      gl_FragColor = c;
     }`,
   transparent: true,
   depthWrite: false
@@ -406,15 +466,19 @@ function spanYAt(span, x) {
   return f[f.length - 1].y;
 }
 
-// Wind: how far a point on the cable moves (metres), given its picture x and anchor weight
+// How far a point on the cable moves (metres), given its picture x and anchor weight.
+// A gentle sway all the time; it grows while a gust passes that point, and the cable is pushed
+// a little downwind.
 const sway = new THREE.Vector3();
 function cableSway(x, w, t, amount) {
   const k = x * 0.0045;
+  const gust = Math.max(0, windAt(x, t));
+  const a = w * amount * (0.35 + 1.3 * gust);
   return sway.set(
-    0.004 * Math.sin(t * 0.83 - k * 0.7 + 1.1),
-    0.010 * Math.sin(t * 1.17 - k + 0.4),
-    0.045 * Math.sin(t * 0.91 - k * 0.8)
-  ).multiplyScalar(w * amount);
+    0.004 * Math.sin(t * 0.83 - k * 0.7 + 1.1) * a + 0.006 * gust * w * amount,
+    0.010 * Math.sin(t * 1.17 - k + 0.4) * a,
+    0.045 * Math.sin(t * 0.91 - k * 0.8) * a + 0.03 * gust * w * amount
+  );
 }
 
 function updateSpan(span, t, amount) {
@@ -561,10 +625,196 @@ const bulbs = CONFIG.bulbs.map((cfg, index) => {
   return {
     root, swing, glow, material, glowMaterial,
     weight: swayWeight(cfg.x, span.anchors), x: cfg.x,
-    freq: 1.05 + 0.3 * ((index * 0.618) % 1), phase: index * 2.4,
+    // each bulb is a small pendulum with its own swing rate, so they drift out of step
+    rate: 2 * Math.PI * (0.62 + 0.16 * frac(index * 0.618034)),
+    side: 0, sideV: 0, fore: 0, foreV: 0,
     hover: 0, lit: 0
   };
 });
+
+/* ---------- Grass blades built in code, across the front of the picture ---------- */
+// One blade shape drawn thousands of times in a single call. Each copy has its own spot, size,
+// lean and colour (taken from grass.png where it stands). The wind bends it on the GPU.
+const bladeGeometry = new THREE.InstancedBufferGeometry();
+{
+  const SEG = 4, pos = [], index = [];
+  for (let s = 0; s < SEG; s++) pos.push(-1, s / SEG, 0, 1, s / SEG, 0);  // two edges per row
+  pos.push(0, 1, 0);                                                     // the tip
+  for (let s = 0; s < SEG - 1; s++) { const a = s * 2; index.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); }
+  index.push((SEG - 1) * 2, (SEG - 1) * 2 + 1, SEG * 2);
+  bladeGeometry.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  bladeGeometry.setIndex(index);
+}
+const MAX_BLADES = Math.max(CONFIG.grass.count, CONFIG.grass.phoneCount);
+const bladeAttr = {
+  aBase: new THREE.InstancedBufferAttribute(new Float32Array(MAX_BLADES * 3), 3),  // foot of the blade
+  aShape: new THREE.InstancedBufferAttribute(new Float32Array(MAX_BLADES * 4), 4), // height, width, turn, seed stalk?
+  aLean: new THREE.InstancedBufferAttribute(new Float32Array(MAX_BLADES * 4), 4),  // lean x, lean z, flutter, picture x
+  aColA: new THREE.InstancedBufferAttribute(new Float32Array(MAX_BLADES * 3), 3),  // colour at the foot
+  aColB: new THREE.InstancedBufferAttribute(new Float32Array(MAX_BLADES * 3), 3)   // colour at the tip
+};
+for (const [name, attr] of Object.entries(bladeAttr)) bladeGeometry.setAttribute(name, attr);
+bladeGeometry.instanceCount = 0;
+
+rig.updateMatrixWorld(true);
+const lamps = hits.map(h => h.getWorldPosition(new THREE.Vector3()));
+
+const bladeMaterial = new THREE.ShaderMaterial({
+  uniforms: {
+    ...windUniforms,
+    uSway: { value: 1 },
+    uMouse: { value: new THREE.Vector2() },
+    uParallax: { value: new THREE.Vector2() },   // picture pixels: near blades, far blades
+    uNear: { value: BLADE_NEAR }, uFar: { value: CONFIG.grass.depth },
+    uLamps: { value: lamps },
+    uWarmth: { value: CONFIG.grass.lampWarmth }
+  },
+  vertexShader: /* glsl */`
+    attribute vec3 aBase; attribute vec4 aShape; attribute vec4 aLean; attribute vec3 aColA; attribute vec3 aColB;
+    uniform float uSway, uNear, uFar, uWarmth;
+    uniform vec2 uMouse, uParallax;
+    uniform vec3 uLamps[${lamps.length}];
+    varying vec3 vColor; varying vec2 vBlade; varying float vKind;
+    ${WIND_GLSL}
+    void main() {
+      float v = position.y, h = aShape.x, kind = aShape.w;
+      // a leaf tapers to a point; a seed stalk is a thin stem with a wider head for the grains
+      float leaf = 1.0 - pow(v, 3.0);
+      float stalk = mix(0.3, 1.0, smoothstep(0.74, 0.8, v)) * (1.0 - 0.7 * smoothstep(0.9, 1.0, v));
+      float width = aShape.y * mix(leaf, stalk, kind);
+      vec3 across = vec3(cos(aShape.z), 0.0, -sin(aShape.z));
+      // wind: lean downwind, plus a quick flutter that grows in a gust
+      float w = windAt(aLean.w, uWindTime) * uSway;
+      float flutter = sin(uWindTime * (2.2 + 1.6 * aLean.z) + 6.2832 * aLean.z)
+                    * (0.08 + 0.5 * clamp(w, 0.0, 1.0)) * uSway * uWindStrength;
+      vec2 lean = aLean.xy + vec2(0.55 * w + 0.07 * flutter, 0.03 * flutter);
+      vec2 bend = lean * h * v * v;                              // the foot stays put, the tip moves most
+      vec3 p = aBase + across * position.x * width * 0.5
+             + vec3(bend.x, v * h - 0.5 * dot(bend, bend) / max(h, 0.01), bend.y);
+      // parallax: near blades drift like the pole and bulbs, far ones like grass.png
+      float depth = -aBase.z;
+      float px = mix(uParallax.x, uParallax.y, smoothstep(uNear, uFar, depth));
+      p.xy += vec2(-uMouse.x, uMouse.y) * px * depth / ${FOCAL}.0;
+      // colour from grass.png, warmer near the lamps, a touch of cool moonlight higher up
+      vec3 col = mix(aColA, aColB, smoothstep(0.0, 0.85, v));
+      float warm = 0.0;
+      for (int i = 0; i < ${lamps.length}; i++) { vec3 d = p - uLamps[i]; warm += exp(-dot(d, d) / 3.0); }
+      col += vec3(0.10, 0.055, 0.015) * uWarmth * min(warm, 1.5) * v;
+      col += vec3(0.01, 0.02, 0.04) * v;
+      vColor = col; vBlade = vec2(position.x, v); vKind = kind;
+      gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0);
+    }`,
+  fragmentShader: /* glsl */`
+    varying vec3 vColor; varying vec2 vBlade; varying float vKind;
+    void main() {
+      vec3 col = vColor * (0.88 + 0.24 * (1.0 - abs(vBlade.x)));
+      if (vKind > 0.5 && vBlade.y > 0.76) {
+        // seed head: rows of grains, alternating either side of the stem
+        float grain = 0.5 + 0.5 * sin(vBlade.y * 377.0 + step(0.0, vBlade.x) * 3.14159);
+        col *= 0.8 + 0.4 * grain;
+      }
+      gl_FragColor = vec4(min(col, vec3(1.0)), 1.0);
+    }`,
+  side: THREE.DoubleSide
+});
+const blades = new THREE.Mesh(bladeGeometry, bladeMaterial);
+blades.frustumCulled = false;   // blades move in the shader
+scene.add(blades);
+
+// Colours are read from grass.png once it has loaded
+function makeSampler(image) {
+  const c = document.createElement('canvas');
+  c.width = image.width; c.height = image.height;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(image, 0, 0);
+  const { data, width, height } = g.getImageData(0, 0, c.width, c.height);
+  // colour of a small patch, 0 to 1: its average, and its brightest pixel (a lit leaf)
+  return (x, y, r = 3) => {
+    let R = 0, G = 0, B = 0, n = 0, best = -1, bR = 0, bG = 0, bB = 0;
+    const xi = Math.round(x), yi = Math.round(y);
+    for (let yy = yi - r; yy <= yi + r; yy++) {
+      for (let xx = xi - r; xx <= xi + r; xx++) {
+        const k = (Math.min(height - 1, Math.max(0, yy)) * width + Math.min(width - 1, Math.max(0, xx))) * 4;
+        R += data[k]; G += data[k + 1]; B += data[k + 2]; n++;
+        const lum = data[k] * 0.3 + data[k + 1] * 0.6 + data[k + 2] * 0.1;
+        if (lum > best) { best = lum; bR = data[k]; bG = data[k + 1]; bB = data[k + 2]; }
+      }
+    }
+    return { mean: [R / n / 255, G / n / 255, B / n / 255], bright: [bR / 255, bG / 255, bB / 255] };
+  };
+}
+
+function mulberry32(seed) {   // small repeatable random numbers, so the field looks the same each visit
+  return () => {
+    seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+let sample = null, placedFor = null, bladeShare = 1;   // bladeShare drops if the device is slow
+const isPhone = () => window.matchMedia('(pointer: coarse)').matches || Math.min(window.innerWidth, window.innerHeight) < 600;
+
+function placeBlades() {
+  if (!sample) return;
+  const G = CONFIG.grass, A = bladeAttr;
+  const count = Math.floor(Math.min(MAX_BLADES, isPhone() ? G.phoneCount : G.count) * bladeShare);
+  const rand = mulberry32(20260927);
+  const far = Math.max(BLADE_NEAR + 1, G.depth);
+  const rowNear = CY + EYE_HEIGHT * FOCAL / BLADE_NEAR;    // below the frame: only the tips show
+  const rowFar = CY + EYE_HEIGHT * FOCAL / far;
+  const x0 = view.x - 60, x1 = view.x + view.w + 60;       // only where the screen can see
+  for (let i = 0; i < count; i++) {
+    const row = rowFar + (rowNear - rowFar) * Math.pow(rand(), 1.35);  // more rows at the back, where blades are small
+    const d = EYE_HEIGHT * FOCAL / (row - CY);
+    const px = x0 + (x1 - x0) * rand();
+    const seed = d < 6 && rand() < G.seedHeads;
+    const shrink = 1 - 0.6 * THREE.MathUtils.smoothstep(d, far * 0.65, far);  // fade out towards the back
+    const h = (seed ? 0.8 + 0.35 * rand() : 0.5 + 0.45 * rand()) * G.height * shrink;
+    const w = Math.max(seed ? 0.014 : 0.013 + 0.012 * rand(), 1.4 * d / FOCAL);
+    const leanDir = rand() * Math.PI * 2, leanBy = (seed ? 0.25 : 0.2) + (seed ? 0.35 : 0.55) * rand();  // blades arch
+    A.aBase.setXYZ(i, (px - CX) * d / FOCAL, -EYE_HEIGHT, -d);
+    A.aShape.setXYZW(i, h, w, (rand() - 0.5) * 2.2, seed ? 1 : 0);
+    A.aLean.setXYZW(i, Math.cos(leanDir) * leanBy, Math.sin(leanDir) * leanBy, rand(), px);
+    // tip colour from where the tip lands in grass.png, foot colour from where it stands (darker)
+    // most blades take the patch's average colour; about a third catch the light like the lit leaves
+    const at = sample(px, Math.max(708, CY + (EYE_HEIGHT - h) * FOCAL / d));
+    const lit = seed || rand() < 0.3;
+    let tip = lit ? at.mean.map((c, k) => c * 0.4 + at.bright[k] * 0.6) : at.mean;
+    if (seed) tip = tip.map((c, k) => c * 0.8 + [0.78, 0.66, 0.26][k] * 0.2);    // a little more yellow
+    const foot = sample(px, Math.min(IMG_H - 1, row)).mean;
+    A.aColB.setXYZ(i, tip[0], tip[1], tip[2]);
+    A.aColA.setXYZ(i, foot[0] * 0.45, foot[1] * 0.45, foot[2] * 0.45);
+  }
+  for (const attr of Object.values(A)) attr.needsUpdate = true;
+  bladeGeometry.instanceCount = count;
+  bladeMaterial.uniforms.uFar.value = far;
+  // darken the painted grass from the row where the blade tips begin
+  const shadeFrom = (CY + (EYE_HEIGHT - 0.9 * G.height) * FOCAL / far) / IMG_H;
+  grassMaterial.uniforms.uShadeFrom.value = shadeFrom;
+  grassMaterial.uniforms.uShadeTo.value = Math.min(1, shadeFrom + 0.12);
+  grassMaterial.uniforms.uFloorShade.value = G.floorShade;
+  placedFor = { x: view.x, w: view.w };
+}
+
+// Speed safety: if the first seconds run under 45 frames a second, draw half the blades (at most twice)
+const safety = { from: 0, frames: 0, checks: 0 };
+function checkSpeed(now, gap) {
+  if (window.__paddyNoSafety || safety.checks >= 2 || bladeGeometry.instanceCount === 0) return;
+  if (gap > 0.25 || !safety.from) { safety.from = now; safety.frames = 0; return; }  // hidden tab or first frame
+  safety.frames++;
+  if (now - safety.from < 3000) return;
+  const fps = safety.frames * 1000 / (now - safety.from);
+  if (fps < 45) {
+    bladeShare /= 2;
+    bladeGeometry.instanceCount = Math.floor(bladeGeometry.instanceCount / 2);
+    safety.checks++;
+  } else {
+    safety.checks = 2;   // fast enough: stop watching
+  }
+  safety.from = 0;
+}
 
 /* ---------- Interaction ---------- */
 const raycaster = new THREE.Raycaster();
@@ -611,17 +861,27 @@ canvas.addEventListener('click', e => {
   if (i >= 0) lightBulb(i); else closeAll();
 });
 window.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
-window.addEventListener('resize', fitView);
+let resizeTimer = 0;
+window.addEventListener('resize', () => {
+  fitView();
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {   // re-place the blades if a different part of the field is on screen
+    if (!placedFor || Math.abs(view.x - placedFor.x) > 30 || Math.abs(view.w - placedFor.w) > 30) placeBlades();
+  }, 250);
+});
 
 /* ---------- Animation ---------- */
 let wind = 0, motion = reduceMotion.matches ? 0 : 1, last = performance.now();
 const baseGlow = 2 * GLASS_R * CONFIG.glow.size;
 
 function frame(now) {
-  const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+  const gap = (now - last) / 1000;
+  const dt = Math.min(0.05, Math.max(0, gap));
   last = now;
+  checkSpeed(now, gap);
   motion += ((reduceMotion.matches ? 0 : 1) - motion) * smooth(dt, 0.25);
   wind += dt * CONFIG.sway.speed;
+  if (wind > 3600) wind -= 3600;   // keep the wind clock small for the GPU
 
   // Parallax: the picture barely moves, the 3D objects a little more
   const follow = smooth(dt, 0.35);
@@ -634,19 +894,39 @@ function frame(now) {
   const rs = CONFIG.parallax.objects * pole.userData.depth / FOCAL;
   rig.position.set(-mouse.x * rs, mouse.y * rs, 0);
 
-  // Wind
+  // Wind: the same values drive the painted grass, the blades, the cable and the bulbs
+  const W = CONFIG.wind;
+  windUniforms.uWindTime.value = wind;
+  windUniforms.uWindStrength.value = W.strength * motion;
+  windUniforms.uBreeze.value = W.breeze;
+  windUniforms.uGustSpeed.value = W.gustSpeed;
+  windUniforms.uGustSize.value = W.gustSize;
+  windUniforms.uGustEvery.value = W.gustEvery;
+  grassMaterial.uniforms.uSway.value = CONFIG.sway.grass * 6;
+  bladeMaterial.uniforms.uSway.value = CONFIG.sway.grass;
+  bladeMaterial.uniforms.uMouse.value.set(mouse.x, mouse.y);
+  bladeMaterial.uniforms.uParallax.value.set(CONFIG.parallax.objects, CONFIG.parallax.grass);
   updateSpan(spans.left, wind, CONFIG.sway.cable * motion);
   updateSpan(spans.right, wind, CONFIG.sway.cable * motion);
-  grassMaterial.uniforms.uTime.value = wind;
-  grassMaterial.uniforms.uAmp.value = CONFIG.sway.grass * motion * 6 / IMG_W;
 
-  const swingAmount = CONFIG.sway.bulbs * motion;
+  // Bulbs: pendulums pushed by the wind where they hang, so a gust swings them one after another
+  const push = CONFIG.sway.bulbs * motion;
+  const steps = Math.max(1, Math.ceil(dt * 120)), step = dt / steps;
   const litRate = smooth(dt, CONFIG.glow.time / 3);
   const hoverRate = smooth(dt, 0.08);
   bulbs.forEach((b, i) => {
     b.root.position.copy(b.root.userData.home).add(cableSway(b.x, b.weight, wind, CONFIG.sway.cable * motion));
-    b.swing.rotation.z = swingAmount * 0.07 * Math.sin(wind * b.freq + b.phase);
-    b.swing.rotation.x = swingAmount * 0.05 * Math.sin(wind * b.freq * 0.77 + b.phase * 1.9);
+    const force = push * (windAt(b.x, wind) + 0.12 * Math.sin(wind * (0.9 + 0.13 * i) + 2.1 * i));
+    const k = b.rate * b.rate, damp = 0.16 * b.rate;
+    for (let s = 0; s < steps; s++) {
+      b.sideV += (-k * b.side - damp * b.sideV + 0.12 * k * force) * step;
+      b.side += b.sideV * step;
+      b.foreV += (-k * b.fore - damp * b.foreV + 0.05 * k * force * Math.sin(wind * 0.7 + i)) * step;
+      b.fore += b.foreV * step;
+    }
+    if (motion < 0.01) b.side = b.sideV = b.fore = b.foreV = 0;
+    b.swing.rotation.z = b.side;
+    b.swing.rotation.x = b.fore;
     b.hover += ((i === hovered ? 1 : 0) - b.hover) * hoverRate;
     b.lit += ((i === active ? 1 : 0) - b.lit) * litRate;
     const size = baseGlow * (1 + (CONFIG.glow.hover - 1) * b.hover) * (1 + (CONFIG.glow.lit - 1) * b.lit);
@@ -670,6 +950,8 @@ Promise.all([load(window.PADDY_IMAGES.plate), load(window.PADDY_IMAGES.grass)]).
   }
   plateMaterial.uniforms.map.value = plateTex;
   grassMaterial.uniforms.map.value = grassTex;
+  sample = makeSampler(grassTex.image);
+  placeBlades();
   renderer.setAnimationLoop(frame);
   requestAnimationFrame(() => canvas.classList.add('ready'));
 });
