@@ -16,92 +16,108 @@ const PERSON = {
   linkedin: 'https://www.linkedin.com/in/wan-zayd-abdullah-690033230/'
 };
 
-// Your career, one entry per company bulb (bulbs 1–4, left to right, newest first).
-// sign  = what the hanging tag under the bulb shows (desktop). The logo also labels the bulb on phones.
-// body  = the career content shown in the middle of the screen.
-//   { h: '…' } a subheading   { p: '…' } a paragraph (**bold** works)
-//   { tools: '…' } a tools line   { todo: '…' } a gap for you to fill (shown marked "TO WRITE")
-// Every fact here comes from portfolio-references/; paddy/career-sources.md says which document.
+// Your career: one chapter per company bulb (bulbs 1–4, left to right, newest first).
+// Every fact comes from portfolio-references/; paddy/career-sources.md says which document.
+//   sign      the wooden tag under the bulb (desktop); its logo also labels the bulb on phones
+//   title     the company, the chapter's heading (its logo is shown when `mark` is set)
+//   role, dates, kind   shown under the title
+//   client    who the work was for, when it wasn't the company itself · unit = the team
+//   project   the main project: its name, one plain line, and the diagram drawn in code (see ART)
+//   notes     [label, text] pairs, shown as short labelled notes
+//   tools     tools for the main project
+//   also      other projects, shown as tiles: { name, line, art or figure, meta, tools }
+//   todo      a gap for you to fill, shown as a "To write" post-it
+//   aside     a small closing line, such as a career break
 const CAREER = [
   {
-    sign: { logo: 'avepoint', dates: '2026 – PRESENT', role: ['SENIOR TECH LEAD'], ring: true },
-    small: 'Jan 2026 – present · Senior Technical Lead',
-    client: 'sunway-education',
-    title: 'AvePoint · Sunway University',
-    summary: 'Rebuilding a student portal that fell over on enrolment day.',
-    body: [
-      { p: 'I joined AvePoint in Kuala Lumpur in January 2026 as a full-stack developer and technical lead. The work covers architecture design, technical delivery, client discussions and hands-on development. In April 2026 AvePoint placed me at Sunway University as Senior Technical Lead on the rebuild of iZone, the university’s student portal, in a project team of more than ten people.' },
-      { h: 'iZone rebuild' },
-      { p: 'The old iZone did not scale. It crashed at every enrolment peak, its interface had aged, and the university wanted it modernised. Underneath sat a quieter fault: the legacy system counted submissions before they were committed, which breaks as soon as many students enrol at the same moment.' },
-      { p: 'I own the architecture of the rebuild on OutSystems ODC: headless services, integration libraries, single sign-on through Microsoft and a private gateway, with the on-premise integration approach documented for the wider team in C4 diagrams and technical design documents. I kept the legacy database structure as a local replica. For enrolment itself I chose row locking, <code>SELECT FOR UPDATE</code> on Aurora PostgreSQL, so simultaneous submissions wait their turn on the rows they touch instead of all reading the same uncommitted count.' },
-      { p: 'Around that core I designed and built the integrations with the iZone API and cloud storage, including a batch synchronisation strategy with audit logging, and delivered responsive front-end features and progressive web app functionality across the portal. I run delivery on Jira, scope features with the business analyst team, hold the client-facing requirements and delivery discussions, and planned load testing around the system’s key performance areas.' },
-      { p: 'It had a cost. The replica was not well optimised, and the team was thin: three developers, myself included, so I developed as well as led, and it stretched me hard.' },
-      { p: 'The new iZone is deployed to live. It was load-tested at <strong>40,000 enrolments over a sustained 20-minute window</strong>.' },
-      { tools: 'OutSystems ODC · Aurora PostgreSQL · Microsoft single sign-on · Private gateway' },
-      { todo: 'The hardest call you made on iZone, and what it cost you, in two or three sentences.' },
-      { p: 'Before AvePoint, I was at Maybank, from September 2024 to January 2026.' }
-    ]
+    sign: { logo: 'avepoint', dates: '2026 – PRESENT', role: ['TECHNICAL LEAD'], ring: true },
+    title: 'AvePoint', mark: 'avepoint',
+    role: 'Technical Lead',
+    dates: 'Jan 2026 – present', kind: 'Full-time',
+    client: { name: 'Sunway University', mark: 'sunway-education', note: 'client, from Apr 2026' },
+    project: {
+      name: 'iZone rebuild', art: 'izone',
+      line: 'The university’s student portal, rebuilt on OutSystems ODC in a project team of more than ten.'
+    },
+    notes: [
+      ['The problem', 'The old portal crashed at every enrolment peak. It counted submissions before they were committed.'],
+      ['The choice', 'I designed the concurrency model for simultaneous enrolment, and kept the legacy database structure as a local replica.'],
+      ['What it cost', 'The replica wasn’t well optimised. We were three developers, me included, so I developed as well as led.'],
+      ['What happened', 'Deployed to live. It held up against load tests of 40,000 enrolments over 20 minutes.'],
+      ['My part', 'I own the architecture: headless services, integration libraries, single sign-on and a private gateway.']
+    ],
+    tools: ['OutSystems ODC', 'Aurora PostgreSQL', 'Microsoft single sign-on', 'Private gateway'],
+    also: [],
+    todo: 'The hardest call on iZone, and what it cost you.'
   },
   {
     sign: { logo: 'maybank', dates: '2024 – 2026', role: ['SENIOR OUTSYSTEMS', 'ENGINEER'], ring: true },
-    small: 'Sep 2024 – Jan 2026 · Senior OutSystems Engineer',
-    client: null,
-    title: 'Maybank',
-    summary: 'A form platform where none existed, and the standards around it.',
-    body: [
-      { p: 'I joined Maybank’s platform team in Kuala Lumpur in September 2024. Beyond my own projects, I pushed for technical governance: standards and practices that go further than the OutSystems documentation, borrowing from traditional coding principles such as middleware patterns for modularity and the presentational component pattern for separation of concerns. I diagnosed and fixed technical errors across the system to improve platform performance and keep the error logs clean, and I was assigned to high-priority initiatives across teams more than once.' },
-      { h: 'Digital Form' },
-      { p: 'Maybank had no internal form platform. Forms were built by a vendor, and nothing confidential was allowed in them.' },
-      { p: 'I was Digital Form’s Technical Lead, Product Owner and sole developer. As product owner I defined the roadmap, the integration strategy and the user requirements. The central decision was to make question types extensible, so each MVP cycle added new types and features and stabilised the platform. Digital Form is a core component of the Dynamic Workflow Builder, which uses dynamic forms and SLA tracking to cut development time for applications that only involve workflows, and it connects with GSAM, HRIS, MStatus and MPowered.' },
-      { p: 'Extensibility had a price: every new question type added complexity. The platform has run through five MVP cycles, and by the fifth it was used across Maybank, with <strong>over 80 forms and thousands of submissions and users</strong>.' },
-      { tools: 'OutSystems O11' },
-      { todo: 'What changed in each MVP cycle, and what the first one got wrong.' },
-      { h: 'Also at Maybank' },
-      { p: '**CAB-Q.** As Technical Lead and business analyst I led delivery of CAB-Q, the internal app that manages deployment approvals across Maybank. Improving the workflow and enforcing governance cut a daily process <strong>from 6 hours to 30 minutes</strong>. I managed its feature scope and deployment strategy to fit the platform standards.' },
-      { p: '**Audit Log.** As Technical Lead and Product Owner I built a standardised, high-performance audit logging system, implemented across every OutSystems application for traceability and compliance.' },
-      { p: '**Tokenizer.** A tokenisation component I designed and managed as Technical Lead, which secures and simplifies public display strings, backed by an encrypted database for data privacy.' },
-      { p: '**MPowered.** On Maybank’s internal agile project management platform, built on OutSystems, I improved stability and resolved recurring defects in core modules.' },
-      { p: '**RPSST.** I prototyped an OutSystems-based solution to modernise and replace legacy transaction processes from Maybank’s RBS system.' },
-      { tools: 'OutSystems O11' },
-      { p: 'Before Maybank, I spent two years with FPT Software, placed at PETRONAS Digital.' }
-    ]
+    title: 'Maybank', mark: 'maybank',
+    role: 'Senior OutSystems Engineer',
+    dates: 'Sep 2024 – Jan 2026', kind: 'Full-time',
+    unit: 'Platform team',
+    project: {
+      name: 'Digital Form', art: 'hub', caption: 'Digital Form connects GSAM, HRIS, MStatus and MPowered.',
+      line: 'Maybank’s internal form platform. I was its technical lead, product owner and sole developer.'
+    },
+    notes: [
+      ['The problem', 'No internal form platform. A vendor built the forms, and nothing confidential was allowed in them.'],
+      ['The choice', 'Extensible question types: each MVP cycle added types and features, and stabilised the platform.'],
+      ['What it cost', 'Every new question type added complexity.'],
+      ['What happened', 'Five MVP cycles. By the fifth: over 80 forms across Maybank, with thousands of submissions and users. It is core to the Dynamic Workflow Builder.']
+    ],
+    tools: ['OutSystems O11'],
+    alsoTitle: 'Also at Maybank',
+    alsoLine: 'Platform work: governance beyond the OutSystems documentation, system-wide fixes, and high-priority initiatives across teams.',
+    also: [
+      { name: 'CAB-Q', figure: '6 h → 30 min', figureText: 'A daily process cut from 6 hours to 30 minutes.',
+        line: 'Deployment approvals across Maybank. Technical lead and business analyst.' },
+      { name: 'Audit Log', art: 'log', line: 'Standardised audit logging across every OutSystems application.' },
+      { name: 'Tokenizer', art: 'token', line: 'Tokenisation for public display strings, on an encrypted database.' },
+      { name: 'MPowered', art: 'board', line: 'Stability fixes on the internal agile project platform.' },
+      { name: 'RPSST', art: 'swap', line: 'A prototype to replace legacy RBS transaction processes.' }
+    ],
+    todo: 'What changed each MVP cycle, and what the first one got wrong.'
   },
   {
-    sign: { logo: 'fpt', dates: '2022 – 2024', role: ['OUTSYSTEMS', 'DEVELOPER'], ring: true },
-    small: 'Sep 2022 – Sep 2024 · OutSystems Developer',
-    client: 'petronas',
-    title: 'FPT Software · PETRONAS Digital',
-    summary: 'Audit software that took exceptions off paper and into a system.',
-    body: [
-      { p: 'From September 2022 to September 2024 I worked for FPT Software Malaysia on contract, placed at PETRONAS Digital as an OutSystems developer. I was part of a financing and auditing software team, designing, developing, maintaining and enhancing features for software that digitalised parts of the department’s work.' },
-      { h: 'MyInsights' },
-      { p: 'PETRONAS’s auditors checked exceptions by hand, on files and paper. MyInsights automates the detection of exceptions and anomalies across data from departments that have digitalised their databases, such as Finance, Assets, Maintenance and Procurement.' },
-      { p: 'I was one of four developers, not the lead. I built user management and permissions, the front-end screens for the auditing module, part of the audit rule logic and part of the data sync, and worked on almost every area of the system except email. The screens were implemented from Figma designs, working with the UI/UX designers.' },
-      { p: 'The key decision was a fixed set of roles, each tied to its own business rules, so every module applies the right rules for each user. It cost little. The business logic had to carry <strong>millions of records</strong> through audit rules set by PETRONAS’s financial sector, so I optimised it for that volume.' },
-      { p: 'The result: auditors centralise audit exceptions and process them in the system instead of on files and paper.' },
-      { tools: 'OutSystems O11' },
-      { todo: 'The part of MyInsights you are proudest of, and why.' },
-      { h: 'Adam Digital Assets' },
-      { p: 'From May to July 2024, alongside FPT, I worked part-time and remotely as a Flutter developer on an Islamic mosque signage app with management features, plus a website twin. With one other developer, I wrote the requirements, designed the app and built it.' },
-      { tools: 'Flutter' },
-      { p: 'Before FPT came a five-month career break for a personal goal, and before that, Impact Business Solutions.' }
-    ]
+    sign: { logo: 'fpt', dates: '2022 – 2024', role: ['SOFTWARE', 'CONSULTANT'], ring: true },
+    title: 'FPT Software', mark: 'fpt',
+    role: 'Software Consultant',
+    dates: 'Sep 2022 – Sep 2024', kind: 'Contract',
+    client: { name: 'PETRONAS Digital', mark: 'petronas', note: 'client, financing and auditing team' },
+    project: {
+      name: 'MyInsights', art: 'paper',
+      line: 'Audit software that automates the detection of exceptions and anomalies.'
+    },
+    notes: [
+      ['The problem', 'Auditors checked exceptions by hand, on files and paper.'],
+      ['The choice', 'A fixed set of roles, each tied to its business rules, so every module applies the right rules for each user.'],
+      ['What it cost', 'It cost little.'],
+      ['What happened', 'Auditors centralise exceptions and process them in the system, not on paper.'],
+      ['My part', 'One of four developers: user management, permissions, the auditing screens from Figma designs, parts of the audit rules and sync, and logic optimised for millions of records.']
+    ],
+    tools: ['OutSystems O11'],
+    alsoTitle: 'Also in this period',
+    also: [
+      { name: 'Adam Digital Assets', art: 'signage', meta: 'May – Jul 2024 · part-time, remote',
+        line: 'An Islamic mosque signage app with management features, plus a website twin. Two of us wrote the requirements, designed and built both.',
+        tools: 'Flutter' }
+    ],
+    todo: 'The part of MyInsights you’re proudest of.'
   },
   {
-    sign: { logo: null, name: ['IMPACT', 'BUSINESS SOLUTIONS'], dates: '2021 – 2022', role: ['SOFTWARE', 'ENGINEER'], ring: false },
-    small: 'Apr 2021 – May 2022 · Software Engineer',
-    client: null,
-    title: 'Impact Business Solutions',
-    summary: 'Dashboards for Sarawak and a QR asset tracker.',
-    body: [
-      { p: 'My working record begins at Impact Business Solutions, where I was a software engineer on contract from April 2021 to May 2022.' },
-      { p: '**VIP Dashboard.** I used Power BI and QGIS to build visualisations of Sarawak data for a presentation to VIPs, processing and analysing the datasets for a static web-based dashboard.' },
-      { tools: 'Power BI · QGIS' },
-      { p: '**QR Asset Management.** I developed a QR-based asset management system in Flutter with a Firebase backend, with efficient data handling and real-time asset tracking.' },
-      { tools: 'Flutter · Firebase' },
-      { todo: 'What these first projects taught you, or anything else from your time at Impact.' },
-      { p: 'In 2022 I took a five-month career break, from April to August, to pursue a personal goal. Then came FPT Software.' }
-    ]
+    sign: { logo: null, name: ['IMPACT', 'BUSINESS SOLUTIONS'], dates: '2021 – 2022', role: ['SOFTWARE', 'CONSULTANT'], ring: false },
+    title: 'Impact Business Solutions', mark: null,
+    role: 'Software Consultant',
+    dates: 'Apr 2021 – May 2022', kind: 'Contract',
+    lead: 'Where my working record begins.',
+    project: null,
+    also: [
+      { name: 'VIP Dashboard', art: 'map', line: 'Sarawak data, processed and visualised for a VIP presentation as a static web dashboard.', tools: 'Power BI · QGIS' },
+      { name: 'QR Asset Management', art: 'qr', line: 'QR-based asset tracking in real time, with a Firebase backend.', tools: 'Flutter · Firebase' }
+    ],
+    aside: { dates: 'Apr – Aug 2022', text: 'Career break, for a personal goal' },
+    todo: 'What these first projects taught you.'
   }
 ];
 
@@ -137,12 +153,13 @@ const CONFIG = {
     time: 0.3        // seconds a clicked bulb takes to brighten
   },
   switchOn: 0.16,    // seconds between bulbs switching on when the page opens
-  signs: {           // tags hanging under the company bulbs on desktop, in picture pixels
+  signs: {           // wooden tags hanging under the company bulbs on desktop, in picture pixels
     width: 150,
     height: 118,
     cord: 22,        // cord between the glass and the tag
-    ink: '#231b15',  // print colour
-    paper: '#e8dfcb' // tag colour
+    wood: ['#d8ae78', '#b3824f'],  // plank colour at the top and at the bottom
+    grain: 0.28,     // how strong the wood grain is (0 = plain plank)
+    ink: '#2a170b'   // burnt-in lettering
   },
   parallax: {        // mouse parallax: how far each layer drifts, in picture pixels
     plate: 3,
@@ -209,53 +226,148 @@ const CONFIG = {
   .who a { pointer-events: auto; color: inherit; text-decoration: none; border-bottom: 1px solid rgba(241, 235, 223, .35); }
   .who a:hover, .who a:focus-visible { color: var(--ink); border-color: var(--ink); outline: none; }
 
+  /* The chapter sheet: scenes that fill the sky band one at a time (desktop) or stack (phones) */
   #career {
     position: fixed; left: 50%; top: 40%; height: 40%; transform: translateX(-50%);
-    width: min(38rem, calc(100% - 32px)); box-sizing: border-box; padding: 22px 28px 40px;
-    overflow-y: auto; overscroll-behavior: contain;
-    scrollbar-width: thin; scrollbar-color: rgba(241, 235, 223, .28) transparent;
+    width: min(38rem, calc(100% - 32px)); box-sizing: border-box; padding: 0 clamp(60px, 5vw, 84px);
+    overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; container-type: inline-size;
     color: var(--ink); font-family: var(--serif);
-    background: radial-gradient(farthest-side at 50% 50%, rgba(4, 9, 24, .64), rgba(4, 9, 24, .5) 55%, rgba(4, 9, 24, 0) 100%);
+    background: linear-gradient(to bottom, rgba(4, 9, 24, 0), rgba(4, 9, 24, .48) 64px, rgba(4, 9, 24, .48) calc(100% - 64px), rgba(4, 9, 24, 0));
     text-shadow: 0 0 12px rgba(3, 8, 22, .95), 0 0 3px rgba(3, 8, 22, .8);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 20px, #000 calc(100% - 40px), transparent);
-            mask-image: linear-gradient(to bottom, transparent, #000 20px, #000 calc(100% - 40px), transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14px, #000 calc(100% - 20px), transparent), linear-gradient(to right, transparent, #000 60px, #000 calc(100% - 60px), transparent);
+    -webkit-mask-composite: source-in;
+            mask-image: linear-gradient(to bottom, transparent, #000 14px, #000 calc(100% - 20px), transparent), linear-gradient(to right, transparent, #000 60px, #000 calc(100% - 60px), transparent);
+            mask-composite: intersect;
     transition: opacity .28s ease;
   }
+  #career::-webkit-scrollbar { display: none; }
+  body:not(.carousel) #career { scroll-snap-type: y mandatory; }
   #career:focus-visible { outline: 1px solid rgba(241, 235, 223, .35); outline-offset: -1px; }
   #career.fading { opacity: 0; }
   .mark {
     display: inline-block; background: currentColor;
     -webkit-mask: var(--mark) center / contain no-repeat; mask: var(--mark) center / contain no-repeat;
   }
-  .ch-small {
-    margin: 0; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 14px;
-    font: 600 11px/1.4 var(--serif); letter-spacing: .24em; text-transform: uppercase; color: var(--ink-soft);
+  :where(.scene) :where(h1, h2, h3, p, dl, dd, ul, figure) { margin: 0; }
+  .scene {
+    box-sizing: border-box; min-height: 100%; padding: calc(var(--vgap, 20px) * 1.1) 0 calc(var(--vgap, 20px) * 1.3);
+    display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px);
+    align-content: center; scroll-snap-align: start; scroll-snap-stop: always;
   }
-  .ch-small .mark { width: 120px; height: 13px; }
-  .ch-title {
-    margin: 12px 0 0; text-align: center; font: 300 clamp(24px, 2.6vw, 38px)/1.15 var(--serif);
-    letter-spacing: .14em; text-transform: uppercase; text-wrap: balance;
+  .scene > * { opacity: 0; translate: 0 14px; transition: opacity .7s ease, translate .7s ease; }
+  .scene.in > * { opacity: 1; translate: 0 0; }
+  .scene.in > :nth-child(2) { transition-delay: .1s; }
+  .scene.in > :nth-child(3) { transition-delay: .2s; }
+  .scene.in > :nth-child(n+4) { transition-delay: .3s; }
+
+  /* Scene 1: title, role, then the content */
+  .ch-head { grid-column: 1 / span 6; }
+  .ch-title { font-weight: 300; line-height: 1; }
+  .ch-logo { display: block; width: min(100%, 300px); height: clamp(24px, min(2.5vw, 4.4vh), 42px); -webkit-mask-position: left center; mask-position: left center; }
+  .ch-name { font: 300 clamp(20px, min(1.9vw, 3.6vh), 32px)/1.15 var(--serif); letter-spacing: .14em; text-transform: uppercase; }
+  .ch-role { margin-top: calc(var(--vgap, 20px) * .6); font: italic 300 clamp(20px, min(2vw, 3.6vh), 32px)/1.2 var(--serif); color: #fff3dc; }
+  .ch-when { margin-top: 8px; font: 600 11px/1.4 var(--serif); letter-spacing: .24em; text-transform: uppercase; color: var(--ink-soft); }
+  .ch-client { margin-top: 12px; display: flex; align-items: center; gap: 10px; font: 500 16px/1.4 var(--serif); color: var(--ink-soft); }
+  .ch-client .mark { flex: none; }
+  .ch-lead { margin-top: 18px; font: italic 300 19px/1.45 var(--serif); color: var(--ink-soft); }
+  .ch-project { grid-column: 1 / span 6; margin-top: calc(var(--vgap, 20px) * 1.4); }
+  .ch-note dt, .ch-also h2, .tile h3 {
+    font: 600 11px/1.3 var(--serif); letter-spacing: .22em; text-transform: uppercase; color: var(--amber);
   }
-  .ch-summary { margin: 8px 0 0; text-align: center; font: italic 300 clamp(17px, 1.4vw, 20px)/1.4 var(--serif); color: var(--ink-soft); }
+  .ch-project h2 { font: 600 16px/1.3 var(--serif); letter-spacing: .06em; color: var(--amber); }
+  .ch-project p { margin-top: 8px; font: 500 clamp(17px, 1.35vw, 21px)/1.5 var(--serif); color: #ece5d7; text-wrap: pretty; }
+  .ch-art { grid-column: 8 / span 5; grid-row: 1 / span 2; align-self: center; color: rgba(221, 213, 198, .82); }
+  .ch-art svg { display: block; width: 100%; max-width: 440px; height: auto; overflow: visible; }
   .ch-cue {
-    margin: 10px 0 20px; text-align: center; font: 600 10px/1.2 var(--serif);
-    letter-spacing: .3em; text-transform: uppercase; color: rgba(241, 235, 223, .5);
+    grid-column: 1 / span 6; align-self: end; margin-top: calc(var(--vgap, 20px) * 1.3);
+    font: 600 10px/1.2 var(--serif); letter-spacing: .3em; text-transform: uppercase; color: rgba(241, 235, 223, .5);
   }
-  .ch-body h2 { margin: 24px 0 8px; font: 600 15px/1.3 var(--serif); letter-spacing: .08em; color: var(--amber); }
-  .ch-body p { margin: 0 0 13px; font: 500 18px/1.58 var(--serif); color: #e7e0d2; text-wrap: pretty; }
-  .ch-body strong { font-weight: 600; color: #fff1d8; }
-  .ch-body code { font: 500 .8em/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--amber); }
-  .ch-body .ch-tools {
-    margin: -2px 0 16px; font: 600 11px/1.6 var(--serif); letter-spacing: .16em; text-transform: uppercase;
-    color: rgba(241, 235, 223, .58);
+  .ch-next {
+    grid-column: 1 / -1; justify-self: start; align-self: end; margin-top: calc(var(--vgap, 20px) * 1.3); padding: 8px 0;
+    border: 0; background: none; cursor: pointer; text-shadow: inherit;
+    font: 600 10px/1.2 var(--serif); letter-spacing: .3em; text-transform: uppercase; color: var(--amber);
   }
-  .ch-body .ch-todo {
-    margin: 4px 0 16px; padding: 9px 13px; border-left: 2px solid var(--amber); background: rgba(243, 199, 122, .07);
-    font: italic 500 16px/1.5 var(--serif); color: #f1d9ad;
+  .s-title .ch-next { grid-column: 8 / span 5; }
+  .s-notes .ch-next { grid-column: 9 / span 4; grid-row: 2; justify-self: end; align-self: center; margin-top: calc(var(--vgap, 20px) * 1.2); }
+  .ch-next:hover, .ch-next:focus-visible { color: #fff1d8; outline: none; }
+
+  /* Scene 2: short labelled notes */
+  .ch-notes {
+    grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: calc(var(--vgap, 20px) * 1.1) clamp(24px, 3.2vw, 60px); align-items: start;
   }
-  .ch-body .ch-todo::before {
-    content: 'To write · '; font: 600 10.5px/1 var(--serif); font-style: normal;
-    letter-spacing: .2em; text-transform: uppercase;
+  .ch-note dd { margin-top: 8px; font: 500 clamp(16px, 1.2vw, 19px)/1.5 var(--serif); color: #ece5d7; text-wrap: pretty; }
+  .ch-tools {
+    grid-column: 1 / span 8; margin-top: calc(var(--vgap, 20px) * 1.2); display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px;
+    font: 600 11px/1.6 var(--serif); letter-spacing: .16em; text-transform: uppercase; color: rgba(241, 235, 223, .62);
+  }
+  .postit {
+    justify-self: start; align-self: start; max-width: 15rem; padding: 14px 16px 16px; box-sizing: border-box;
+    background: linear-gradient(170deg, #efd7a3, #dfbf80); color: #3b2a14; text-shadow: none;
+    font: italic 500 16px/1.4 var(--serif); rotate: -2.2deg; box-shadow: 0 10px 22px rgba(0, 0, 0, .38);
+    transition: rotate .35s ease;
+  }
+  .postit:hover { rotate: 0deg; }
+  .postit b {
+    display: block; margin-bottom: 6px; font: 600 10px/1 var(--serif); font-style: normal;
+    letter-spacing: .22em; text-transform: uppercase; color: #80571d;
+  }
+
+  /* Scene 3: the period's other projects as tiles */
+  .ch-also { grid-column: 1 / span 8; }
+  .ch-also p { margin-top: 10px; font: 500 17px/1.5 var(--serif); color: var(--ink-soft); text-wrap: pretty; }
+  .ch-tiles {
+    grid-column: 1 / -1; margin-top: calc(var(--vgap, 20px) * 1.2); padding: 0; list-style: none;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 28px clamp(20px, 2.4vw, 40px);
+  }
+  .tile { border-top: 1px solid rgba(241, 235, 223, .22); padding-top: 14px; transition: translate .3s ease; }
+  .tile:hover { translate: 0 -4px; }
+  .t-art { height: 64px; margin-bottom: 12px; display: flex; align-items: center; color: rgba(221, 213, 198, .82); }
+  .t-art svg { height: 100%; width: auto; max-width: 100%; overflow: visible; }
+  .t-fig { font: 300 30px/1 var(--serif); letter-spacing: .02em; color: var(--amber); white-space: nowrap; }
+  .tile h3 { margin-bottom: 6px; }
+  .t-meta { margin-bottom: 6px; font: 600 10.5px/1.4 var(--serif); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+  .t-line { font: 500 15.5px/1.42 var(--serif); color: #ece5d7; text-wrap: pretty; }
+  .t-tools { margin-top: 8px; font: 600 10.5px/1.4 var(--serif); letter-spacing: .16em; text-transform: uppercase; color: rgba(241, 235, 223, .6); }
+  .s-also.few .ch-also { grid-column: 1 / span 4; grid-row: 1; }
+  .s-also.few .ch-tiles { grid-column: 6 / span 7; grid-row: 1; margin-top: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .s-also.few .ch-next { grid-row: 2; }
+
+  /* A chapter that fits in one scene: title, role and its projects side by side */
+  .s-solo .ch-head { grid-column: 1 / span 6; grid-row: 1; }
+  .s-solo .ch-tiles { grid-column: 7 / span 6; grid-row: 1; margin-top: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .s-solo .t-art { height: clamp(64px, calc(var(--vgap, 20px) * 4.4), 110px); }
+  .s-solo .ch-aside { grid-column: 7 / span 6; grid-row: 2; align-self: end; margin-top: calc(var(--vgap, 20px) * 1.2); }
+  .s-solo .postit { grid-column: 4 / span 3; grid-row: 1; justify-self: end; align-self: end; }
+  .s-solo .ch-cue { grid-row: 2; }
+  .ch-aside { font: 500 16px/1.4 var(--serif); color: var(--ink-soft); }
+  .ch-aside span { display: block; margin-bottom: 4px; font: 600 10.5px/1.4 var(--serif); letter-spacing: .2em; text-transform: uppercase; color: rgba(241, 235, 223, .6); }
+
+  /* Diagrams drawn in code */
+  .art { fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+  .art text { fill: currentColor; stroke: none; font: 600 10px var(--serif); letter-spacing: .14em; }
+  .art .a { stroke: var(--amber); }
+  .art .f { fill: currentColor; stroke: none; }
+  .art .fa { fill: var(--amber); stroke: none; }
+  .art .o { opacity: .5; }
+  .art .p { fill: #0b1329; }
+  .art .d { stroke-dasharray: 3 4; }
+  .draw { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.6s ease .3s; }
+  .scene.in .draw { stroke-dashoffset: 0; }
+
+  /* Where you are in the chapter (desktop) */
+  #ticks { position: fixed; display: none; flex-direction: column; transform: translateY(-50%); }
+  body:not(.carousel) #ticks.on { display: flex; }
+  #ticks button { width: 24px; height: 26px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+  #ticks button::after { content: ''; width: 2px; height: 12px; background: rgba(241, 235, 223, .32); transition: height .3s ease, background-color .3s ease; }
+  #ticks button[aria-current="true"]::after { height: 22px; background: var(--amber); }
+  #ticks button:hover::after { background: var(--ink); }
+  #ticks button:focus-visible { outline: 1px solid var(--ink-soft); outline-offset: -2px; }
+
+  @container (max-width: 820px) {
+    .ch-head, .ch-project { grid-column: 1 / span 7; }
+    .ch-art { grid-column: 8 / span 5; }
+    .ch-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 
   #mlabel {
@@ -270,11 +382,31 @@ const CONFIG = {
   #dots button[aria-current="true"]::after { background: var(--amber); box-shadow: 0 0 10px rgba(243, 166, 74, .9); }
   #dots button:focus-visible { outline: 1px solid var(--ink-soft); outline-offset: -4px; border-radius: 50%; }
   body.carousel #mlabel, body.carousel #dots { display: flex; }
-  body.carousel #career { width: calc(100% - 24px); padding: 16px 18px 36px; }
-  body.carousel .ch-title { font-size: 24px; }
-  body.carousel .ch-body p { font-size: 17px; }
+  body.carousel #career {
+    width: calc(100% - 24px); padding: 0 18px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14px, #000 calc(100% - 20px), transparent);
+            mask-image: linear-gradient(to bottom, transparent, #000 14px, #000 calc(100% - 20px), transparent);
+  }
+  body.carousel .ch-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  body.carousel .ch-role { margin-top: 0; }
+  body.carousel .scene { display: block; min-height: 0; padding: 20px 0 30px; }
+  body.carousel .scene + .scene { border-top: 1px solid rgba(241, 235, 223, .14); }
+  body.carousel .ch-project, body.carousel .ch-art { margin-top: 24px; }
+  body.carousel .ch-art svg { max-width: 360px; }
+  body.carousel .ch-notes { grid-template-columns: 1fr; gap: 18px; }
+  body.carousel .ch-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px; margin-top: 22px; }
+  body.carousel .s-solo .t-art { height: 72px; }
+  body.carousel .s-also.few .ch-tiles { grid-template-columns: 1fr; }
+  body.carousel .ch-aside, body.carousel .postit, body.carousel .ch-tools { margin-top: 24px; }
+  body.carousel .ch-cue { margin-top: 26px; }
+  body.carousel .ch-next { display: none; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  @media (prefers-reduced-motion: reduce) { #career, #scene { transition: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    #career, #scene, .scene > *, .tile, .postit, #ticks button::after { transition: none; }
+    .scene > * { opacity: 1; translate: 0 0; }
+    .tile:hover { translate: 0 0; }
+    .draw { stroke-dasharray: none; stroke-dashoffset: 0; transition: none; }
+  }
   .fallback { background: var(--night) center / cover no-repeat; }
 </style>
 </head>
@@ -284,6 +416,7 @@ const CONFIG = {
 <nav class="sr" id="chapters" aria-label="Career chapters"></nav>
 <p class="sr" id="status" aria-live="polite"></p>
 <article id="career" class="fading" tabindex="0" aria-label="Career chapter"></article>
+<nav id="ticks" aria-label="Parts of this chapter"></nav>
 <div id="mlabel" aria-hidden="true"></div>
 <div id="dots" aria-label="Career chapters"></div>
 
@@ -350,6 +483,7 @@ const labelEl = document.getElementById('mlabel');
 const dotsEl = document.getElementById('dots');
 const navEl = document.getElementById('chapters');
 const statusEl = document.getElementById('status');
+const ticksEl = document.getElementById('ticks');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const MARKS = window.PADDY_IMAGES.marks;
 const MARK_NAMES = { avepoint: 'AvePoint', maybank: 'Maybank', fpt: 'FPT Software', petronas: 'PETRONAS',
@@ -361,29 +495,174 @@ document.getElementById('who-name').textContent = `${PERSON.name} · ${PERSON.ti
 document.getElementById('who-link').href = PERSON.linkedin;
 
 const markHTML = (name, cls = '') => `<span class="mark ${cls}" role="img" aria-label="${MARK_NAMES[name] || name}" style="--mark:url(${MARKS[name]})"></span>`;
-const inline = t => t.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+// A logo beside text that already names it. Without a height, wide wordmarks and compact symbols get the same area.
+const markDeco = (name, h) => { const im = markImages[name], a = im ? im.width / im.height : 4;
+  h = h || Math.max(11, Math.min(18, Math.sqrt(1500 / a)));
+  const w = h * a;
+  return `<span class="mark" aria-hidden="true" style="--mark:url(${MARKS[name]});width:${w.toFixed(1)}px;height:${h}px"></span>`; };
 let carousel = false;
 
-function chapterHTML(i) {
-  const c = CAREER[i];
-  const body = c.body.map(b =>
-    b.h ? `<h2>${b.h}</h2>` :
-    b.tools ? `<p class="ch-tools">${b.tools}</p>` :
-    b.todo ? `<p class="ch-todo">${b.todo}</p>` :
-    `<p>${inline(b.p)}</p>`).join('');
-  return `<header>
-      <p class="ch-small"><span>${c.small}</span>${c.client && MARKS[c.client] ? markHTML(c.client) : ''}</p>
-      <h1 class="ch-title">${c.title}</h1>
-      <p class="ch-summary">${c.summary}</p>
-      <p class="ch-cue">${i + 1} / ${COMPANIES} · ${carousel ? 'Swipe or tap a light' : 'Choose a light'}</p>
-    </header>
-    <div class="ch-body">${body}</div>`;
+// Small repeatable random numbers, so the QR pattern and each sign's grain never change
+function seeded(n) {
+  return () => { n = (Math.imul(n, 1664525) + 1013904223) >>> 0; return n / 4294967296; };
 }
+
+/* ---------- Diagrams drawn in code: thin lines, decorative (the text beside them carries the meaning) ---------- */
+const svgArt = (w, h, body) => `<svg class="art" viewBox="0 0 ${w} ${h}" aria-hidden="true" focusable="false">${body}</svg>`;
+const rectD = (x, y, w, h) => `M${x} ${y}h${w}v${h}h${-w}Z`;
+const pathD = (d, cls = '') => `<path class="draw${cls ? ' ' + cls : ''}" pathLength="1" d="${d}"/>`;
+const label = (x, y, t) => `<text x="${x}" y="${y}" text-anchor="middle">${t}</text>`;
+const boxed = (x, y, w, h, t, cls = '') => pathD(rectD(x, y, w, h), cls) + label(x + w / 2, y + h / 2 + 3.5, t);
+const dot = (x, y, r = 2.4, cls = 'f') => `<circle class="${cls}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r}"/>`;
+const arrow = (x1, y, x2) => pathD(`M${x1} ${y}H${x2}M${x2 - 6} ${y - 5}L${x2} ${y}L${x2 - 6} ${y + 5}`, 'a');
+function qrPattern(x0, y0, s) {   // 21 × 21 modules: three finder squares, the rest repeatable noise (it doesn't scan)
+  const rnd = seeded(2021), cells = [];
+  const finder = (q, r) => `<path class="draw" pathLength="1" style="stroke-width:${s}" d="${rectD(x0 + (q + 0.5) * s, y0 + (r + 0.5) * s, 6 * s, 6 * s)}"/>`
+    + `<rect class="f" x="${x0 + (q + 2) * s}" y="${y0 + (r + 2) * s}" width="${3 * s}" height="${3 * s}"/>`;
+  for (let r = 0; r < 21; r++) for (let q = 0; q < 21; q++) {
+    const inFinder = (r < 8 && q < 8) || (r < 8 && q > 12) || (r > 12 && q < 8);
+    if (!inFinder && rnd() < 0.46) cells.push(`<rect class="f" x="${x0 + q * s}" y="${y0 + r * s}" width="${s - 0.6}" height="${s - 0.6}"/>`);
+  }
+  return finder(0, 0) + finder(14, 0) + finder(0, 14) + cells.join('');
+}
+const ART = {
+  // iZone: the pieces of the architecture around the portal
+  izone: svgArt(440, 252,
+    Array.from({ length: 14 }, (_, k) => dot(44 + (7 + (k % 4) * 6) * Math.cos(k * 2.4), 124 + (7 + (k % 4) * 6) * Math.sin(k * 2.4))).join('')
+    + label(44, 176, 'STUDENTS') + arrow(80, 124, 126)
+    + boxed(130, 103, 118, 42, 'STUDENT PORTAL', 'a')
+    + boxed(138, 22, 102, 32, 'MICROSOFT SSO') + '<path class="d" d="M189 54V103"/>'
+    + pathD('M248 124H270V58H292') + pathD('M248 124H292') + pathD('M248 124H270V190H292')
+    + boxed(292, 43, 140, 30, 'HEADLESS SERVICES') + boxed(292, 109, 140, 30, 'INTEGRATION LIBS') + boxed(292, 175, 140, 30, 'PRIVATE GATEWAY')
+    + pathD('M189 145V186')
+    + pathD('M155 193a34 7 0 1 0 68 0a34 7 0 1 0 -68 0M155 193V222a34 7 0 0 0 68 0V193')
+    + label(189, 248, 'AURORA POSTGRESQL')),
+  // Digital Form: a hub for the four systems it connects, and its five MVP cycles
+  hub: svgArt(440, 252,
+    pathD('M160 106L128 50') + pathD('M280 106L312 50') + pathD('M160 126L128 166') + pathD('M280 126L312 166')
+    + boxed(24, 28, 104, 30, 'GSAM') + boxed(312, 28, 104, 30, 'HRIS')
+    + boxed(24, 158, 104, 30, 'MSTATUS') + boxed(312, 158, 104, 30, 'MPOWERED')
+    + boxed(160, 96, 120, 40, 'DIGITAL FORM', 'a')
+    + pathD('M176 222H264') + [176, 198, 220, 242, 264].map((x, k) => dot(x, 222, 4, k === 4 ? 'fa' : 'f')).join('')
+    + label(220, 246, 'MVP 1 – 5')),
+  // MyInsights: exceptions moved from files and paper into one system
+  paper: svgArt(440, 252,
+    [rectD(48, 70, 92, 116), rectD(60, 58, 92, 116), rectD(72, 46, 92, 116)].map(d => pathD(d, 'p')).join('')
+    + [64, 52, 68, 44, 60, 36, 56].map((w, k) => pathD(`M84 ${68 + k * 12}h${w}`)).join('')
+    + label(118, 210, 'FILES AND PAPER') + arrow(184, 116, 236)
+    + pathD(rectD(250, 48, 160, 108)) + pathD('M330 156V172M300 172H360')
+    + [68, 86, 104, 122, 140].map((y, k) => pathD(`M264 ${y}H${k === 2 ? 386 : 396 - k * 9}`, k === 2 ? 'a' : '')).join('')
+    + pathD('M394 98V110M394 98h8l-3 3l3 3h-8', 'a')
+    + label(330, 210, 'ONE SYSTEM')),
+  // Adam Digital Assets: mosque signage, as an app and its website twin
+  signage: svgArt(240, 150,
+    pathD('M30 140V74C30 44 56 26 70 14C84 26 110 44 110 74V140') + pathD('M20 140H120')
+    + pathD(rectD(46, 72, 48, 50), 'a') + [84, 96, 108].map(y => pathD(`M54 ${y}h32`)).join('')
+    + pathD('M146 58h28a4 4 0 0 1 4 4v54a4 4 0 0 1 -4 4h-28a4 4 0 0 1 -4 -4v-54a4 4 0 0 1 4 -4Z') + pathD('M154 112h12')
+    + '<path class="d" d="M178 86H188"/>' + pathD(rectD(188, 50, 46, 40)) + pathD('M188 60h46')),
+  // VIP Dashboard: contour lines and data points (a motif, not a map)
+  map: svgArt(240, 150,
+    pathD('M30 80C28 44 70 22 108 26C150 30 176 50 172 82C168 112 132 126 96 122C60 118 32 108 30 80Z')
+    + pathD('M52 78C52 54 80 40 106 42C134 44 152 58 150 80C148 102 124 110 98 108C72 106 52 98 52 78Z')
+    + pathD('M76 76C76 64 92 56 106 58C122 60 130 68 128 80C126 92 112 96 100 94C86 92 76 88 76 76Z')
+    + [[64, 62], [118, 46], [140, 98], [96, 80], [160, 64]].map(([x, y]) => dot(x, y, 3, 'fa')).join('')
+    + [[196, 104, 26], [206, 92, 38], [216, 112, 18], [226, 84, 46]].map(([x, y, h]) => `<rect class="f o" x="${x}" y="${y}" width="6" height="${h}"/>`).join('')),
+  // QR Asset Management
+  qr: svgArt(240, 150, qrPattern(57, 12, 6)),
+  // Small glyphs for the Maybank tiles
+  log: svgArt(120, 60, [[14, 86], [26, 70], [38, 92], [50, 54]].map(([y, w]) => dot(14, y, 2) + pathD(`M22 ${y}h${w}`)).join('')),
+  token: svgArt(120, 60, pathD('M16 16h88a6 6 0 0 1 6 6v16a6 6 0 0 1 -6 6h-88a6 6 0 0 1 -6 -6v-16a6 6 0 0 1 6 -6Z')
+    + Array.from({ length: 8 }, (_, k) => dot(25 + k * 10, 30, 2.6, k < 3 ? 'fa' : 'f')).join('')),
+  board: svgArt(120, 60, [10, 45, 80].map((x, k) => pathD(rectD(x, 6, 30, 48))
+    + Array.from({ length: 3 - k }, (_, j) => pathD(rectD(x + 5, 12 + j * 12, 20, 8), k === 1 && j === 0 ? 'a' : '')).join('')).join('')),
+  swap: svgArt(120, 60, `<path class="d" d="${rectD(8, 16, 38, 28)}"/>` + arrow(52, 30, 70) + pathD(rectD(76, 16, 36, 28)))
+};
+
+/* ---------- A chapter: title, role, then the content, in scenes ---------- */
+const toolsHTML = ([first, ...rest]) => `<p class="ch-tools">${first.startsWith('OutSystems ')
+  ? `${markDeco('outsystems', 13)}<span><span class="sr">OutSystems </span>${first.slice(11)}</span>` : `<span>${first}</span>`}${rest.map(t => `<span>· ${t}</span>`).join('')}</p>`;
+const postitHTML = todo => todo ? `<aside class="postit"><b>To write</b>${todo}</aside>` : '';
+const tileHTML = t => `<li class="tile">
+    <div class="t-art">${t.figure ? `<span class="t-fig" aria-hidden="true">${t.figure}</span>` : ART[t.art] || ''}</div>
+    <h3>${t.name}</h3>
+    ${t.meta ? `<p class="t-meta">${t.meta}</p>` : ''}
+    <p class="t-line">${t.figureText ? `<span class="sr">${t.figureText} </span>` : ''}${t.line}</p>
+    ${t.tools ? `<p class="t-tools">${t.tools}</p>` : ''}
+  </li>`;
+
+function chapterScenes(c) {
+  const head = `<header class="ch-head">
+      <h1 class="ch-title">${c.mark
+        ? `<span class="mark ch-logo" aria-hidden="true" style="--mark:url(${MARKS[c.mark]})"></span><span class="sr">${c.title}</span>`
+        : `<span class="ch-name">${c.title}</span>`}</h1>
+      <p class="ch-role">${c.role}</p>
+      <p class="ch-when">${c.dates} · ${c.kind}</p>
+      ${c.client ? `<p class="ch-client"><span aria-hidden="true">↳</span>${c.client.mark ? markDeco(c.client.mark) : ''}<span>${c.client.name}, ${c.client.note}</span></p>` : ''}
+      ${c.unit ? `<p class="ch-client">${c.unit}</p>` : ''}
+      ${c.lead ? `<p class="ch-lead">${c.lead}</p>` : ''}
+    </header>`;
+  if (!c.project) return [{ name: 'Introduction', cls: 's-title s-solo', html: `${head}
+      <ul class="ch-tiles">${c.also.map(tileHTML).join('')}</ul>
+      ${c.aside ? `<p class="ch-aside"><span>${c.aside.dates}</span>${c.aside.text}</p>` : ''}
+      ${postitHTML(c.todo)}` }];
+  const scenes = [{ name: 'Introduction', cls: 's-title', html: `${head}
+      <div class="ch-project"><h2>${c.project.name}</h2><p>${c.project.line}</p></div>
+      <figure class="ch-art">${ART[c.project.art]}${c.project.caption ? `<figcaption class="sr">${c.project.caption}</figcaption>` : ''}</figure>` },
+    { name: 'The notes', cls: 's-notes', html: `
+      <div class="ch-notes">${c.notes.map(([k, v]) => `<dl class="ch-note"><dt>${k}</dt><dd>${v}</dd></dl>`).join('')}${postitHTML(c.todo)}</div>
+      ${toolsHTML(c.tools)}` }];
+  if (c.also.length) scenes.push({ name: c.alsoTitle, cls: `s-also${c.also.length < 3 ? ' few' : ''}`, html: `
+      <div class="ch-also"><h2>${c.alsoTitle}</h2>${c.alsoLine ? `<p>${c.alsoLine}</p>` : ''}</div>
+      <ul class="ch-tiles">${c.also.map(tileHTML).join('')}</ul>` });
+  return scenes;
+}
+function chapterHTML(i) {
+  const scenes = chapterScenes(CAREER[i]);
+  const cue = `${i + 1} / ${COMPANIES} · ${carousel ? 'Swipe or tap a light' : 'Choose a light'}`;
+  return scenes.map((sc, k) => `<section class="scene ${sc.cls}" aria-label="${sc.name}">${sc.html}
+      ${k === 0 ? `<p class="ch-cue">${cue}</p>` : ''}
+      ${k < scenes.length - 1 ? `<button class="ch-next" type="button" data-go="${k + 1}">↓ ${scenes[k + 1].name}</button>` : ''}
+    </section>`).join('');
+}
+
+// Scenes: one at a time on desktop (scroll, ↑ ↓ or the ticks), stacked on phones
+let sceneEls = [], sceneAt = 0;
+function renderChapter(i) {
+  careerEl.innerHTML = chapterHTML(i);
+  careerEl.scrollTop = 0;
+  sceneEls = [...careerEl.querySelectorAll('.scene')];
+  sceneAt = 0;
+  ticksEl.replaceChildren(...sceneEls.map((sc, k) => {
+    const t = document.createElement('button');
+    t.type = 'button';
+    t.setAttribute('aria-label', `Part ${k + 1} of ${sceneEls.length}: ${sc.getAttribute('aria-label')}`);
+    t.addEventListener('click', () => goScene(k));
+    return t;
+  }));
+  ticksEl.classList.toggle('on', sceneEls.length > 1);
+  careerEl.querySelectorAll('.ch-next').forEach(b => b.addEventListener('click', () => goScene(+b.dataset.go)));
+  if (reduceMotion.matches || carousel) { sceneEls.forEach(sc => sc.classList.add('in')); markScene(); }
+  else requestAnimationFrame(() => requestAnimationFrame(markScene));   // let the first scene fade in
+}
+function markScene() {
+  const y = careerEl.scrollTop + careerEl.clientHeight * 0.4;
+  sceneAt = 0;
+  sceneEls.forEach((sc, k) => { if (sc.offsetTop <= y) sceneAt = k; });
+  if (sceneEls[sceneAt]) sceneEls[sceneAt].classList.add('in');
+  [...ticksEl.children].forEach((t, k) => t.setAttribute('aria-current', k === sceneAt ? 'true' : 'false'));
+}
+function goScene(k) {
+  if (!sceneEls.length) return;
+  const sc = sceneEls[Math.max(0, Math.min(sceneEls.length - 1, k))];
+  sc.classList.add('in');   // start its fade while it glides in
+  careerEl.scrollTo({ top: sc.offsetTop, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+}
+careerEl.addEventListener('scroll', () => requestAnimationFrame(markScene), { passive: true });
 
 // Keyboard and screen-reader list of chapters, plus the phone dots
 CAREER.forEach((c, i) => {
   const b = document.createElement('button');
-  b.textContent = `${c.title}, ${c.small}`;
+  b.textContent = `${c.title}, ${c.role}, ${c.dates}`;
   b.addEventListener('focus', () => { hovered = i; });
   b.addEventListener('blur', () => { hovered = -1; });
   b.addEventListener('click', () => select(i));
@@ -403,8 +682,7 @@ function select(i) {
   statusEl.textContent = `Showing ${CAREER[i].title}`;
   if (carousel) panTo(i);
   const show = () => {
-    careerEl.innerHTML = chapterHTML(i);
-    careerEl.scrollTop = 0;
+    renderChapter(i);
     careerEl.classList.remove('fading');
   };
   if (first || reduceMotion.matches) { show(); return; }
@@ -455,7 +733,7 @@ function fitView() {
   document.body.classList.toggle('carousel', carousel);
   if (carousel) { panTarget = clampPan(CONFIG.bulbs[Math.max(0, active)].x - vw / 2); if (!was || pan === null) pan = panTarget; }
   if (!carousel) pan = panTarget = null;
-  if (was !== carousel && active >= 0) careerEl.innerHTML = chapterHTML(active);   // cue wording differs
+  if (was !== carousel && active >= 0) renderChapter(active);   // scenes stack on phones, and the cue differs
   applyView();
   for (const b of bulbs || []) if (b.sign) b.sign.visible = !carousel;
   layoutCareer();
@@ -1042,7 +1320,7 @@ function checkSpeed(now, gap) {
 const markImages = {};
 const loadImage = src => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = src; });
 const cordGeometry = new THREE.CylinderGeometry(0.0011, 0.0011, 1, 6).translate(0, -0.5, 0);
-const cordMaterial = new THREE.MeshBasicMaterial({ color: 0x1b1612 });
+const cordMaterial = new THREE.MeshBasicMaterial({ color: 0x5b4a34 });   // twine
 
 function tint(g, im, x, y, w, h, ink) {   // draw a logo mask in one ink
   const c = document.createElement('canvas');
@@ -1054,19 +1332,56 @@ function tint(g, im, x, y, w, h, ink) {   // draw a logo mask in one ink
   g.drawImage(c, x, y);
 }
 
-function drawSign(sign) {
+function drawSign(sign, seed) {
   const S = CONFIG.signs, R = 3;                        // canvas pixels per picture pixel
   const W = S.width * R, H = S.height * R;
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const g = c.getContext('2d');
-  // paper, a little warmer at the top where the bulb lights it
-  g.beginPath(); g.roundRect(1.5 * R, 1.5 * R, W - 3 * R, H - 3 * R, 9 * R);
-  const paper = g.createLinearGradient(0, 0, 0, H);
-  paper.addColorStop(0, '#f4e3c0'); paper.addColorStop(0.45, S.paper); paper.addColorStop(1, '#cbbda3');
-  g.fillStyle = paper; g.fill();
-  g.lineWidth = 1.2 * R; g.strokeStyle = 'rgba(35, 27, 21, .35)'; g.stroke();
-  g.beginPath(); g.arc(W / 2, 9 * R, 2.6 * R, 0, Math.PI * 2); g.fillStyle = '#3b2f26'; g.fill();   // cord hole
-  // lay out: logo (or name), dates, role, OutSystems
+  const rnd = seeded(seed * 7919 + 17);
+  const x0 = 1.5 * R, y0 = 1.5 * R, w = W - 3 * R, h = H - 3 * R;
+  // the plank, a little lighter at the top where the bulb lights it
+  g.save();
+  g.beginPath(); g.roundRect(x0, y0, w, h, 4 * R); g.clip();
+  const wood = g.createLinearGradient(0, 0, 0, H);
+  wood.addColorStop(0, S.wood[0]); wood.addColorStop(1, S.wood[1]);
+  g.fillStyle = wood; g.fillRect(0, 0, W, H);
+  // grain: long wavy lines along the plank, flowing round one small knot near a lower corner
+  const knot = { x: W * (rnd() < 0.5 ? 0.12 : 0.88), y: H * (0.7 + rnd() * 0.14) }, kr = 8 * R;
+  for (let k = 0; k < 30; k++) {
+    const base = y0 + rnd() * h, amp = (0.5 + rnd() * 1.6) * R, len = (40 + rnd() * 70) * R, ph = rnd() * 6.283;
+    g.beginPath();
+    for (let x = -6; x <= W + 6; x += 4) {
+      let y = base + amp * Math.sin(x / len * 6.283 + ph);
+      const dx = x - knot.x, dy = y - knot.y;
+      y += (dy >= 0 ? 1 : -1) * kr * 0.9 * Math.exp(-(dx * dx + dy * dy) / (kr * kr));
+      if (x === -6) g.moveTo(x, y); else g.lineTo(x, y);
+    }
+    g.strokeStyle = `rgba(96, 58, 28, ${(S.grain * (0.35 + 0.65 * rnd())).toFixed(3)})`;
+    g.lineWidth = (0.25 + rnd() * 0.8) * R;
+    g.stroke();
+  }
+  for (let k = 3; k >= 1; k--) {
+    g.beginPath(); g.ellipse(knot.x, knot.y, k * 1.9 * R, k * 1.2 * R, 0, 0, Math.PI * 2);
+    g.strokeStyle = `rgba(88, 50, 22, ${S.grain * 1.1})`; g.lineWidth = 0.6 * R; g.stroke();
+  }
+  g.beginPath(); g.ellipse(knot.x, knot.y, 1.3 * R, 0.8 * R, 0, 0, Math.PI * 2);
+  g.fillStyle = `rgba(80, 44, 18, ${S.grain * 1.6})`; g.fill();
+  // weathering: darker ends, a light bevel along the top, a darker strip for the plank's thickness
+  const ends = g.createLinearGradient(0, 0, W, 0);
+  ends.addColorStop(0, 'rgba(70, 40, 16, .3)'); ends.addColorStop(0.1, 'rgba(70, 40, 16, 0)');
+  ends.addColorStop(0.9, 'rgba(70, 40, 16, 0)'); ends.addColorStop(1, 'rgba(70, 40, 16, .3)');
+  g.fillStyle = ends; g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(255, 232, 190, .3)'; g.fillRect(0, y0, W, 1.2 * R);
+  g.fillStyle = 'rgba(62, 36, 14, .5)'; g.fillRect(0, H - 3.6 * R, W, 2.1 * R);
+  g.restore();
+  g.beginPath(); g.roundRect(x0, y0, w, h, 4 * R);
+  g.lineWidth = 1.1 * R; g.strokeStyle = 'rgba(58, 32, 12, .6)'; g.stroke();
+  // a small metal screw eye where the cord ties on
+  g.beginPath(); g.arc(W / 2, 9 * R, 2.3 * R, 0, Math.PI * 2);
+  g.lineWidth = 1.1 * R; g.strokeStyle = '#a0988d'; g.stroke();
+  g.beginPath(); g.arc(W / 2, 9 * R, 1 * R, 0, Math.PI * 2); g.fillStyle = '#2a1a0e'; g.fill();
+  // lettering burnt into the wood: logo (or name), dates, role, OutSystems
+  g.shadowColor = 'rgba(92, 44, 12, .55)'; g.shadowBlur = 1.4 * R;
   const rows = [];
   if (sign.logo) {
     const im = markImages[sign.logo], k = Math.min(W * 0.74 / im.width, 30 * R / im.height);
@@ -1075,17 +1390,17 @@ function drawSign(sign) {
     rows.push({ h: 19 * R, draw: y => text(sign.name[0], y, 17, '.16em') });
     rows.push({ h: 13 * R, draw: y => text(sign.name[1], y, 11, '.1em') });
   }
-  rows.push({ h: 9 * R });
+  rows.push({ h: 7 * R });
   rows.push({ h: 14 * R, draw: y => text(sign.dates, y, 12, '.14em') });
   rows.push({ h: 3 * R });
   for (const line of sign.role) rows.push({ h: 13 * R, draw: y => text(line, y, 11, '.1em') });
   if (sign.ring) {
     const im = markImages.outsystems, k = Math.min(W * 0.46 / im.width, 10 * R / im.height);
-    rows.push({ h: 7 * R });
+    rows.push({ h: 5 * R });
     rows.push({ h: im.height * k, draw: y => tint(g, im, (W - im.width * k) / 2, y, im.width * k, im.height * k, S.ink) });
   }
   const total = rows.reduce((t, r) => t + r.h, 0);
-  let y = 14 * R + (H - 14 * R - total) / 2;
+  let y = 14 * R + (H - 18 * R - total) / 2;
   for (const r of rows) { if (r.draw) r.draw(y); y += r.h; }
   return c;
   function text(t, y, size, spacing) {
@@ -1108,7 +1423,7 @@ function buildSigns() {
     const cord = new THREE.Mesh(cordGeometry, cordMaterial);
     cord.position.y = glassBottom;
     cord.scale.y = S.cord * lpp;
-    const tex = new THREE.CanvasTexture(drawSign(CAREER[i].sign));
+    const tex = new THREE.CanvasTexture(drawSign(CAREER[i].sign, i + 1));
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     const mat = new THREE.MeshBasicMaterial({ map: tex, alphaTest: 0.5, toneMapped: false });
@@ -1127,8 +1442,9 @@ function buildSigns() {
 function glassBottomRow(b) { return b.gy + (GLASS_H / 2) * b.scale * FOCAL / b.depth; }
 function layoutCareer() {
   if (!bulbs) return;
-  const H = window.innerHeight, S = CONFIG.signs;
+  const W = window.innerWidth, H = window.innerHeight, S = CONFIG.signs;
   const toY = row => (row - view.y) * H / view.h;
+  const toX = col => (col - view.x) * W / view.w;
   const company = bulbs.slice(0, COMPANIES);
   const grassTop = toY(CY + (EYE_HEIGHT - 0.9 * CONFIG.grass.height) * FOCAL / CONFIG.grass.depth);
   const below = carousel
@@ -1139,7 +1455,20 @@ function layoutCareer() {
   if (bottom - top < 220) bottom = Math.min(H - (carousel ? 44 : 16), top + 220);   // always room to read
   careerEl.style.top = `${top}px`;
   careerEl.style.height = `${Math.max(120, bottom - top)}px`;
+  careerEl.style.setProperty('--vgap', `${Math.max(12, Math.min(40, (bottom - top) * 0.045)).toFixed(1)}px`);
   dotsEl.style.top = `${bottom + 4}px`;
+  if (carousel) { careerEl.style.left = careerEl.style.width = careerEl.style.transform = ''; return; }
+  // Desktop: as wide as the sky allows, stopping short of the pole
+  const P = CONFIG.pole, row = view.y + (top + bottom) / 2 * view.h / H;
+  const poleLeft = P.top[0] + (P.bottom[0] - P.top[0]) * (row - P.top[1]) / (P.bottom[1] - P.top[1]) - P.width[0] / 2;
+  const right = Math.min(W - 24, toX(poleLeft) - 44);
+  const width = Math.min(Math.max(1200, W * 0.55), right - 24);
+  const left = 24 + (right - 24 - width) / 2;
+  careerEl.style.left = `${left}px`;
+  careerEl.style.width = `${width}px`;
+  careerEl.style.transform = 'none';
+  ticksEl.style.left = `${left + width + 8}px`;
+  ticksEl.style.top = `${(top + bottom) / 2}px`;
 }
 
 // Phone label: company logo (or name) under the lit bulb, following it
@@ -1205,7 +1534,19 @@ canvas.addEventListener('pointercancel', () => { down = null; });
 window.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') select(Math.min(COMPANIES - 1, active + 1));
   if (e.key === 'ArrowLeft') select(Math.max(0, active - 1));
+  if (carousel) return;
+  if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); goScene(sceneAt + 1); }
+  if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); goScene(sceneAt - 1); }
 });
+// Scrolling over the picture (not the chapter itself) also steps through the chapter
+let wheelWait = 0;
+window.addEventListener('wheel', e => {
+  if (carousel || active < 0 || careerEl.contains(e.target) || Math.abs(e.deltaY) < 4) return;
+  const now = performance.now();
+  if (now < wheelWait) return;
+  wheelWait = now + 700;
+  goScene(sceneAt + Math.sign(e.deltaY));
+}, { passive: true });
 window.addEventListener('resize', fitView);
 
 /* ---------- Animation ---------- */

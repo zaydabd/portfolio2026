@@ -1,107 +1,105 @@
 # Career content: where each fact comes from
 
-Every claim in the page's `CAREER` data comes from a document in `portfolio-references/`.
-Nothing was added from outside them. Where documents disagree, the choice and the reason are noted.
+Every claim in the page's `CAREER` data comes from a document in `portfolio-references/` or from your answers while this version was planned.
+Nothing was added from anywhere else.
 
-**Documents:** CV = `CV - Wan Zayd Abdullah Wan Akil Senior Technical Lead Updated.md` · LI = `Wan Zayd Abdullah _ LinkedIn (experience).md` ·
-DET = `Developer portfolio details.md` · PROP = `Portfolio proposal.md` · BRIEF = `next-session-brief.md` · JOURNEY = `Developer portfolio journey.md`
+**Documents:**
+- CV = `CV - Wan Zayd Abdullah Wan Akil Senior Technical Lead Updated.md`
+- LI = `Wan Zayd Abdullah _ LinkedIn (experience).md`
+- DET = `Developer portfolio details.md`
+- PROP = `Portfolio proposal.md`
+- BRIEF = `next-session-brief.md`
+- JOURNEY = `Developer portfolio journey.md`
+- BLOCK-OUT = your "Portfolio block-out · round 10" canvas, including its recorded answer Q2, "LinkedIn dates, CV roles"
 
-## Bulb 1: AvePoint · Sunway University
+## Bulb 1: AvePoint
 | Claim | Source |
 |---|---|
-| Joined AvePoint, Kuala Lumpur, January 2026, full-stack developer / technical lead | LI ("Full Stack Developer / Technical Lead", Jan 2026 – Present) |
-| Work covers architecture design, technical delivery, client discussions, hands-on development | LI |
-| Placed at Sunway University from April 2026 | LI (Sunway University, Apr 2026 – Present) |
-| Title Senior Technical Lead on iZone | CV, BRIEF, PROP; DET rule 4 allows it on iZone only |
+| AvePoint, Jan 2026 – present, full-time | LI ("AvePoint · Full-time", Jan 2026 – Present) |
+| Role: Technical Lead | Your answer ("avepoint is technical lead"); LI ("Full Stack Developer / Technical Lead"; Sunway engagement "Technical Lead") |
+| Sunway University, client, from Apr 2026 | LI ("Sunway University — Technical Lead (Apr 2026 – Present)") |
+| iZone rebuild, the university's student portal, rebuilt on OutSystems ODC | LI ("Rebuilding student portal on ODC"); CV ("iZone Portal Rebuild … OutSystems - ODC") |
 | Project team of more than ten | LI ("project team of 10+") |
-| Old portal did not scale, crashed at every enrolment peak, old interface, client wanted it modernised | DET (iZone problem) |
-| Legacy system counted submissions before commit, which fails under concurrency | DET (iZone problem) |
-| Owns the architecture: headless services, integration libraries, SSO, private gateway | LI; BRIEF; DET ("architecture owner") |
-| Single sign-on through Microsoft | DET (iZone tools: "Microsoft single sign-on") |
-| On-premise integration approach documented for the wider team | CV |
-| C4 diagrams and technical design documents | LI |
-| Kept the legacy database structure as a local replica | DET (iZone decision); PROP ("schema comes from the legacy application") |
-| Row locking, SELECT FOR UPDATE on Aurora PostgreSQL, for enrolment | DET (iZone decision) |
-| "wait their turn on the rows they touch": plain-language explanation of row locking | general meaning of SELECT FOR UPDATE, not a project claim |
-| Integrations with the iZone API and cloud storage; batch sync with audit logging | CV |
-| Responsive front-end features and progressive web app functionality | CV |
-| Delivery on Jira; scoping with the business analyst team; planned load testing around key performance areas | CV |
-| Client-facing requirements and delivery discussions | LI |
-| Replica not well optimised; thin team, developed as well as led, stretched hard | DET (iZone trade-off) |
-| Three developers, himself included | PROP; JOURNEY confirms PROP settles the DET open question |
-| Deployed to live | DET (iZone outcome; "not yet in use" left out under DET rule 1, no relative time) |
-| Load-tested at 40,000 enrolments over a sustained 20-minute window | DET, PROP |
+| Crashed at every enrolment peak; counted submissions before they were committed | DET (iZone problem) |
+| Designed the concurrency model for simultaneous enrolment | DET ("He designed the concurrency model for simultaneous student enrollment") |
+| Kept the legacy database structure as a local replica | DET (iZone decision); PROP |
+| Replica not well optimised; developed as well as led | DET (iZone trade-off) |
+| Three developers, me included | PROP; JOURNEY says PROP settles it |
+| Deployed to live | DET (iZone outcome) |
+| Held up against load tests of 40,000 enrolments over 20 minutes | DET and PROP ("load-tested at 40,000 enrolments over a sustained 20-minute window"); "held up" is your wording |
+| I own the architecture: headless services, integration libraries, single sign-on, private gateway | LI; BRIEF; DET |
 | Tools: OutSystems ODC, Aurora PostgreSQL, Microsoft single sign-on, private gateway | DET |
-| At Maybank September 2024 – January 2026 | LI |
+| Diagram: the portal with Microsoft single sign-on, headless services, integration libraries, private gateway and Aurora PostgreSQL | The same sources. It shows the parts, not a measured data flow. |
 
 ## Bulb 2: Maybank
 | Claim | Source |
 |---|---|
-| Platform team, Kuala Lumpur, from September 2024 | LI |
-| Title Senior OutSystems Engineer | BRIEF ("his preferred wording"); DET timeline. PROP says "Senior Outsystems Developer" and LI says "Software Engineer"; the brief's preferred wording is used |
-| Pushed technical governance beyond the OutSystems documentation | LI |
-| Middleware patterns (modularity), presentational component pattern (separation of concerns) | LI |
-| Diagnosed and fixed technical errors system-wide; platform performance; clean error logs | LI |
-| Assigned to high-priority initiatives across teams more than once | LI ("Multiple time assigned…") |
-| Left out: raising the design baseline for a team with no designer | PROP, "What it leaves out": his choice |
-| No internal form platform; vendor-built forms; nothing confidential allowed | DET (Digital Form problem) |
-| Technical Lead, Product Owner, sole developer | DET, PROP |
-| Defined roadmap, integration strategy, user requirements as product owner | CV |
+| Maybank, Sep 2024 – Jan 2026, full-time | LI |
+| Role: Senior OutSystems Engineer | Your answer ("maybank is outsystems senior"); BRIEF (his preferred wording); CV ("Senior OS Engineer") |
+| Platform team | LI ("Platform Team") |
+| Digital Form, Maybank's internal form platform; technical lead, product owner and sole developer | DET, PROP |
+| No internal form platform; a vendor built the forms; nothing confidential allowed | DET (Digital Form problem) |
 | Extensible question types; each MVP cycle added types and features and stabilised the platform | DET (decision) |
-| Core component of the Dynamic Workflow Builder; connects GSAM, HRIS, MStatus, MPowered | CV; BRIEF |
-| Workflow builder uses dynamic forms and SLA tracking to cut development time for workflow-only apps | LI ("Currently developing a workflow builder…"; "currently" dropped under DET rule 1). Treating LI's workflow builder as the CV's Dynamic Workflow Builder is a link between two sources |
-| Each new question type added complexity | DET (trade-off) |
+| Every new question type added complexity | DET (trade-off) |
 | Five MVP cycles | CV, BRIEF |
-| Used across Maybank; over 80 forms by the fifth MVP; thousands of submissions and users | DET (outcome), PROP |
-| Tools OutSystems O11 (all Maybank work) | DET |
-| CAB-Q: Technical Lead and business analyst; deployment approvals across Maybank; workflow and governance; 6 hours → 30 minutes daily; feature scope and deployment strategy | CV; PROP; DET |
-| Audit Log: Technical Lead and Product Owner; standardised, high-performance; across every OutSystems application; traceability and compliance | CV; DET |
-| Tokenizer: Technical Lead; secures and simplifies public display strings; encrypted database; data privacy | CV |
-| MPowered: internal agile project management platform on OutSystems; stability; recurring defects in core modules | CV |
-| RPSST: prototype to modernise and replace legacy RBS transaction processes | CV |
-| Two years with FPT Software, placed at PETRONAS Digital | LI (Sep 2022 – Sep 2024) |
+| Over 80 forms across Maybank by the fifth, thousands of submissions and users | DET (outcome), PROP |
+| Core to the Dynamic Workflow Builder | CV; BRIEF |
+| Diagram: Digital Form connects GSAM, HRIS, MStatus and MPowered | CV; BRIEF; `Proposal.md` ("It connects four systems") |
+| Tools: OutSystems O11 | DET |
+| Platform work: governance beyond the OutSystems documentation, system-wide fixes, high-priority initiatives across teams | LI |
+| CAB-Q: deployment approvals across Maybank; technical lead and business analyst; a daily process from 6 hours to 30 minutes | CV; PROP; DET |
+| Audit Log: standardised audit logging across every OutSystems application | CV; DET |
+| Tokenizer: tokenisation for public display strings, on an encrypted database | CV |
+| MPowered: stability fixes on the internal agile project platform | CV |
+| RPSST: a prototype to replace legacy RBS transaction processes | CV |
+| Left out: raising the design baseline for a team with no designer | PROP, "What it leaves out" (your choice) |
 
-## Bulb 3: FPT Software · PETRONAS Digital
+## Bulb 3: FPT Software
 | Claim | Source |
 |---|---|
-| FPT Software Malaysia, contract, September 2022 – September 2024 | LI |
-| Placed at PETRONAS Digital as OutSystems developer | LI ("Outsystems Developer (FPT Payroll)", PETRONAS Digital Sdn Bhd) |
-| Financing and auditing software team; designed, developed, maintained, enhanced features; digitalised parts of the department's work | LI |
+| FPT Software Malaysia, Sep 2022 – Sep 2024, contract | LI |
+| Role: Software Consultant | Your answer ("fpt … software consultant"); CV ("FPT Malaysia Software Consultant"); BLOCK-OUT Q2 |
+| PETRONAS Digital, client, financing and auditing team | LI (PETRONAS Digital entry: "financing/auditing software development team") |
+| MyInsights: audit software that automates the detection of exceptions and anomalies | CV; BRIEF |
 | Auditors checked exceptions by hand, on files and paper | DET (MyInsights problem) |
-| Automates detection of exceptions and anomalies; Finance, Assets, Maintenance, Procurement data | CV; BRIEF |
-| One of four developers, not the lead; user management, permissions, front-end screens, part of the audit rules and data sync; almost every area except email | DET (MyInsights role and team) |
-| Screens implemented from Figma designs with UI/UX designers | CV |
-| Fixed set of roles, each tied to its business rules; different rules per user per module | DET (decision); CV |
-| It cost little | DET (trade-off: "Low cost, in his account") |
-| Millions of records through audit rules set by PETRONAS's financial sector; optimised logic | CV; BRIEF |
+| A fixed set of roles, each tied to its business rules, so each module applies the right rules per user | DET (decision); CV |
+| It cost little | DET ("Low cost, in his account") |
 | Auditors centralise exceptions and process them in the system | DET (outcome) |
-| Left out: "turned it from a monolithic module into a decentralized system" | BRIEF: marked wrong by Wan Zayd |
-| Tools OutSystems O11 | DET |
-| Adam Digital Assets: May – July 2024, part-time, remote, Flutter developer | LI |
-| Islamic mosque signage app with management features, plus a website twin; with one other developer wrote requirements, designed and built | LI; DET |
-| Tools Flutter | DET (Flutter only on Minor Projects, DET rule 3) |
-| Five-month career break for a personal goal | LI (Apr – Aug 2022) |
+| One of four developers: user management, permissions, auditing screens from Figma designs, parts of the audit rules and sync | DET (role and team); CV (Figma) |
+| Logic optimised for millions of records | CV; BRIEF |
+| Tools: OutSystems O11 | DET |
+| Adam Digital Assets: May – Jul 2024, part-time, remote; an Islamic mosque signage app with management features, plus a website twin; two developers wrote the requirements, designed and built both; Flutter | LI; DET |
+| Left out: "turned it from a monolithic module into a decentralized system" | BRIEF: marked wrong by you |
 
 ## Bulb 4: Impact Business Solutions
 | Claim | Source |
 |---|---|
-| Software engineer, contract, April 2021 – May 2022 | LI. The CV says "Software Consultant"; LinkedIn is used because BRIEF treats it as authoritative. **Confirm which you want.** |
-| "My working record begins" here | Earliest entry in both LI and CV |
-| VIP Dashboard: Power BI and QGIS; Sarawak data; VIP presentation; processed and analysed datasets for a static web dashboard | CV; DET |
-| QR Asset Management: Flutter, Firebase backend; efficient data handling; real-time asset tracking | CV; DET |
-| Career break April – August 2022, personal goal | LI |
+| Impact Business Solutions, Apr 2021 – May 2022, contract | LI |
+| Role: Software Consultant | CV; BLOCK-OUT Q2. You didn't name this role in the planning answers, so the block-out rule decides it. |
+| "Where my working record begins." | The earliest entry in both LI and CV |
+| VIP Dashboard: Sarawak data, processed and visualised for a VIP presentation as a static web dashboard; Power BI, QGIS | CV; DET |
+| QR Asset Management: QR-based asset tracking in real time, with a Firebase backend; Flutter | CV; DET |
+| Career break, Apr – Aug 2022, for a personal goal | LI ("Personal goal pursuit · Career break") |
 
 ## Signs
-| Sign | Dates | Role | Source |
+| Sign | Dates | Role | OutSystems mark |
 |---|---|---|---|
-| AvePoint | 2026 – present | Senior Tech Lead | LI dates; CV/BRIEF title. "Tech" is shortened to fit, as in the sign preview you chose |
-| Maybank | 2024 – 2026 | Senior OutSystems Engineer | LI dates; BRIEF title |
-| FPT Software | 2022 – 2024 | OutSystems Developer | LI |
-| Impact Business Solutions | 2021 – 2022 | Software Engineer | LI (see bulb 4) |
+| AvePoint | 2026 – present | Technical Lead | yes |
+| Maybank | 2024 – 2026 | Senior OutSystems Engineer | yes |
+| FPT Software | 2022 – 2024 | Software Consultant | yes |
+| Impact Business Solutions | 2021 – 2022 | Software Consultant | no |
 
-## Gaps left for you (shown as "TO WRITE" on the page)
-- iZone: the hardest call you made, and what it cost you.
-- Digital Form: what changed in each MVP cycle, and what the first one got wrong.
-- MyInsights: the part you are proudest of, and why.
-- Impact: what those first projects taught you.
-- Impact role: "Software Engineer" (LinkedIn) or "Software Consultant" (CV)?
+## Decisions in this version
+- **Roles:** follow your answers plus the block-out rule "LinkedIn dates, CV roles". The earlier Impact question ("Software Engineer" or "Software Consultant") is closed as Software Consultant.
+- **No taglines, no row locking.** The 40,000 load test is a plain note inside "What happened", not a highlight.
+- **Left out:** the block-out draft's "one junior and one mid-level" isn't in your documents.
+- **True but not shown, to keep it short:**
+  - C4 diagrams and the documented on-premise integration approach
+  - the iZone API, cloud storage and batch-sync integrations
+  - progressive web app work, Jira delivery and business-analyst scoping
+
+## Gaps left for you (shown as "To write" post-its)
+- iZone: the hardest call, and what it cost you.
+- Digital Form: what changed each MVP cycle, and what the first one got wrong.
+- MyInsights: the part you're proudest of.
+- Impact: what these first projects taught you.
