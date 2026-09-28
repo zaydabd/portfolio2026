@@ -24,6 +24,7 @@ The longest sentence on the page is 23 words.
 | Claim | Source |
 |---|---|
 | AvePoint, Jan 2026 – present, full-time | LI |
+| Logo row: AvePoint, then Sunway, then Sunway Education (wraps on phones) | MSG ("it is Avepoint Logo then Sunway Logo", "Sunway education and Sunway are different", "in mobile it show wrap"). The Sunway logo is made from your file `logos/Sunway_Group/Sunway_Group_id6YZCrquJ_1.png`. |
 | Technical Lead | ANS ("avepoint is technical lead"); LI |
 | For Sunway Digital Hub, stationed at Sunway University | MSG ("Client Sunway Digital Hub to Sunway University"); ANS ("Through the Hub"); CV ("stationed at Sunway University") |
 | iZone, Sunway University's student portal | MSG; CV ("iZone Portal Rebuild") |
@@ -33,12 +34,11 @@ The longest sentence on the page is 23 words.
 | A large portal: around four enrolment modules, plus a student profile and a dashboard | MSG |
 | Ten on the project, three of us developers | MSG ("A project team of 10 including three developers which include me") |
 | Hats: technical lead, developer, business analyst and solution architect | MSG ("Wore multiple hats such as business analyst and solution architect"; "plus hats dont forget") |
-| Tools: OutSystems ODC · .NET (iZone API layer) | MSG; ANS ("it is the api layer") |
+| Tools: OutSystems ODC, .NET (iZone API layer) | MSG; ANS ("it is the api layer") |
 | Sunway City: a mobile-responsive version of the website | MSG |
 | Four developers within a larger project team | MSG |
 | Senior developer; helped build the mobile version and solve complex requirements and issues | MSG ("Role in sunway city was senior developer. help build mobile but also helped solve complex requirements or issues") |
 | Sunway City tools: OutSystems ODC | ANS |
-| iZone diagram: the portal with Microsoft single sign-on, headless services, integration libraries, private gateway and Aurora PostgreSQL | LI; DET. It shows the parts, not a measured data flow. |
 
 ## Bulb 2: Maybank
 | Claim | Source |
@@ -51,13 +51,12 @@ The longest sentence on the page is 23 words.
 | Extensible question types; each of five MVP cycles added types and features, and stabilised the platform | MSG; DET |
 | By MVP 5: over 80 forms, thousands of submissions, four other applications using it | MSG |
 | Tools: OutSystems O11 | DET |
-| Diagram: Digital Form connects GSAM, HRIS, MStatus and MPowered | CV; BRIEF |
 | CAB-Q: internal app for deployment approvals; a daily 6-hour process cut to 30 minutes | CV; DET |
 | Audit Log: one standard audit log for every OutSystems application, for traceability and compliance | CV |
 | Tokenizer: tokenises public display strings, backed by an encrypted database for privacy | CV |
 | MPowered: internal agile project management platform; recurring defects in core modules resolved, improving stability and performance | CV |
 | RPSST: an OutSystems prototype to replace legacy transaction processes in the RBS system | CV |
-| These five are shown as names with a line or two, with no "Also" heading | MSG |
+| These five are shown as names with a line or two under each, in a part the links call "Other projects", with no "Also" heading | MSG |
 
 ## Bulb 3: FPT Software (my draft, in your style)
 | Claim | Source |
@@ -65,6 +64,7 @@ The longest sentence on the page is 23 words.
 | FPT Software, Sep 2022 – Sep 2024, contract | LI |
 | Software Consultant, with the OutSystems mark | ANS; CV; BLOCK-OUT Q2 |
 | Placed at PETRONAS Digital, on the financing and auditing software team | LI ("Part of a financing/auditing software development team"); CV ("Petronas Resource") |
+| Logo row: FPT Software, then PETRONAS | The plan you approved |
 | Auditors checked exceptions by hand, on files and paper | DET |
 | MyInsights detects exceptions and anomalies automatically, and brings them into one system | CV ("automate detection of exceptions and anomalies"); DET (exceptions centralised in the system) |
 | One of four developers | DET |
@@ -93,6 +93,8 @@ The longest sentence on the page is 23 words.
 | FPT Software | 2022 – 2024 | Software Consultant | yes |
 | Impact Business Solutions | 2021 – 2022 | Software Consultant | no |
 
+Phones and tablets show smaller tags with the logo only ("IMPACT" for Impact).
+
 ## Changes to your documents in this version
 - **iZone load figure:** "60k enrolments sustained over an hour" (MSG) replaces the documents' 40,000 enrolments over 20 minutes (DET, PROP).
 - **iZone team:** "ten" (MSG) replaces LinkedIn's "10+".
@@ -100,6 +102,10 @@ The longest sentence on the page is 23 words.
 - **Digital Form role:** now "sole developer, led the technical and business design, through to implementation" (MSG). It was "technical lead, product owner and sole developer" (DET).
 
 ## True but not shown, to keep it short
+- **Diagrams removed in this version, on your instruction:**
+  - iZone: the portal with Microsoft single sign-on, headless services, integration libraries, private gateway and Aurora PostgreSQL (LI; DET)
+  - Digital Form: it connects GSAM, HRIS, MStatus and MPowered (CV; BRIEF)
+  - MyInsights: files and paper flowing into one system (DET)
 - **iZone:**
   - the concurrency model and the legacy database kept as a local replica
   - the replica's cost
@@ -114,3 +120,46 @@ The longest sentence on the page is 23 words.
 - **Left out on your instruction:**
   - "turned it from a monolithic module into a decentralized system" (marked wrong in BRIEF)
   - the "To write" post-its, now replaced by your own text
+
+## How the page is set (type and layout)
+These are the rules the page follows, and where each comes from. I read these pages' text in this round.
+
+**Type: one serif (Cormorant Garamond), one size, two weights, five roles.**
+| Role | Colour | Weight | Used for |
+|---|---|---|---|
+| Name | warm cream `#f1e6d2` | 600 | the role, every project name, Impact's name, your name |
+| Text | warm cream | 500 | a part's main sentences: the main project's lead, fact values, Impact's opening line |
+| Detail | moonlight blue `#b4c3dc` | 500 | dates and job type, the "where" line, fact labels, tools, tile dates, the career break, section labels, "OutSystems Technical Lead", one-line descriptions in lists |
+| Link | lamp gold `#f3c77a` | 600 | only what you can press: part and chapter links, LinkedIn |
+| Moon | moon white `#e2e9f3` | 600 | names in the Moonlighting part |
+
+- Size: 16 px on phones, 17 px from 768 px up. Line spacing 140%. Lines up to about 70 characters.
+- No italics, capitals or letter-spacing. Full-height numbers, so "Jan 2026 – present" is one size. No grey.
+- No arrows or other text symbols. Links are plain names; separators are commas.
+- The wooden signs keep their burnt-in capitals (drawn on a canvas, not page text).
+
+**Sources for the type rules:**
+- One typeface for all text, logos the only exception: Sundance 2022 ([Fonts In Use](https://fontsinuse.com/uses/46527/sundance-2022-visual-identity)); Sundance Institute ([Pentagram](https://www.pentagram.com/work/sundance-institute/story))
+- Neutral type, so the picture and the work carry the character: Sundance 2023+ ([Porto Rocha](https://www.portorocha.com/sundance))
+- Colour used sparingly, "one solid colour": Sundance 2020 ([It's Nice That, Studio Lowrie](https://www.itsnicethat.com/features/studio-lowrie-sundance-film-festival-2020-identity-graphic-design-240320)); "classic, simple, and iconic" ([sundance.org](https://www.sundance.org/blogs/inside-the-evolution-of-the-sundance-film-festivals-visual-style-with-creative-director-kristina-mueller/))
+- Names bright, labels and descriptions dim: [paco.me](https://paco.me/)
+- Body text 15–25 px, line spacing 120–145%, 45–90 characters a line: [Butterick, Typography in ten minutes](https://practicaltypography.com/typography-in-ten-minutes.html) and [line length](https://practicaltypography.com/line-length.html)
+- Sundance's 2022 typeface, Pangea, is a paid font ([Fontwerk](https://fontwerk.com/en/fonts/pangea)); the page keeps Cormorant Garamond, as you chose.
+
+**Layout: three standard tiers.**
+| Tier | Width | Layout |
+|---|---|---|
+| Phone | under 768 px | swipe between lights, small signs, parts stacked in a card that runs into the grass, above the phone's safe area |
+| Tablet | 768–1023 px, or any upright screen 768 px or wider | as phone, content up to 720 px wide |
+| Desktop | 1024 px and up, wider than tall | signs on the cable, one part at a time, content up to 960 px wide; the sheet reaches at most 40 px into the grass, and a part too tall for a short window scrolls within itself |
+
+- Breakpoints 768 and 1024 px: [Tailwind theme.css](https://github.com/tailwindlabs/tailwindcss/blob/main/packages/tailwindcss/theme.css) (md 48rem, lg 64rem). Content widths 720 and 960 px: [Bootstrap _variables.scss](https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss) (container md 720, lg 960).
+- Spacing grows smoothly with the screen from 320 to 1024 px: [Utopia fluid space calculator](https://utopia.fyi/space/calculator/).
+
+| Space | At 320 px | At 1024 px and up |
+|---|---|---|
+| Gutter | 16 px | 56 px |
+| Small (a name to its details) | 6 px | 8 px |
+| Medium (between items) | 20 px | 32 px |
+| Large (between blocks) | 32 px | 56 px |
+
