@@ -17,16 +17,18 @@ const PERSON = {
 };
 
 // Your career: one chapter per company bulb (bulbs 1–4, left to right, newest first).
-// Every fact comes from portfolio-references/; paddy/career-sources.md says which document.
+// Every fact comes from your own words or portfolio-references/; paddy/career-sources.md says which.
 //   sign      the wooden tag under the bulb (desktop); its logo also labels the bulb on phones
 //   title     the company, the chapter's heading (its logo is shown when `mark` is set)
 //   role, dates, kind   shown under the title
-//   client    who the work was for, when it wasn't the company itself · unit = the team
-//   project   the main project: its name, one plain line, and the diagram drawn in code (see ART)
-//   notes     [label, text] pairs, shown as short labelled notes
-//   tools     tools for the main project
-//   also      other projects, shown as tiles: { name, line, art or figure, meta, tools }
-//   todo      a gap for you to fill, shown as a "To write" post-it
+//   client    a line under the title: `before`, then the `mark` logo and `name`, then `after`
+//   lead      a short opening line, for a chapter without a main project
+//   project   the main project: name, lead (a sentence or two), art (a diagram, see ART),
+//             then facts ([label, text, team]) and tools, shown in its own part ("Inside …")
+//             team = { size, devs, open } draws the team as dots: devs in amber, the first ringed as you
+//   more      a second project, with the same fields, in a part of its own
+//   also      smaller projects, each a name with a line or two under it: { name, line, art, meta, tools }
+//   alsoTitle a heading over them (leave it out for none) · moon: true shows that part in moonlight
 //   aside     a small closing line, such as a career break
 const CAREER = [
   {
@@ -34,76 +36,76 @@ const CAREER = [
     title: 'AvePoint', mark: 'avepoint',
     role: 'Technical Lead',
     dates: 'Jan 2026 – present', kind: 'Full-time',
-    client: { name: 'Sunway University', mark: 'sunway-education', note: 'client, from Apr 2026' },
+    client: { before: 'For Sunway Digital Hub, stationed at', mark: 'sunway-education', name: 'Sunway University' },
     project: {
-      name: 'iZone rebuild', art: 'izone',
-      line: 'The university’s student portal, rebuilt on OutSystems ODC in a project team of more than ten.'
+      name: 'iZone, Sunway University’s student portal', short: 'iZone', art: 'izone',
+      lead: 'The legacy portal buckled every peak season. I led the rebuild, which holds up to 60k enrolments sustained over an hour.',
+      facts: [
+        ['Scope', 'A large portal: around four enrolment modules, plus a student profile and a dashboard.'],
+        ['Team', 'Ten on the project, three of us developers.', { size: 10, devs: 3 }],
+        ['Hats I wore', 'Technical lead, developer, business analyst and solution architect.']
+      ],
+      tools: ['OutSystems ODC', '.NET (iZone API layer)']
     },
-    notes: [
-      ['The problem', 'The old portal crashed at every enrolment peak. It counted submissions before they were committed.'],
-      ['The choice', 'I designed the concurrency model for simultaneous enrolment, and kept the legacy database structure as a local replica.'],
-      ['What it cost', 'The replica wasn’t well optimised. We were three developers, me included, so I developed as well as led.'],
-      ['What happened', 'Deployed to live. It held up against load tests of 40,000 enrolments over 20 minutes.'],
-      ['My part', 'I own the architecture: headless services, integration libraries, single sign-on and a private gateway.']
-    ],
-    tools: ['OutSystems ODC', 'Aurora PostgreSQL', 'Microsoft single sign-on', 'Private gateway'],
-    also: [],
-    todo: 'The hardest call on iZone, and what it cost you.'
+    more: {
+      name: 'Sunway City', short: 'Sunway City', art: 'responsive',
+      lead: 'A mobile-responsive version of the Sunway City website.',
+      facts: [
+        ['Team', 'Four developers within a larger project team.', { devs: 4, open: true }],
+        ['My role', 'Senior developer. I helped build the mobile version, and helped solve complex requirements and issues.']
+      ],
+      tools: ['OutSystems ODC']
+    },
+    also: []
   },
   {
     sign: { logo: 'maybank', dates: '2024 – 2026', role: ['SENIOR OUTSYSTEMS', 'ENGINEER'], ring: true },
     title: 'Maybank', mark: 'maybank',
     role: 'Senior OutSystems Engineer',
     dates: 'Sep 2024 – Jan 2026', kind: 'Full-time',
-    unit: 'Platform team',
+    client: { before: 'Platform and Delivery teams, Digitalisation and Automation Department' },
     project: {
-      name: 'Digital Form', art: 'hub', caption: 'Digital Form connects GSAM, HRIS, MStatus and MPowered.',
-      line: 'Maybank’s internal form platform. I was its technical lead, product owner and sole developer.'
+      name: 'Digital Form', short: 'Digital Form', art: 'hub', caption: 'Digital Form connects GSAM, HRIS, MStatus and MPowered.',
+      lead: 'Maybank’s in-house answer to Google Forms, built for sensitive data that can’t be hosted on external SaaS.',
+      facts: [
+        ['My role', 'Sole developer. I led the technical and business design, through to implementation.', { devs: 1 }],
+        ['How it grew', 'Extensible question types. Each of five MVP cycles added types and features, and stabilised the platform.'],
+        ['Outcome', 'By MVP 5: over 80 forms, thousands of submissions, and four other applications using it.']
+      ],
+      tools: ['OutSystems O11']
     },
-    notes: [
-      ['The problem', 'No internal form platform. A vendor built the forms, and nothing confidential was allowed in them.'],
-      ['The choice', 'Extensible question types: each MVP cycle added types and features, and stabilised the platform.'],
-      ['What it cost', 'Every new question type added complexity.'],
-      ['What happened', 'Five MVP cycles. By the fifth: over 80 forms across Maybank, with thousands of submissions and users. It is core to the Dynamic Workflow Builder.']
-    ],
-    tools: ['OutSystems O11'],
-    alsoTitle: 'Also at Maybank',
-    alsoLine: 'Platform work: governance beyond the OutSystems documentation, system-wide fixes, and high-priority initiatives across teams.',
+    alsoName: 'Five more projects',
     also: [
-      { name: 'CAB-Q', figure: '6 h → 30 min', figureText: 'A daily process cut from 6 hours to 30 minutes.',
-        line: 'Deployment approvals across Maybank. Technical lead and business analyst.' },
-      { name: 'Audit Log', art: 'log', line: 'Standardised audit logging across every OutSystems application.' },
-      { name: 'Tokenizer', art: 'token', line: 'Tokenisation for public display strings, on an encrypted database.' },
-      { name: 'MPowered', art: 'board', line: 'Stability fixes on the internal agile project platform.' },
-      { name: 'RPSST', art: 'swap', line: 'A prototype to replace legacy RBS transaction processes.' }
-    ],
-    todo: 'What changed each MVP cycle, and what the first one got wrong.'
+      { name: 'CAB-Q', art: 'queue', line: 'Maybank’s internal app for deployment approvals. It cut a daily 6-hour process to 30 minutes.' },
+      { name: 'Audit Log', art: 'log', line: 'One standard audit log for every OutSystems application at Maybank, for traceability and compliance.' },
+      { name: 'Tokenizer', art: 'token', line: 'A platform component that tokenises public display strings, backed by an encrypted database to keep data private.' },
+      { name: 'MPowered', art: 'board', line: 'Maybank’s internal agile project management platform. I resolved recurring defects in its core modules, improving stability and performance.' },
+      { name: 'RPSST', art: 'swap', line: 'An OutSystems prototype to replace legacy transaction processes in Maybank’s RBS system.' }
+    ]
   },
   {
     sign: { logo: 'fpt', dates: '2022 – 2024', role: ['SOFTWARE', 'CONSULTANT'], ring: true },
     title: 'FPT Software', mark: 'fpt',
     role: 'Software Consultant',
     dates: 'Sep 2022 – Sep 2024', kind: 'Contract',
-    client: { name: 'PETRONAS Digital', mark: 'petronas', note: 'client, financing and auditing team' },
+    client: { before: 'Placed at', mark: 'petronas', name: 'PETRONAS Digital', after: ', on the financing and auditing software team' },
     project: {
-      name: 'MyInsights', art: 'paper',
-      line: 'Audit software that automates the detection of exceptions and anomalies.'
+      name: 'MyInsights', short: 'MyInsights', art: 'paper',
+      lead: 'Auditors checked exceptions by hand, on files and paper. MyInsights detects exceptions and anomalies automatically, and brings them into one system.',
+      facts: [
+        ['Team', 'One of four developers.', { size: 4, devs: 4 }],
+        ['What I built', 'Nearly every area but email: user management, permissions, the auditing screens from Figma designs, and parts of the audit rules and data sync.'],
+        ['Scale', 'I optimised the business logic to run millions of records through the audit rules.'],
+        ['Data from', 'Finance, Assets, Maintenance, Procurement and other departments.']
+      ],
+      tools: ['OutSystems O11']
     },
-    notes: [
-      ['The problem', 'Auditors checked exceptions by hand, on files and paper.'],
-      ['The choice', 'A fixed set of roles, each tied to its business rules, so every module applies the right rules for each user.'],
-      ['What it cost', 'It cost little.'],
-      ['What happened', 'Auditors centralise exceptions and process them in the system, not on paper.'],
-      ['My part', 'One of four developers: user management, permissions, the auditing screens from Figma designs, parts of the audit rules and sync, and logic optimised for millions of records.']
-    ],
-    tools: ['OutSystems O11'],
-    alsoTitle: 'Also in this period',
+    alsoTitle: 'Moonlighting', moon: true,
     also: [
       { name: 'Adam Digital Assets', art: 'signage', meta: 'May – Jul 2024 · part-time, remote',
-        line: 'An Islamic mosque signage app with management features, plus a website twin. Two of us wrote the requirements, designed and built both.',
+        line: 'A mosque signage app with management features, plus its website twin. Another developer and I wrote the requirements, then designed and built both.',
         tools: 'Flutter' }
-    ],
-    todo: 'The part of MyInsights you’re proudest of.'
+    ]
   },
   {
     sign: { logo: null, name: ['IMPACT', 'BUSINESS SOLUTIONS'], dates: '2021 – 2022', role: ['SOFTWARE', 'CONSULTANT'], ring: false },
@@ -113,11 +115,10 @@ const CAREER = [
     lead: 'Where my working record begins.',
     project: null,
     also: [
-      { name: 'VIP Dashboard', art: 'map', line: 'Sarawak data, processed and visualised for a VIP presentation as a static web dashboard.', tools: 'Power BI · QGIS' },
-      { name: 'QR Asset Management', art: 'qr', line: 'QR-based asset tracking in real time, with a Firebase backend.', tools: 'Flutter · Firebase' }
+      { name: 'VIP Dashboard', art: 'map', line: 'A static web dashboard of Sarawak data, which I processed and visualised for a VIP presentation.', tools: 'Power BI · QGIS' },
+      { name: 'QR Asset Management', art: 'qr', line: 'Real-time asset tracking by QR code, built on a Firebase backend.', tools: 'Flutter · Firebase' }
     ],
-    aside: { dates: 'Apr – Aug 2022', text: 'Career break, for a personal goal' },
-    todo: 'What these first projects taught you.'
+    aside: { dates: 'Apr – Aug 2022', text: 'A career break, for a personal goal.' }
   }
 ];
 
@@ -205,6 +206,8 @@ const CONFIG = {
     --ink: #f1ebdf;
     --ink-soft: #ddd5c6;
     --amber: #f3c77a;
+    --moon: #c9d7ed;      /* moonlight: the moon's disc, tinted with the blue of its halo */
+    --moon-ink: #e2e9f3;
     --serif: 'Cormorant Garamond', 'Cormorant', Garamond, 'Times New Roman', serif;
   }
   html, body { height: 100%; margin: 0; overflow: hidden; background: var(--night); }
@@ -250,7 +253,7 @@ const CONFIG = {
   }
   :where(.scene) :where(h1, h2, h3, p, dl, dd, ul, figure) { margin: 0; }
   .scene {
-    box-sizing: border-box; min-height: 100%; padding: calc(var(--vgap, 20px) * 1.1) 0 calc(var(--vgap, 20px) * 1.3);
+    box-sizing: border-box; min-height: 100%; padding: calc(var(--vgap, 20px) * 1.1) 0 var(--vgap, 20px);
     display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px);
     align-content: center; scroll-snap-align: start; scroll-snap-stop: always;
   }
@@ -267,55 +270,65 @@ const CONFIG = {
   .ch-name { font: 300 clamp(20px, min(1.9vw, 3.6vh), 32px)/1.15 var(--serif); letter-spacing: .14em; text-transform: uppercase; }
   .ch-role { margin-top: calc(var(--vgap, 20px) * .6); font: italic 300 clamp(20px, min(2vw, 3.6vh), 32px)/1.2 var(--serif); color: #fff3dc; }
   .ch-when { margin-top: 8px; font: 600 11px/1.4 var(--serif); letter-spacing: .24em; text-transform: uppercase; color: var(--ink-soft); }
-  .ch-client { margin-top: 12px; display: flex; align-items: center; gap: 10px; font: 500 16px/1.4 var(--serif); color: var(--ink-soft); }
-  .ch-client .mark { flex: none; }
+  .ch-client { margin-top: 10px; padding-left: 1.25em; text-indent: -1.25em; font: 500 16px/1.5 var(--serif); color: var(--ink-soft); text-wrap: pretty; }
+  .ch-client .mark { vertical-align: middle; margin: -2px 5px 0 3px; }
+  .ch-client .nw { white-space: nowrap; }
   .ch-lead { margin-top: 18px; font: italic 300 19px/1.45 var(--serif); color: var(--ink-soft); }
-  .ch-project { grid-column: 1 / span 6; margin-top: calc(var(--vgap, 20px) * 1.4); }
-  .ch-note dt, .ch-also h2, .tile h3 {
+  .ch-project { grid-column: 1 / span 6; margin-top: calc(var(--vgap, 20px) * 1.15); }
+  .fact dt, .ch-also h2 {
     font: 600 11px/1.3 var(--serif); letter-spacing: .22em; text-transform: uppercase; color: var(--amber);
   }
-  .ch-project h2 { font: 600 16px/1.3 var(--serif); letter-spacing: .06em; color: var(--amber); }
+  .ch-project h2, .ch-kicker { font: 600 16px/1.3 var(--serif); letter-spacing: .06em; color: var(--amber); }
   .ch-project p { margin-top: 8px; font: 500 clamp(17px, 1.35vw, 21px)/1.5 var(--serif); color: #ece5d7; text-wrap: pretty; }
   .ch-art { grid-column: 8 / span 5; grid-row: 1 / span 2; align-self: center; color: rgba(221, 213, 198, .82); }
   .ch-art svg { display: block; width: 100%; max-width: 440px; height: auto; overflow: visible; }
   .ch-cue {
-    grid-column: 1 / span 6; align-self: end; margin-top: calc(var(--vgap, 20px) * 1.3);
+    grid-column: 1 / span 6; align-self: end; margin-top: var(--vgap, 20px);
     font: 600 10px/1.2 var(--serif); letter-spacing: .3em; text-transform: uppercase; color: rgba(241, 235, 223, .5);
   }
   .ch-next {
-    grid-column: 1 / -1; justify-self: start; align-self: end; margin-top: calc(var(--vgap, 20px) * 1.3); padding: 8px 0;
+    grid-column: 1 / -1; justify-self: start; align-self: end; margin-top: var(--vgap, 20px); padding: 5px 0;
     border: 0; background: none; cursor: pointer; text-shadow: inherit;
     font: 600 10px/1.2 var(--serif); letter-spacing: .3em; text-transform: uppercase; color: var(--amber);
   }
   .s-title .ch-next { grid-column: 8 / span 5; }
-  .s-notes .ch-next { grid-column: 9 / span 4; grid-row: 2; justify-self: end; align-self: center; margin-top: calc(var(--vgap, 20px) * 1.2); }
+  .s-inside .ch-next, .s-more .ch-next, .s-also .ch-next { grid-column: 9 / span 4; justify-self: end; align-self: center; }
   .ch-next:hover, .ch-next:focus-visible { color: #fff1d8; outline: none; }
 
-  /* Scene 2: short labelled notes */
-  .ch-notes {
-    grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: calc(var(--vgap, 20px) * 1.1) clamp(24px, 3.2vw, 60px); align-items: start;
+  /* Scene 2: inside the main project, as labelled facts */
+  .ch-kicker { grid-column: 1 / -1; }
+  .ch-facts {
+    grid-column: 1 / -1; margin-top: calc(var(--vgap, 20px) * 1.1); display: grid;
+    grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: calc(var(--vgap, 20px) * 1.1) clamp(24px, 3.2vw, 60px); align-items: start;
   }
-  .ch-note dd { margin-top: 8px; font: 500 clamp(16px, 1.2vw, 19px)/1.5 var(--serif); color: #ece5d7; text-wrap: pretty; }
+  .fact dd { margin: 8px 0 0; font: 500 clamp(16px, 1.2vw, 19px)/1.5 var(--serif); color: #ece5d7; text-wrap: pretty; }
+  .fact .team { display: block; height: 28px; width: auto; margin: 2px 0 8px; color: rgba(221, 213, 198, .82); overflow: visible; }
   .ch-tools {
     grid-column: 1 / span 8; margin-top: calc(var(--vgap, 20px) * 1.2); display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px;
     font: 600 11px/1.6 var(--serif); letter-spacing: .16em; text-transform: uppercase; color: rgba(241, 235, 223, .62);
   }
-  .postit {
-    justify-self: start; align-self: start; max-width: 15rem; padding: 14px 16px 16px; box-sizing: border-box;
-    background: linear-gradient(170deg, #efd7a3, #dfbf80); color: #3b2a14; text-shadow: none;
-    font: italic 500 16px/1.4 var(--serif); rotate: -2.2deg; box-shadow: 0 10px 22px rgba(0, 0, 0, .38);
-    transition: rotate .35s ease;
-  }
-  .postit:hover { rotate: 0deg; }
-  .postit b {
-    display: block; margin-bottom: 6px; font: 600 10px/1 var(--serif); font-style: normal;
-    letter-spacing: .22em; text-transform: uppercase; color: #80571d;
-  }
+  .ch-tools .tn { font: italic 500 14px/1 var(--serif); letter-spacing: .02em; text-transform: none; }
+  .s-inside .ch-tools, .s-inside .ch-next { grid-row: 3; }
 
-  /* Scene 3: the period's other projects as tiles */
+  /* Scene 3, AvePoint: a second project, beside its motif */
+  .s-more .ch-project { grid-column: 1 / span 7; grid-row: 1; margin-top: 0; }
+  .s-more .ch-art { grid-column: 9 / span 4; grid-row: 1 / span 3; }
+  .s-more .ch-art svg { max-width: 300px; }
+  .s-more .ch-facts { grid-column: 1 / span 7; grid-row: 2; }
+  .s-more .ch-tools { grid-column: 1 / span 7; grid-row: 3; }
+  .s-more .ch-next { grid-row: 4; }
+
+  /* Scene 3: smaller projects, each a name with a line or two under it */
   .ch-also { grid-column: 1 / span 8; }
-  .ch-also p { margin-top: 10px; font: 500 17px/1.5 var(--serif); color: var(--ink-soft); text-wrap: pretty; }
+  .ch-projs {
+    grid-column: 1 / -1; margin: 0; padding: 0; list-style: none; display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(var(--vgap, 20px) * 1.3) clamp(24px, 3.2vw, 60px);
+  }
+  .proj { border-top: 1px solid rgba(241, 235, 223, .22); padding-top: 14px; }
+  .p-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; color: rgba(221, 213, 198, .82); }
+  .p-head svg { flex: none; height: 22px; width: auto; overflow: visible; }
+  .proj h3, .tile h3 { font: 600 19px/1.25 var(--serif); letter-spacing: .02em; color: var(--amber); }
+  .s-also .ch-next { margin-top: calc(var(--vgap, 20px) * 1.2); }
   .ch-tiles {
     grid-column: 1 / -1; margin-top: calc(var(--vgap, 20px) * 1.2); padding: 0; list-style: none;
     display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 28px clamp(20px, 2.4vw, 40px);
@@ -324,21 +337,30 @@ const CONFIG = {
   .tile:hover { translate: 0 -4px; }
   .t-art { height: 64px; margin-bottom: 12px; display: flex; align-items: center; color: rgba(221, 213, 198, .82); }
   .t-art svg { height: 100%; width: auto; max-width: 100%; overflow: visible; }
-  .t-fig { font: 300 30px/1 var(--serif); letter-spacing: .02em; color: var(--amber); white-space: nowrap; }
   .tile h3 { margin-bottom: 6px; }
   .t-meta { margin-bottom: 6px; font: 600 10.5px/1.4 var(--serif); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
-  .t-line { font: 500 15.5px/1.42 var(--serif); color: #ece5d7; text-wrap: pretty; }
+  .t-line { font: 500 15.5px/1.45 var(--serif); color: #ece5d7; text-wrap: pretty; }
   .t-tools { margin-top: 8px; font: 600 10.5px/1.4 var(--serif); letter-spacing: .16em; text-transform: uppercase; color: rgba(241, 235, 223, .6); }
-  .s-also.few .ch-also { grid-column: 1 / span 4; grid-row: 1; }
+  .s-also.few .ch-also { grid-column: 1 / span 4; grid-row: 1; align-self: center; }
   .s-also.few .ch-tiles { grid-column: 6 / span 7; grid-row: 1; margin-top: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .s-also.few .ch-next { grid-row: 2; }
+
+  /* Moonlighting: that part glows in moonlight instead of lamplight */
+  .s-moon { --amber: var(--moon); }
+  .s-moon .ch-also h2 { font: italic 300 clamp(24px, min(2.2vw, 4vh), 34px)/1.2 var(--serif); letter-spacing: .02em; text-transform: none; }
+  .s-moon .ch-also h2::before {
+    content: ''; display: inline-block; width: .34em; height: .34em; margin: 0 .45em .12em 0; border-radius: 50%;
+    background: var(--moon-ink); box-shadow: 0 0 10px 2px rgba(201, 215, 237, .75);
+  }
+  .s-moon .t-line { color: var(--moon-ink); }
+  .s-moon .t-meta, .s-moon .t-tools { color: rgba(201, 215, 237, .78); }
+  .s-moon .t-art, .s-moon .tile { color: rgba(201, 215, 237, .85); border-color: rgba(201, 215, 237, .3); }
 
   /* A chapter that fits in one scene: title, role and its projects side by side */
   .s-solo .ch-head { grid-column: 1 / span 6; grid-row: 1; }
   .s-solo .ch-tiles { grid-column: 7 / span 6; grid-row: 1; margin-top: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .s-solo .t-art { height: clamp(64px, calc(var(--vgap, 20px) * 4.4), 110px); }
   .s-solo .ch-aside { grid-column: 7 / span 6; grid-row: 2; align-self: end; margin-top: calc(var(--vgap, 20px) * 1.2); }
-  .s-solo .postit { grid-column: 4 / span 3; grid-row: 1; justify-self: end; align-self: end; }
   .s-solo .ch-cue { grid-row: 2; }
   .ch-aside { font: 500 16px/1.4 var(--serif); color: var(--ink-soft); }
   .ch-aside span { display: block; margin-bottom: 4px; font: 600 10.5px/1.4 var(--serif); letter-spacing: .2em; text-transform: uppercase; color: rgba(241, 235, 223, .6); }
@@ -367,7 +389,8 @@ const CONFIG = {
   @container (max-width: 820px) {
     .ch-head, .ch-project { grid-column: 1 / span 7; }
     .ch-art { grid-column: 8 / span 5; }
-    .ch-notes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ch-facts { grid-template-columns: repeat(min(var(--n, 3), 2), minmax(0, 1fr)); }
+    .ch-projs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 
   #mlabel {
@@ -393,16 +416,20 @@ const CONFIG = {
   body.carousel .scene + .scene { border-top: 1px solid rgba(241, 235, 223, .14); }
   body.carousel .ch-project, body.carousel .ch-art { margin-top: 24px; }
   body.carousel .ch-art svg { max-width: 360px; }
-  body.carousel .ch-notes { grid-template-columns: 1fr; gap: 18px; }
+  body.carousel .ch-facts { grid-template-columns: 1fr; gap: 18px; margin-top: 16px; }
+  body.carousel .ch-projs { grid-template-columns: 1fr; gap: 22px; }
   body.carousel .ch-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px; margin-top: 22px; }
   body.carousel .s-solo .t-art { height: 72px; }
-  body.carousel .s-also.few .ch-tiles { grid-template-columns: 1fr; }
-  body.carousel .ch-aside, body.carousel .postit, body.carousel .ch-tools { margin-top: 24px; }
+  body.carousel .s-also.few .ch-tiles { grid-template-columns: 1fr; margin-top: 20px; }
+  body.carousel .ch-aside, body.carousel .ch-tools { margin-top: 24px; }
+  body.carousel .s-more .ch-art { margin-top: 20px; }
+  body.carousel .s-more .ch-art svg { max-width: 240px; }
   body.carousel .ch-cue { margin-top: 26px; }
   body.carousel .ch-next { display: none; }
+  body.carousel .ch-end { display: block; margin-top: 26px; padding: 10px 0; font-size: 11px; text-align: left; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   @media (prefers-reduced-motion: reduce) {
-    #career, #scene, .scene > *, .tile, .postit, #ticks button::after { transition: none; }
+    #career, #scene, .scene > *, .tile, #ticks button::after { transition: none; }
     .scene > * { opacity: 1; translate: 0 0; }
     .tile:hover { translate: 0 0; }
     .draw { stroke-dasharray: none; stroke-dashoffset: 0; transition: none; }
@@ -525,7 +552,23 @@ function qrPattern(x0, y0, s) {   // 21 × 21 modules: three finder squares, the
   }
   return finder(0, 0) + finder(14, 0) + finder(0, 14) + cells.join('');
 }
+// A team as dots: developers in amber, the first of them ringed as you; `open` trails off for a larger, uncounted team
+function teamDots({ size = 0, devs = 1, open = false }) {
+  const n = Math.max(size, devs), gap = 14, x0 = 10, end = x0 + (n - 1) * gap;
+  const dots = Array.from({ length: n }, (_, k) => dot(x0 + k * gap, 8, 3.2, k < devs ? 'fa' : 'f o')).join('');
+  const more = open ? [0.55, 0.35, 0.18].map((o, k) => `<path style="opacity:${o}" d="M${end + 12 + k * 14} 8h8"/>`).join('') : '';
+  return svgArt(end + (open ? 58 : 12), 28, `<circle class="a" cx="${x0}" cy="8" r="6.4"/>` + dots + more + label(x0, 26, 'ME'))
+    .replace('class="art"', 'class="art team"');
+}
 const ART = {
+  // Sunway City: the website, and its mobile-responsive version (in amber)
+  responsive: svgArt(240, 150,
+    pathD(rectD(12, 22, 150, 94)) + pathD('M87 116V130M64 130H110') + pathD('M12 36H162')
+    + [[26, 50, 60], [26, 62, 46], [26, 74, 54], [26, 86, 38]].map(([x, y, w]) => pathD(`M${x} ${y}h${w}`)).join('')
+    + pathD(rectD(100, 48, 50, 52)) + '<path class="d" d="M168 76H182"/>'
+    + pathD('M194 30h30a5 5 0 0 1 5 5v90a5 5 0 0 1 -5 5h-30a5 5 0 0 1 -5 -5v-90a5 5 0 0 1 5 -5Z', 'a')
+    + pathD('M189 44H229', 'a') + [54, 62, 70].map((y, k) => pathD(`M196 ${y}h${k === 1 ? 18 : 26}`)).join('')
+    + pathD(rectD(196, 80, 26, 26)) + pathD('M203 120h12', 'a')),
   // iZone: the pieces of the architecture around the portal
   izone: svgArt(440, 252,
     Array.from({ length: 14 }, (_, k) => dot(44 + (7 + (k % 4) * 6) * Math.cos(k * 2.4), 124 + (7 + (k % 4) * 6) * Math.sin(k * 2.4))).join('')
@@ -569,7 +612,9 @@ const ART = {
     + [[196, 104, 26], [206, 92, 38], [216, 112, 18], [226, 84, 46]].map(([x, y, h]) => `<rect class="f o" x="${x}" y="${y}" width="6" height="${h}"/>`).join('')),
   // QR Asset Management
   qr: svgArt(240, 150, qrPattern(57, 12, 6)),
-  // Small glyphs for the Maybank tiles
+  // Small glyphs for the Maybank projects
+  queue: svgArt(120, 60, [10, 30, 50].map((y, k) => pathD(rectD(8, y - 7, 76, 14), k === 2 ? 'a' : '')
+    + pathD(`M94 ${y}l5 5l11 -11`, k === 2 ? 'a' : '')).join('')),   // CAB-Q: deployment requests, approved
   log: svgArt(120, 60, [[14, 86], [26, 70], [38, 92], [50, 54]].map(([y, w]) => dot(14, y, 2) + pathD(`M22 ${y}h${w}`)).join('')),
   token: svgArt(120, 60, pathD('M16 16h88a6 6 0 0 1 6 6v16a6 6 0 0 1 -6 6h-88a6 6 0 0 1 -6 -6v-16a6 6 0 0 1 6 -6Z')
     + Array.from({ length: 8 }, (_, k) => dot(25 + k * 10, 30, 2.6, k < 3 ? 'fa' : 'f')).join('')),
@@ -579,59 +624,84 @@ const ART = {
 };
 
 /* ---------- A chapter: title, role, then the content, in scenes ---------- */
+// Tools: the OutSystems mark stands in for its name; a note in brackets stays in normal case
+const toolHTML = t => { const m = t.match(/^(.*?) \((.*)\)$/);
+  return m ? `${m[1]} <span class="tn">(${m[2]})</span>` : t; };
 const toolsHTML = ([first, ...rest]) => `<p class="ch-tools">${first.startsWith('OutSystems ')
-  ? `${markDeco('outsystems', 13)}<span><span class="sr">OutSystems </span>${first.slice(11)}</span>` : `<span>${first}</span>`}${rest.map(t => `<span>· ${t}</span>`).join('')}</p>`;
-const postitHTML = todo => todo ? `<aside class="postit"><b>To write</b>${todo}</aside>` : '';
+  ? `${markDeco('outsystems', 13)}<span><span class="sr">OutSystems </span>${toolHTML(first.slice(11))}</span>` : `<span>${toolHTML(first)}</span>`}${rest.map(t => `<span>· ${toolHTML(t)}</span>`).join('')}</p>`;
+const factsHTML = facts => `<div class="ch-facts" style="--n:${facts.length}">${facts.map(([k, v, team]) =>
+  `<dl class="fact"><dt>${k}</dt><dd>${team ? teamDots(team) : ''}${v}</dd></dl>`).join('')}</div>`;
+// A smaller project: with a picture above it (a few side by side), or a small glyph beside its name (a longer list)
 const tileHTML = t => `<li class="tile">
-    <div class="t-art">${t.figure ? `<span class="t-fig" aria-hidden="true">${t.figure}</span>` : ART[t.art] || ''}</div>
+    <div class="t-art">${ART[t.art] || ''}</div>
     <h3>${t.name}</h3>
     ${t.meta ? `<p class="t-meta">${t.meta}</p>` : ''}
-    <p class="t-line">${t.figureText ? `<span class="sr">${t.figureText} </span>` : ''}${t.line}</p>
+    <p class="t-line">${t.line}</p>
     ${t.tools ? `<p class="t-tools">${t.tools}</p>` : ''}
   </li>`;
+const projHTML = t => `<li class="proj"><div class="p-head">${ART[t.art] || ''}<h3>${t.name}</h3></div><p class="t-line">${t.line}</p></li>`;
 
 function chapterScenes(c) {
+  const cl = c.client;
   const head = `<header class="ch-head">
       <h1 class="ch-title">${c.mark
         ? `<span class="mark ch-logo" aria-hidden="true" style="--mark:url(${MARKS[c.mark]})"></span><span class="sr">${c.title}</span>`
         : `<span class="ch-name">${c.title}</span>`}</h1>
       <p class="ch-role">${c.role}</p>
       <p class="ch-when">${c.dates} · ${c.kind}</p>
-      ${c.client ? `<p class="ch-client"><span aria-hidden="true">↳</span>${c.client.mark ? markDeco(c.client.mark) : ''}<span>${c.client.name}, ${c.client.note}</span></p>` : ''}
-      ${c.unit ? `<p class="ch-client">${c.unit}</p>` : ''}
+      ${cl ? `<p class="ch-client"><span aria-hidden="true">↳ </span>${cl.before || ''}${cl.name ? ` <span class="nw">${cl.mark ? markDeco(cl.mark) : ''}${cl.name}</span>` : ''}${cl.after || ''}</p>` : ''}
       ${c.lead ? `<p class="ch-lead">${c.lead}</p>` : ''}
     </header>`;
   if (!c.project) return [{ name: 'Introduction', cls: 's-title s-solo', html: `${head}
       <ul class="ch-tiles">${c.also.map(tileHTML).join('')}</ul>
-      ${c.aside ? `<p class="ch-aside"><span>${c.aside.dates}</span>${c.aside.text}</p>` : ''}
-      ${postitHTML(c.todo)}` }];
+      ${c.aside ? `<p class="ch-aside"><span>${c.aside.dates}</span>${c.aside.text}</p>` : ''}` }];
+  const p = c.project;
   const scenes = [{ name: 'Introduction', cls: 's-title', html: `${head}
-      <div class="ch-project"><h2>${c.project.name}</h2><p>${c.project.line}</p></div>
-      <figure class="ch-art">${ART[c.project.art]}${c.project.caption ? `<figcaption class="sr">${c.project.caption}</figcaption>` : ''}</figure>` },
-    { name: 'The notes', cls: 's-notes', html: `
-      <div class="ch-notes">${c.notes.map(([k, v]) => `<dl class="ch-note"><dt>${k}</dt><dd>${v}</dd></dl>`).join('')}${postitHTML(c.todo)}</div>
-      ${toolsHTML(c.tools)}` }];
-  if (c.also.length) scenes.push({ name: c.alsoTitle, cls: `s-also${c.also.length < 3 ? ' few' : ''}`, html: `
-      <div class="ch-also"><h2>${c.alsoTitle}</h2>${c.alsoLine ? `<p>${c.alsoLine}</p>` : ''}</div>
-      <ul class="ch-tiles">${c.also.map(tileHTML).join('')}</ul>` });
+      <div class="ch-project"><h2>${p.name}</h2><p>${p.lead}</p></div>
+      <figure class="ch-art">${ART[p.art]}${p.caption ? `<figcaption class="sr">${p.caption}</figcaption>` : ''}</figure>` },
+    { name: `Inside ${p.short}`, cls: 's-inside', html: `
+      <h2 class="ch-kicker">${p.short}</h2>
+      ${factsHTML(p.facts)}
+      ${toolsHTML(p.tools)}` }];
+  if (c.more) scenes.push({ name: c.more.name, cls: 's-more', html: `
+      <div class="ch-project"><h2>${c.more.name}</h2><p>${c.more.lead}</p></div>
+      <figure class="ch-art">${ART[c.more.art]}</figure>
+      ${factsHTML(c.more.facts)}
+      ${toolsHTML(c.more.tools)}` });
+  if (c.also.length) {
+    const few = c.also.length < 3;
+    scenes.push({ name: c.alsoTitle || c.alsoName, cls: `s-also${few ? ' few' : ''}${c.moon ? ' s-moon' : ''}`, html: `
+      ${c.alsoTitle ? `<div class="ch-also"><h2>${c.alsoTitle}</h2></div>` : `<h2 class="sr">${c.alsoName}</h2>`}
+      ${few ? `<ul class="ch-tiles">${c.also.map(tileHTML).join('')}</ul>` : `<ul class="ch-projs">${c.also.map(projHTML).join('')}</ul>`}` });
+  }
   return scenes;
 }
 function chapterHTML(i) {
-  const scenes = chapterScenes(CAREER[i]);
-  const cue = `${i + 1} / ${COMPANIES} · ${carousel ? 'Swipe or tap a light' : 'Choose a light'}`;
+  const scenes = chapterScenes(CAREER[i]), next = CAREER[i + 1];
+  const cue = `${i + 1} / ${COMPANIES} · ${carousel ? 'Swipe or tap a light' : 'Scroll, or choose a light'}`;
   return scenes.map((sc, k) => `<section class="scene ${sc.cls}" aria-label="${sc.name}">${sc.html}
       ${k === 0 ? `<p class="ch-cue">${cue}</p>` : ''}
-      ${k < scenes.length - 1 ? `<button class="ch-next" type="button" data-go="${k + 1}">↓ ${scenes[k + 1].name}</button>` : ''}
+      ${k < scenes.length - 1 ? `<button class="ch-next" type="button" data-go="${k + 1}">↓ ${scenes[k + 1].name}</button>`
+        : next ? `<button class="ch-next ch-end" type="button" data-chapter="${i + 1}">${carousel ? `Next: ${next.title} →` : `↓ Next: ${next.title}`}</button>` : ''}
     </section>`).join('');
 }
 
-// Scenes: one at a time on desktop (scroll, ↑ ↓ or the ticks), stacked on phones
+// Scenes: one at a time on desktop (scroll, ↑ ↓ or the ticks), stacked on phones.
+// Scrolling on past a chapter's last part opens the next chapter; back past its first part, the previous one at its end.
 let sceneEls = [], sceneAt = 0;
-function renderChapter(i) {
+const edge = { top: 0, bottom: 0 };   // when the sheet reached its top and its bottom (0 = it isn't there)
+function trackEdges() {
+  const now = performance.now(), el = careerEl;
+  edge.top = el.scrollTop <= 2 ? edge.top || now : 0;
+  edge.bottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2 ? edge.bottom || now : 0;
+}
+function renderChapter(i, at = 'start') {
   careerEl.innerHTML = chapterHTML(i);
-  careerEl.scrollTop = 0;
   sceneEls = [...careerEl.querySelectorAll('.scene')];
+  careerEl.scrollTop = at === 'end' ? careerEl.scrollHeight : 0;
   sceneAt = 0;
+  edge.top = edge.bottom = 0;
+  trackEdges();
   ticksEl.replaceChildren(...sceneEls.map((sc, k) => {
     const t = document.createElement('button');
     t.type = 'button';
@@ -640,7 +710,8 @@ function renderChapter(i) {
     return t;
   }));
   ticksEl.classList.toggle('on', sceneEls.length > 1);
-  careerEl.querySelectorAll('.ch-next').forEach(b => b.addEventListener('click', () => goScene(+b.dataset.go)));
+  careerEl.querySelectorAll('.ch-next').forEach(b => b.addEventListener('click', () =>
+    b.dataset.chapter ? select(+b.dataset.chapter) : goScene(+b.dataset.go)));
   if (reduceMotion.matches || carousel) { sceneEls.forEach(sc => sc.classList.add('in')); markScene(); }
   else requestAnimationFrame(() => requestAnimationFrame(markScene));   // let the first scene fade in
 }
@@ -657,7 +728,15 @@ function goScene(k) {
   sc.classList.add('in');   // start its fade while it glides in
   careerEl.scrollTo({ top: sc.offsetTop, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
 }
-careerEl.addEventListener('scroll', () => requestAnimationFrame(markScene), { passive: true });
+let chapterWait = 0;
+function turnChapter(dir) {   // on to the next chapter's first part, or back to the previous chapter's last
+  const i = active + dir, now = performance.now();
+  if (active < 0 || i < 0 || i >= COMPANIES || now < chapterWait) return false;
+  chapterWait = now + 900;
+  select(i, dir < 0 ? 'end' : 'start');
+  return true;
+}
+careerEl.addEventListener('scroll', () => { trackEdges(); requestAnimationFrame(markScene); }, { passive: true });
 
 // Keyboard and screen-reader list of chapters, plus the phone dots
 CAREER.forEach((c, i) => {
@@ -674,7 +753,7 @@ CAREER.forEach((c, i) => {
 });
 
 let active = -1;
-function select(i) {
+function select(i, at = 'start') {   // at: open the chapter at its 'start' or at its 'end'
   if (i < 0 || i >= COMPANIES || i === active) return;
   const first = active < 0;
   active = i;
@@ -682,7 +761,7 @@ function select(i) {
   statusEl.textContent = `Showing ${CAREER[i].title}`;
   if (carousel) panTo(i);
   const show = () => {
-    renderChapter(i);
+    renderChapter(i, at);
     careerEl.classList.remove('fading');
   };
   if (first || reduceMotion.matches) { show(); return; }
@@ -1535,18 +1614,59 @@ window.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight') select(Math.min(COMPANIES - 1, active + 1));
   if (e.key === 'ArrowLeft') select(Math.max(0, active - 1));
   if (carousel) return;
-  if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); goScene(sceneAt + 1); }
-  if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); goScene(sceneAt - 1); }
+  const dir = e.key === 'ArrowDown' || e.key === 'PageDown' ? 1 : e.key === 'ArrowUp' || e.key === 'PageUp' ? -1 : 0;
+  if (!dir) return;
+  e.preventDefault();
+  const k = sceneAt + dir;
+  if (k >= 0 && k < sceneEls.length) goScene(k);
+  else if (!e.repeat) turnChapter(dir);   // past the end (or the start): the next (or previous) chapter
 });
-// Scrolling over the picture (not the chapter itself) also steps through the chapter
+// Wheel and trackpad. A gesture is a run of wheel events less than 200 ms apart.
+// Desktop: the page steps through the chapter's parts itself, one part per notch (or per 700 ms of a long swipe),
+// so a small scroll never snaps back. Turning to another chapter takes a fresh gesture that starts once the
+// chapter is already at its last (or first) part, so a flick's momentum can't skip ahead.
+// Phones: the card scrolls itself, and a fresh gesture past its end opens the next chapter.
+const gesture = { start: 0, last: 0, sum: 0, done: false };
 let wheelWait = 0;
 window.addEventListener('wheel', e => {
-  if (carousel || active < 0 || careerEl.contains(e.target) || Math.abs(e.deltaY) < 4) return;
-  const now = performance.now();
-  if (now < wheelWait) return;
-  wheelWait = now + 700;
-  goScene(sceneAt + Math.sign(e.deltaY));
+  if (active < 0 || !e.deltaY) return;
+  const now = performance.now(), dir = Math.sign(e.deltaY), onSheet = careerEl.contains(e.target);
+  if (now - gesture.last > 200 || Math.sign(gesture.sum) === -dir) Object.assign(gesture, { start: now, sum: 0, done: false });
+  gesture.last = now;
+  gesture.sum += e.deltaY;
+  if (carousel) {
+    if (dir > 0 && !gesture.done && edge.bottom && edge.bottom < gesture.start && gesture.sum >= 60) gesture.done = turnChapter(1);
+    return;
+  }
+  const sc = sceneEls[sceneAt];   // a part taller than the sheet scrolls through first
+  if (onSheet && sc && (dir > 0 ? careerEl.scrollTop + careerEl.clientHeight < sc.offsetTop + sc.offsetHeight - 2
+                                : careerEl.scrollTop > sc.offsetTop + 2)) return;
+  if (e.cancelable) e.preventDefault();
+  if (gesture.done || Math.abs(gesture.sum) < 40) return;
+  const k = sceneAt + dir;
+  if (k >= 0 && k < sceneEls.length) {
+    if (now < wheelWait) return;
+    wheelWait = now + 700;
+    gesture.sum = 0;
+    goScene(k);
+    return;
+  }
+  const edgeAt = dir > 0 ? edge.bottom : edge.top;
+  if (edgeAt && edgeAt < gesture.start && Math.abs(gesture.sum) >= 60 && turnChapter(dir)) gesture.done = true;
+}, { passive: false });
+// Touch: pull the chapter up past its end for the next one (on desktop, down past its start for the previous one)
+let touch = null;
+careerEl.addEventListener('touchstart', e => {
+  touch = e.touches.length === 1 ? { y: e.touches[0].clientY, top: edge.top > 0, bottom: edge.bottom > 0 } : null;
 }, { passive: true });
+careerEl.addEventListener('touchmove', e => {
+  if (!touch || e.touches.length !== 1) return;
+  const dy = touch.y - e.touches[0].clientY;   // > 0: the finger moved up
+  const lastPart = carousel || sceneAt === sceneEls.length - 1, firstPart = !carousel && sceneAt === 0;
+  if ((touch.bottom && lastPart && dy > 70 && turnChapter(1)) || (touch.top && firstPart && dy < -70 && turnChapter(-1))) touch = null;
+}, { passive: true });
+careerEl.addEventListener('touchend', () => { touch = null; }, { passive: true });
+careerEl.addEventListener('touchcancel', () => { touch = null; }, { passive: true });
 window.addEventListener('resize', fitView);
 
 /* ---------- Animation ---------- */
