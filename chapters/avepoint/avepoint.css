@@ -1,0 +1,5 @@
+/* ==========================================================================
+   AvePoint only. Start every rule with [data-company="avepoint"] so it can't reach
+   the other chapters; the shared look is in css/chapters.css (desktop) and
+   css/phone.css (phones and tablets).
+   ========================================================================== */

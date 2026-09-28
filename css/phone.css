@@ -2,38 +2,130 @@
    the chapter dots, and a card under the small signs that runs down into the grass, with the parts stacked. */
 
 /* Chapter dots, just above the screen's safe area */
-#dots { position: fixed; left: 50%; bottom: calc(var(--safe-bottom) + 6px); transform: translateX(-50%); display: none; gap: 4px; }
-#dots button { width: 28px; height: 28px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
-#dots button::after { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--dot); }
-#dots button[aria-current="true"]::after { background: var(--c-link); box-shadow: 0 0 10px var(--dot-glow); }
-#dots button:focus-visible { outline: 1px solid var(--c-detail); outline-offset: -4px; border-radius: 50%; }
-
-body.carousel { --logo-k: .78; }
-body.carousel #dots { display: flex; }
-body.carousel #career {
-  left: 0; right: 0; width: 100%; transform: none; bottom: calc(var(--safe-bottom) + 40px); height: auto;
-  padding: 0 var(--gutter);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14px, #000 calc(100% - 28px), transparent);
-          mask-image: linear-gradient(to bottom, transparent, #000 14px, #000 calc(100% - 28px), transparent);
+#dots {
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--safe-bottom) + 6px);
+  transform: translateX(-50%);
+  display: none;
+  gap: 4px;
 }
-body.tablet { --logo-k: .88; }
-body.tablet #career { left: 50%; width: min(100%, calc(720px + 2 * var(--gutter))); transform: translateX(-50%); }
+#dots button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+#dots button::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--dot);
+}
+#dots button[aria-current="true"]::after {
+  background: var(--c-link);
+  box-shadow: 0 0 10px var(--dot-glow);
+}
+#dots button:focus-visible {
+  outline: 1px solid var(--c-detail);
+  outline-offset: -4px;
+  border-radius: 50%;
+}
+
+body.carousel {
+  --logo-k: 0.78;
+}
+body.carousel #dots {
+  display: flex;
+}
+body.carousel #career {
+  left: 0;
+  right: 0;
+  width: 100%;
+  transform: none;
+  bottom: calc(var(--safe-bottom) + 40px);
+  height: auto;
+  padding: 0 var(--gutter);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 14px,
+    #000 calc(100% - 28px),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 14px,
+    #000 calc(100% - 28px),
+    transparent
+  );
+}
+body.tablet {
+  --logo-k: 0.88;
+}
+body.tablet #career {
+  left: 50%;
+  width: min(100%, calc(720px + 2 * var(--gutter)));
+  transform: translateX(-50%);
+}
 
 /* Parts stacked, one column */
-body.carousel .scene { display: block; min-height: 0; padding: var(--gap-l) 0; }
-body.carousel .scene:first-child { padding-top: var(--gap-m); }
-body.carousel .scene + .scene { border-top: 1px solid var(--rule); }
-body.carousel .ch-head { margin-top: var(--gap-m); }
-body.carousel .ch-project { margin-top: var(--gap-l); }
-body.carousel .s-more .ch-project { margin-top: 0; }
-body.carousel .s-more .ch-art { margin-top: var(--gap-m); }
-body.carousel .s-more .ch-art svg { max-width: 220px; }
-body.carousel .ch-facts { grid-template-columns: 1fr; }
-body.carousel .ch-projs, body.carousel .ch-tiles { grid-template-columns: 1fr; margin-top: 0; }
-body.carousel .ch-also + .ch-tiles, body.carousel .ch-head + .ch-tiles { margin-top: var(--gap-l); }
-body.carousel .ch-tools, body.carousel .ch-aside { margin-top: var(--gap-m); }
-body.carousel .ch-next { display: none; }
-body.carousel .ch-end { display: block; margin-top: var(--gap-l); padding: 10px 0; text-align: left; }
+body.carousel .scene {
+  display: block;
+  min-height: 0;
+  padding: var(--gap-l) 0;
+}
+body.carousel .scene:first-child {
+  padding-top: var(--gap-m);
+}
+body.carousel .scene + .scene {
+  border-top: 1px solid var(--rule);
+}
+body.carousel .ch-head {
+  margin-top: var(--gap-m);
+}
+body.carousel .ch-project {
+  margin-top: var(--gap-l);
+}
+body.carousel .s-more .ch-project {
+  margin-top: 0;
+}
+body.carousel .ch-facts {
+  grid-auto-flow: row; /* stacked, one under another */
+  grid-template-columns: 1fr;
+}
+body.carousel .ch-projs,
+body.carousel .ch-tiles {
+  grid-template-columns: 1fr;
+  margin-top: 0;
+}
+body.carousel .ch-also + .ch-tiles,
+body.carousel .ch-head + .ch-tiles {
+  margin-top: var(--gap-l);
+}
+body.carousel .ch-tools,
+body.carousel .ch-aside {
+  margin-top: var(--gap-m);
+}
+body.carousel .ch-next {
+  display: none;
+}
+body.carousel .ch-end {
+  display: block;
+  margin-top: var(--gap-l);
+  padding: 10px 0;
+  text-align: left;
+}
 
 /* Tablets: two columns where there's room */
-body.tablet .ch-facts, body.tablet .ch-projs, body.tablet .ch-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+body.tablet .ch-facts,
+body.tablet .ch-projs,
+body.tablet .ch-tiles {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}

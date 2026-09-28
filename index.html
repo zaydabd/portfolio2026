@@ -1,30 +1,63 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Wan Zayd Abdullah</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap">
-<!-- Look: tokens.css holds every colour, font and space (the 3D scene reads it too) -->
-<link rel="stylesheet" href="css/tokens.css">
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/chapters.css">
-<link rel="stylesheet" href="css/phone.css">
-<!-- three.js, from the CDN; every module imports it as 'three' -->
-<script type="importmap">
-{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js" } }
-</script>
-<script type="module" src="js/main.js"></script>
-</head>
-<body>
-<canvas id="scene" role="img" aria-label="A paddy field at night under a full moon. Seven bulbs hang from a cable tied to a metal pole; the first four each hold a chapter of Wan Zayd Abdullah's career."></canvas>
-<header class="who"><p><span id="who-name" class="type-name"></span><span id="who-title" class="type-detail"></span></p><a id="who-link" class="type-link" href="#" target="_blank" rel="noopener">LinkedIn</a></header>
-<nav class="sr" id="chapters" aria-label="Career chapters"></nav>
-<p class="sr" id="status" aria-live="polite"></p>
-<article id="career" class="fading" tabindex="0" aria-label="Career chapter"></article>
-<nav id="ticks" aria-label="Parts of this chapter"></nav>
-<div id="dots" aria-label="Career chapters"></div>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Wan Zayd Abdullah</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap"
+    />
+    <!-- Look: tokens.css holds every colour, font and space (the 3D scene reads it too) -->
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/marks.css" />
+    <link rel="stylesheet" href="css/chapters.css" />
+    <link rel="stylesheet" href="css/phone.css" />
+    <!-- Each company's own styles; its words and layout are in chapters/<company>/<company>.html -->
+    <link rel="stylesheet" href="chapters/avepoint/avepoint.css" />
+    <link rel="stylesheet" href="chapters/maybank/maybank.css" />
+    <link rel="stylesheet" href="chapters/fpt/fpt.css" />
+    <link rel="stylesheet" href="chapters/impact/impact.css" />
+    <!-- three.js, from the CDN; every module imports it as 'three' -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js"
+        }
+      }
+    </script>
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <canvas
+      id="scene"
+      role="img"
+      aria-label="A paddy field at night under a full moon. Seven bulbs hang from a cable tied to a metal pole; the first four each hold a chapter of Wan Zayd Abdullah's career."
+    ></canvas>
+    <header class="who">
+      <p>
+        <span id="who-name" class="type-name"></span
+        ><span id="who-title" class="type-detail"></span>
+      </p>
+      <a id="who-link" class="type-link" href="#" target="_blank" rel="noopener"
+        >LinkedIn</a
+      >
+    </header>
+    <nav class="sr" id="chapters" aria-label="Career chapters"></nav>
+    <p class="sr" id="status" aria-live="polite"></p>
+    <article
+      id="career"
+      class="fading"
+      tabindex="0"
+      aria-label="Career chapter"
+    ></article>
+    <nav id="ticks" aria-label="Parts of this chapter"></nav>
+    <div id="dots" aria-label="Career chapters"></div>
+  </body>
 </html>

@@ -1,0 +1,96 @@
+<!-- Maybank: one <section class="scene"> per part.
+     Logos: <span class="mark mark-name"></span> (css/marks.css).
+     Next buttons: data-go="1" goes to this chapter's 2nd part (counting from 0);
+     data-chapter="2" opens the 3rd company in CAREER (js/config.js). -->
+
+<section class="scene s-title" aria-label="Introduction">
+  <h1 class="ch-logos">
+    <span class="mark mark-maybank"></span>
+    <span class="sr">Maybank</span>
+  </h1>
+  <div class="ch-head">
+    <p class="type-name">Senior OutSystems Engineer</p>
+    <p class="ch-when type-detail">Sep 2024 – Jan 2026, full-time</p>
+    <p class="type-detail">Platform and Delivery teams, Digitalisation and Automation Department</p>
+  </div>
+  <div class="ch-project">
+    <h2 class="type-name">Digital Form</h2>
+    <p class="type-text">
+      Maybank’s in-house answer to Google Forms, built for sensitive data that
+      can’t be hosted on external SaaS.
+    </p>
+  </div>
+  <button class="ch-next type-link" type="button" data-go="1">Digital Form</button>
+</section>
+
+<section class="scene s-inside" aria-label="Digital Form">
+  <h2 class="ch-kicker type-name">Digital Form</h2>
+  <div class="ch-facts">
+    <dl class="fact">
+      <dt class="type-detail">My role</dt>
+      <dd class="type-text">
+        Sole developer. I led the technical and business design, through to
+        implementation.
+      </dd>
+    </dl>
+    <dl class="fact">
+      <dt class="type-detail">How it grew</dt>
+      <dd class="type-text">
+        Extensible question types. Each of five MVP cycles added types and
+        features, and stabilised the platform.
+      </dd>
+    </dl>
+    <dl class="fact">
+      <dt class="type-detail">Outcome</dt>
+      <dd class="type-text">
+        By MVP 5: over 80 forms, thousands of submissions, and four other
+        applications using it.
+      </dd>
+    </dl>
+  </div>
+  <p class="ch-tools type-detail"><span class="mark mark-outsystems"></span><span class="sr">OutSystems </span>O11</p>
+  <button class="ch-next type-link" type="button" data-go="2">Other projects</button>
+</section>
+
+<section class="scene s-also" aria-label="Other projects">
+  <h2 class="sr">Other projects</h2>
+  <ul class="ch-projs">
+    <li class="proj">
+      <h3 class="type-name">CAB-Q</h3>
+      <p class="type-detail">
+        Maybank’s internal app for deployment approvals. It cut a daily 6-hour
+        process to 30 minutes.
+      </p>
+    </li>
+    <li class="proj">
+      <h3 class="type-name">Audit Log</h3>
+      <p class="type-detail">
+        One standard audit log for every OutSystems application at Maybank, for
+        traceability and compliance.
+      </p>
+    </li>
+    <li class="proj">
+      <h3 class="type-name">Tokenizer</h3>
+      <p class="type-detail">
+        A platform component that tokenises public display strings, backed by an
+        encrypted database to keep data private.
+      </p>
+    </li>
+    <li class="proj">
+      <h3 class="type-name">MPowered</h3>
+      <p class="type-detail">
+        Maybank’s internal agile project management platform. I resolved
+        recurring defects in its core modules, improving stability and
+        performance.
+      </p>
+    </li>
+    <li class="proj">
+      <h3 class="type-name">RPSST</h3>
+      <p class="type-detail">
+        An OutSystems prototype to replace legacy transaction processes in
+        Maybank’s RBS system.
+      </p>
+    </li>
+  </ul>
+  <button class="ch-next ch-end type-link" type="button" data-chapter="2">FPT Software</button>
+</section>

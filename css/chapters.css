@@ -1,140 +1,358 @@
 /* The reading sheet and the chapter parts, as laid out on desktop (phones and tablets: css/phone.css).
    Parts fill the sky one at a time; each part is a 12-column grid. */
 #career {
-  position: fixed; left: 50%; top: 40%; height: 40%; transform: translateX(-50%);
-  width: 100%; box-sizing: border-box; padding: 0 64px;
-  overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
-  font: 500 var(--fs)/var(--lh) var(--serif); color: var(--c-name); font-variant-numeric: lining-nums;
-  background: linear-gradient(to bottom, transparent, var(--scrim) 64px, var(--scrim) calc(100% - 64px), transparent);
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  height: 40%;
+  transform: translateX(-50%);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 64px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  font: 500 var(--fs) / var(--lh) var(--serif);
+  color: var(--c-name);
+  font-variant-numeric: lining-nums;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--scrim) 64px,
+    var(--scrim) calc(100% - 64px),
+    transparent
+  );
   text-shadow: var(--shadow-sheet);
   /* the edges fade only within a part's own padding, so resting text is never dimmed;
      a part taller than the sheet fades out further where it runs on */
-  --fade-top: var(--gap-s); --fade-bottom: var(--gap-s);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent), linear-gradient(to right, transparent, #000 60px, #000 calc(100% - 60px), transparent);
+  --fade-top: var(--gap-s);
+  --fade-bottom: var(--gap-s);
+  -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      #000 var(--fade-top),
+      #000 calc(100% - var(--fade-bottom)),
+      transparent
+    ),
+    linear-gradient(
+      to right,
+      transparent,
+      #000 60px,
+      #000 calc(100% - 60px),
+      transparent
+    );
   -webkit-mask-composite: source-in;
-          mask-image: linear-gradient(to bottom, transparent, #000 var(--fade-top), #000 calc(100% - var(--fade-bottom)), transparent), linear-gradient(to right, transparent, #000 60px, #000 calc(100% - 60px), transparent);
-          mask-composite: intersect;
-  transition: opacity .28s ease;
+  mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      #000 var(--fade-top),
+      #000 calc(100% - var(--fade-bottom)),
+      transparent
+    ),
+    linear-gradient(
+      to right,
+      transparent,
+      #000 60px,
+      #000 calc(100% - 60px),
+      transparent
+    );
+  mask-composite: intersect;
+  transition: opacity 0.28s ease;
 }
-#career::-webkit-scrollbar { display: none; }
-#career.more-above { --fade-top: 56px; }
-#career.more-below { --fade-bottom: 56px; }
-body:not(.carousel) #career { scroll-snap-type: y mandatory; }
-#career:focus-visible { outline: 1px solid var(--focus); outline-offset: -1px; }
-#career.fading { opacity: 0; }
-
-/* A logo, drawn in the text colour from its mask image */
-.mark {
-  display: inline-block; background: currentColor;
-  -webkit-mask: var(--mark) center / contain no-repeat; mask: var(--mark) center / contain no-repeat;
+#career::-webkit-scrollbar {
+  display: none;
+}
+#career.more-above {
+  --fade-top: 56px;
+}
+#career.more-below {
+  --fade-bottom: 56px;
+}
+body:not(.carousel) #career {
+  scroll-snap-type: y mandatory;
+}
+#career:focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -1px;
+}
+#career.fading {
+  opacity: 0;
 }
 
 /* A part */
-:where(.scene) :where(h1, h2, h3, p, dl, dd, ul, figure) { margin: 0; }
-.scene {
-  box-sizing: border-box; min-height: 100%; padding: var(--gap-s) 0;
-  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap-m);
-  align-content: center; scroll-snap-align: start; scroll-snap-stop: always;
+:where(.scene) :where(h1, h2, h3, p, dl, dd, ul, figure) {
+  margin: 0;
 }
-.scene > * { opacity: 0; translate: 0 14px; transition: opacity .7s ease, translate .7s ease; }
-.scene.in > * { opacity: 1; translate: 0 0; }
-.scene.in > :nth-child(2) { transition-delay: .1s; }
-.scene.in > :nth-child(3) { transition-delay: .2s; }
-.scene.in > :nth-child(n+4) { transition-delay: .3s; }
+.scene {
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: var(--gap-s) 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap-m);
+  align-content: center;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+.scene > * {
+  opacity: 0;
+  translate: 0 14px;
+  transition: opacity 0.7s ease, translate 0.7s ease;
+}
+.scene.in > * {
+  opacity: 1;
+  translate: 0 0;
+}
+.scene.in > :nth-child(2) {
+  transition-delay: 0.1s;
+}
+.scene.in > :nth-child(3) {
+  transition-delay: 0.2s;
+}
+.scene.in > :nth-child(n + 4) {
+  transition-delay: 0.3s;
+}
 
 /* First part: the logos, then who and when on the left and the main project on the right */
-.ch-logos { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-m); color: var(--c-name); }
-.ch-logos .mark { flex: none; width: calc(var(--w) * var(--logo-k)); height: calc(var(--h) * var(--logo-k)); -webkit-mask-position: left center; mask-position: left center; }
-.ch-head { grid-column: 1 / span 5; grid-row: 2; margin-top: var(--gap-m); }
-.ch-when { margin-top: var(--gap-s); }
-.ch-lead { margin-top: var(--gap-m); max-width: var(--measure); }
-.ch-project { grid-column: 7 / span 6; grid-row: 2; align-self: start; margin-top: var(--gap-m); }
-.ch-project p { margin-top: var(--gap-s); max-width: var(--measure); }
-.s-title .ch-next { grid-row: 3; }
+.ch-logos {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-m);
+  color: var(--c-name);
+}
+.ch-logos .mark {
+  flex: none;
+  width: calc(var(--w) * var(--logo-k));
+  height: calc(var(--h) * var(--logo-k));
+  -webkit-mask-position: left center;
+  mask-position: left center;
+}
+.ch-head {
+  grid-column: 1 / span 5;
+  grid-row: 2;
+  margin-top: var(--gap-m);
+}
+.ch-when {
+  margin-top: var(--gap-s);
+}
+.ch-lead {
+  margin-top: var(--gap-m);
+  max-width: var(--measure);
+}
+.ch-project {
+  grid-column: 7 / span 6;
+  grid-row: 2;
+  align-self: start;
+  margin-top: var(--gap-m);
+}
+.ch-project p {
+  margin-top: var(--gap-s);
+  max-width: var(--measure);
+}
+.s-title .ch-next {
+  grid-row: 3;
+}
 
 /* The link at the end of each part, named after what comes next */
 .ch-next {
-  grid-column: 7 / -1; justify-self: end; align-self: end; margin-top: var(--gap-l); padding: 6px 0;
-  border: 0; background: none; cursor: pointer; text-shadow: inherit;
+  grid-column: 7 / -1;
+  justify-self: end;
+  align-self: end;
+  margin-top: var(--gap-l);
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-shadow: inherit;
 }
-.ch-next:hover, .ch-next:focus-visible { outline: none; text-decoration: underline; text-underline-offset: 3px; }
+.ch-next:hover,
+.ch-next:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
 /* The main project in detail: its facts, then its tools */
-.ch-kicker { grid-column: 1 / -1; }
+.ch-kicker {
+  grid-column: 1 / -1;
+}
 .ch-facts {
-  grid-column: 1 / -1; margin-top: var(--gap-m); display: grid;
-  grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: var(--gap-m) var(--gap-l); align-items: start;
+  grid-column: 1 / -1;
+  margin-top: var(--gap-m);
+  display: grid;
+  grid-auto-flow: column; /* one column per fact, however many there are */
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--gap-m) var(--gap-l);
+  align-items: start;
 }
-.fact dd { margin: var(--gap-s) 0 0; max-width: var(--measure); }
-.fact .team { display: block; height: 16px; width: auto; margin: 4px 0 var(--gap-s); color: var(--art); overflow: visible; }
-.ch-tools { grid-column: 1 / span 8; margin-top: var(--gap-l); }
-.ch-tools .mark { color: var(--c-detail); vertical-align: -1px; margin-right: .4em; }
-.s-inside .ch-tools { grid-row: 3; }
-.s-inside .ch-next, .s-more .ch-next { grid-row: 3; grid-column: 9 / -1; align-self: end; }
+.fact dd {
+  margin: var(--gap-s) 0 0;
+  max-width: var(--measure);
+}
+.ch-tools {
+  grid-column: 1 / span 8;
+  margin-top: var(--gap-l);
+}
+.ch-tools .mark {
+  color: var(--c-detail);
+  vertical-align: -1px;
+  margin-right: 0.4em;
+}
+.s-inside .ch-tools {
+  grid-row: 3;
+}
+.s-inside .ch-next,
+.s-more .ch-next {
+  grid-row: 3;
+  grid-column: 9 / -1;
+  align-self: end;
+}
 
-/* AvePoint's second project, beside its drawing */
-.s-more .ch-project { grid-column: 1 / span 7; grid-row: 1; margin-top: 0; }
-.s-more .ch-art { grid-column: 9 / span 4; grid-row: 1 / span 2; align-self: center; color: var(--art); }
-.s-more .ch-art svg { display: block; width: 100%; max-width: 300px; height: auto; overflow: visible; }
-.s-more .ch-facts { grid-column: 1 / span 7; grid-row: 2; }
-.s-more .ch-tools { grid-column: 1 / span 7; grid-row: 3; }
+/* AvePoint's second project */
+.s-more .ch-project {
+  grid-column: 1 / span 7;
+  grid-row: 1;
+  margin-top: 0;
+}
+.s-more .ch-facts {
+  grid-column: 1 / span 7;
+  grid-row: 2;
+}
+.s-more .ch-tools {
+  grid-column: 1 / span 7;
+  grid-row: 3;
+}
 
-/* Smaller projects: a name with a line or two under it (a list), or a picture above (tiles) */
+/* Smaller projects: a name with a line or two under it, as a list or as tiles */
 .ch-projs {
-  grid-column: 1 / -1; margin: 0; padding: 0; list-style: none; display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap-m) var(--gap-l);
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap-m) var(--gap-l);
 }
-.proj { border-top: 1px solid var(--rule); padding-top: var(--gap-s); }
-.p-head { display: flex; align-items: center; gap: 10px; color: var(--art); }
-.p-head svg { flex: none; height: 20px; width: auto; overflow: visible; }
-.proj p { margin-top: var(--gap-s); }
+.proj {
+  border-top: 1px solid var(--rule);
+  padding-top: var(--gap-s);
+}
+.proj p {
+  margin-top: var(--gap-s);
+}
 .ch-tiles {
-  grid-column: 1 / -1; margin: 0; padding: 0; list-style: none;
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gap-m) var(--gap-l);
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--gap-m) var(--gap-l);
 }
-.tile { border-top: 1px solid var(--rule); padding-top: var(--gap-s); }
-.t-art { height: 64px; margin-bottom: var(--gap-s); display: flex; align-items: center; color: var(--art); }
-.t-art svg { height: 100%; width: auto; max-width: 100%; overflow: visible; }
-.tile h3 + p { margin-top: var(--gap-s); }
-.s-also.few .ch-also { grid-column: 1 / span 4; grid-row: 1; align-self: start; }
-.s-also.few .ch-tiles { grid-column: 6 / span 7; grid-row: 1; grid-template-columns: minmax(0, 30rem); }
-.s-also.few .ch-next { grid-row: 2; }
-.s-also .ch-next { margin-top: var(--gap-m); }
+.tile {
+  border-top: 1px solid var(--rule);
+  padding-top: var(--gap-s);
+}
+.tile h3 + p {
+  margin-top: var(--gap-s);
+}
+.s-also.few .ch-also {
+  grid-column: 1 / span 4;
+  grid-row: 1;
+  align-self: start;
+}
+.s-also.few .ch-tiles {
+  grid-column: 6 / span 7;
+  grid-row: 1;
+  grid-template-columns: minmax(0, 30rem);
+}
+.s-also.few .ch-next {
+  grid-row: 2;
+}
+.s-also .ch-next {
+  margin-top: var(--gap-m);
+}
 
 /* Moonlighting: that part reads by moonlight instead of lamplight */
-.s-moon { --art: var(--moon-art); --art-accent: var(--c-moon); --rule: var(--moon-rule); }
+.s-moon {
+  --rule: var(--moon-rule);
+}
 .s-moon .ch-also h2::before {
-  content: ''; display: inline-block; width: .34em; height: .34em; margin: 0 .5em .12em 0; border-radius: 50%;
-  background: var(--c-moon); box-shadow: 0 0 10px 2px var(--moon-glow);
+  content: "";
+  display: inline-block;
+  width: 0.34em;
+  height: 0.34em;
+  margin: 0 0.5em 0.12em 0;
+  border-radius: 50%;
+  background: var(--c-moon);
+  box-shadow: 0 0 10px 2px var(--moon-glow);
 }
 
 /* Impact: one part, its head beside its two projects */
-.s-solo .ch-head { grid-column: 1 / span 5; grid-row: 1 / span 2; margin-top: 0; }
-.s-solo .ch-tiles { grid-column: 7 / span 6; grid-row: 1; }
-.s-solo .t-art { height: clamp(64px, 10vh, 100px); }
-.s-solo .ch-aside { grid-column: 7 / span 6; grid-row: 2; margin-top: var(--gap-m); }
-
-/* Line drawings (js/ui/drawings.js): thin lines, decorative; the text beside them carries the meaning */
-.art { fill: none; stroke: currentColor; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
-.art .a { stroke: var(--art-accent); }
-.art .f { fill: currentColor; stroke: none; }
-.art .fa { fill: var(--art-accent); stroke: none; }
-.art .o { opacity: .5; }
-.art .d { stroke-dasharray: 3 4; }
-.draw { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 1.6s ease .3s; }
-.scene.in .draw { stroke-dashoffset: 0; }
+.s-solo .ch-head {
+  grid-column: 1 / span 5;
+  grid-row: 1 / span 2;
+  margin-top: 0;
+}
+.s-solo .ch-tiles {
+  grid-column: 7 / span 6;
+  grid-row: 1;
+}
+.s-solo .ch-aside {
+  grid-column: 7 / span 6;
+  grid-row: 2;
+  margin-top: var(--gap-m);
+}
 
 /* Where you are in the chapter: one tick per part, beside the sheet */
-#ticks { position: fixed; display: none; flex-direction: column; transform: translateY(-50%); }
-body:not(.carousel) #ticks.on { display: flex; }
-#ticks button { width: 24px; height: 26px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
-#ticks button::after { content: ''; width: 2px; height: 12px; background: var(--tick); transition: height .3s ease, background-color .3s ease; }
-#ticks button[aria-current="true"]::after { height: 22px; background: var(--c-link); }
-#ticks button:hover::after { background: var(--c-name); }
-#ticks button:focus-visible { outline: 1px solid var(--c-detail); outline-offset: -2px; }
+#ticks {
+  position: fixed;
+  display: none;
+  flex-direction: column;
+  transform: translateY(-50%);
+}
+body:not(.carousel) #ticks.on {
+  display: flex;
+}
+#ticks button {
+  width: 24px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+#ticks button::after {
+  content: "";
+  width: 2px;
+  height: 12px;
+  background: var(--tick);
+  transition: height 0.3s ease, background-color 0.3s ease;
+}
+#ticks button[aria-current="true"]::after {
+  height: 22px;
+  background: var(--c-link);
+}
+#ticks button:hover::after {
+  background: var(--c-name);
+}
+#ticks button:focus-visible {
+  outline: 1px solid var(--c-detail);
+  outline-offset: -2px;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  #career, .scene > *, #ticks button::after { transition: none; }
-  .scene > * { opacity: 1; translate: 0 0; }
-  .draw { stroke-dasharray: none; stroke-dashoffset: 0; transition: none; }
+  #career,
+  .scene > *,
+  #ticks button::after {
+    transition: none;
+  }
+  .scene > * {
+    opacity: 1;
+    translate: 0 0;
+  }
 }

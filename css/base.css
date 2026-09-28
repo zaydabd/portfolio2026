@@ -1,44 +1,124 @@
 /* The page, the five type roles, the picture and the header. Colours, fonts and spaces are in css/tokens.css. */
-html, body { height: 100%; margin: 0; overflow: hidden; background: var(--night); }
-body { overscroll-behavior: none; }
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--night);
+}
+body {
+  overscroll-behavior: none;
+}
 
 /* Type: one size per screen, two weights, five roles */
-.type-name, .type-text, .type-detail, .type-link, .type-moon {
-  font-family: var(--serif); font-size: var(--fs); line-height: var(--lh);
-  font-style: normal; letter-spacing: normal; text-transform: none; font-variant-numeric: lining-nums;
+.type-name,
+.type-text,
+.type-detail,
+.type-link,
+.type-moon {
+  font-family: var(--serif);
+  font-size: var(--fs);
+  line-height: var(--lh);
+  font-style: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  font-variant-numeric: lining-nums;
 }
-.type-name { font-weight: 600; color: var(--c-name); }
-.type-text { font-weight: 500; color: var(--c-name); text-wrap: pretty; }
-.type-detail { font-weight: 500; color: var(--c-detail); text-wrap: pretty; }
-.type-link { font-weight: 600; color: var(--c-link); }
-.type-moon { font-weight: 600; color: var(--c-moon); }
+.type-name {
+  font-weight: 600;
+  color: var(--c-name);
+}
+.type-text {
+  font-weight: 500;
+  color: var(--c-name);
+  text-wrap: pretty;
+}
+.type-detail {
+  font-weight: 500;
+  color: var(--c-detail);
+  text-wrap: pretty;
+}
+.type-link {
+  font-weight: 600;
+  color: var(--c-link);
+}
+.type-moon {
+  font-weight: 600;
+  color: var(--c-moon);
+}
 
 /* The 3D picture */
 #scene {
-  position: fixed; inset: 0; width: 100%; height: 100%; display: block;
-  opacity: 0; transition: opacity .8s ease; touch-action: none;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  touch-action: none;
 }
-#scene.ready { opacity: 1; }
-#scene.hot { cursor: pointer; }
+#scene.ready {
+  opacity: 1;
+}
+#scene.hot {
+  cursor: pointer;
+}
 
 /* Top corners: name, title, LinkedIn */
 .who {
-  position: fixed; top: calc(env(safe-area-inset-top, 0px) + 12px); left: var(--gutter); right: var(--gutter);
-  display: flex; justify-content: space-between; align-items: baseline; gap: var(--gap-m);
-  margin: 0; text-shadow: var(--shadow-header); pointer-events: none;
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 12px);
+  left: var(--gutter);
+  right: var(--gutter);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--gap-m);
+  margin: 0;
+  text-shadow: var(--shadow-header);
+  pointer-events: none;
 }
-.who p { margin: 0; }
-.who #who-title { margin-left: .5em; }
-@media (max-width: 767.98px) { .who #who-title { display: block; margin: 0; } }   /* phones: the title under the name, never split */
-.who a { pointer-events: auto; text-decoration: none; }
-.who a:hover, .who a:focus-visible { outline: none; text-decoration: underline; text-underline-offset: 3px; }
+.who p {
+  margin: 0;
+}
+.who #who-title {
+  margin-left: 0.5em;
+}
+@media (max-width: 767.98px) {
+  .who #who-title {
+    display: block;
+    margin: 0;
+  }
+} /* phones: the title under the name, never split */
+.who a {
+  pointer-events: auto;
+  text-decoration: none;
+}
+.who a:hover,
+.who a:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 
 /* Hidden from sight, read by screen readers */
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 
 /* No WebGL: the still picture instead */
-.fallback { background: var(--night) center / cover no-repeat; }
+.fallback {
+  background: var(--night) center / cover no-repeat;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  #scene { transition: none; }
+  #scene {
+    transition: none;
+  }
 }
