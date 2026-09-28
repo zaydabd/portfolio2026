@@ -11,7 +11,7 @@ export const PERSON = {
 };
 
 // Your career: one chapter per company bulb (bulbs 1–4, left to right, newest first).
-// Every fact comes from your own words or portfolio-references/; paddy/career-sources.md says which.
+// Every fact comes from your own words or portfolio-references/; career-sources.md says which.
 //   sign      the wooden tag under the bulb; phones and tablets show a small one with the logo only
 //   title     the company; its logo row shows instead when `logos` is set (the company first, then its clients)
 //   role, dates, kind   shown under the logos
