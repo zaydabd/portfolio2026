@@ -78,12 +78,14 @@ export const CONFIG = {
     gustSpeed: 240, // how fast a gust crosses the screen, in picture pixels per second
     gustSize: 380, // how wide a gust is, in picture pixels
     gustEvery: 8, // seconds between gusts
+    clockWrap: 3600, // wind clock wraps here to keep GPU floats precise
   },
   sway: {
     // how strongly each thing answers the wind (0 = still, 2 = double)
     cable: 1,
     bulbs: 1,
     grass: 1,
+    grassMaterial: 6, // multiplier for the painted-grass sway uniform
     speed: 1, // wind clock: 2 = everything happens twice as fast
   },
   grass: {
@@ -102,6 +104,12 @@ export const CONFIG = {
     hover: 1.15, // glow growth while the mouse is on a bulb
     lit: 1.7, // glow growth once a bulb is clicked
     time: 0.3, // seconds a clicked bulb takes to brighten
+    hoverTau: 0.08, // smoothing time constant for hover fade
+    onTau: 0.07, // smoothing time constant for switch-on ramp
+    onThreshold: 0.95, // bulb counts as "on" above this value
+    onFloor: 0.6, // glow floor when on-ramp is at 0
+    onRange: 0.4, // glow range added as on-ramp reaches 1
+    litOpacityBoost: 0.35, // extra opacity when the bulb is lit
   },
   switchOn: 0.16, // seconds between bulbs switching on when the page opens
   signs: {
@@ -112,6 +120,13 @@ export const CONFIG = {
     phone: { width: 100, height: 56 }, // phones and tablets: a small tag with the logo only
     cord: 22, // cord between the glass and the tag
     grain: 0.28, // how strong the wood grain is (0 = plain plank)
+    brightness: {
+      base: 0.72, // sign material base brightness
+      hover: 0.14, // extra brightness on hover
+      lit: 0.2, // extra brightness when bulb is lit
+      offFloor: 0.35, // brightness floor when bulb is off
+      offRange: 0.65, // brightness range added as bulb switches on
+    },
   },
   sheet: {
     grassOverlap: 40, // desktop: how far the reading area may reach into the top of the grass, in CSS pixels
@@ -121,6 +136,23 @@ export const CONFIG = {
     plate: 3,
     grass: 4,
     objects: 10,
+    tau: 0.35, // smoothing time constant for parallax easing
+  },
+  motion: {
+    tau: 0.25, // smoothing time constant for motion on/off fade
+  },
+  carousel: {
+    tau: 0.16, // smoothing time constant for carousel pan glide
+  },
+  physics: {
+    stepsPerSecond: 120, // target substep rate for pendulum integration
+    damping: 0.16, // pendulum damping ratio (2 × rate × damping)
+    breezeCoupling: 0.12, // how much breeze pushes the pendulum sideways
+    foreCoupling: 0.05, // fore-aft coupling (fraction of sideways force)
+    forePhase: 0.7, // phase offset for fore-aft wind variation
+    jitterFreq: 0.9, // base frequency multiplier for per-bulb desync
+    jitterSpread: 0.13, // per-bulb frequency increment
+    jitterPhase: 2.1, // per-bulb phase offset multiplier
   },
   // Which part of the picture stays on screen when the window isn't 4:3.
   // 0 = keep the left / top edge, 1 = keep the right / bottom edge.
