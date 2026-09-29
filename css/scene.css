@@ -1,0 +1,60 @@
+/* The scene: the photo's size on screen, and where each 3D model sits on it. js/scene/layout.js reads these whenever
+   the window changes size. Every position is a length from the photo's top-left corner: var(--pw) is 1% of the
+   photo's width, var(--ph) 1% of its height. Phones and tablets first; desktop is 1024 px and up, held sideways. */
+:root {
+  /* The photo: phones and tablets see its full height and scroll sideways; desktop sees all of it, stretched to fit */
+  --photo-w: max(100dvw, 100dvh * 16 / 9);
+  --pw: calc(var(--photo-w) / 100);
+  --ph: 1dvh;
+
+  /* Pole: its top just below the header (css/base.css) */
+  --pole-x: calc(90.7 * var(--pw));
+  --pole-top: calc(env(safe-area-inset-top, 0px) + var(--header-lines) * var(--fs) * var(--lh) + 24px + 0.6 * var(--ph));
+  --pole-foot-x: calc(93.4 * var(--pw));
+  --pole-width: calc(1.7 * var(--pw));
+
+  /* Cable: tied near the pole's top, sagging across to the left edge, running down past the right edge */
+  --cable-tie: calc(var(--pole-top) + 1 * var(--ph));
+  --cable-left: calc(var(--cable-tie) + 2.2 * var(--ph));
+  --cable-sag: calc(2.2 * var(--ph)); /* how far the long span dips at its middle */
+  --cable-right: calc(var(--cable-tie) + 6 * var(--ph));
+
+  /* Bulbs: one per x, left to right; bulbs 1–4 are the companies */
+  --bulb-x: calc(6 * var(--pw)) calc(19.1 * var(--pw)) calc(35.5 * var(--pw)) calc(51.4 * var(--pw))
+    calc(65.3 * var(--pw)) calc(77.8 * var(--pw)) calc(91.3 * var(--pw)) calc(95.7 * var(--pw));
+  --bulb-drop: calc(4.8 * var(--ph)); /* from the cable down to the glass's centre */
+  --bulb-size: calc(1.2 * var(--pw)); /* the glass's width */
+
+  /* Grass */
+  --horizon: calc(65.1 * var(--ph)); /* eye level, where the 3D field starts */
+  --grass-wave: calc(82.4 * var(--ph)); /* the painted grass waves fully from here down */
+
+  /* Captions hang this far under their glass with this many lines of text, and the sheet starts under them */
+  --caption-gap: calc(0.6 * var(--ph));
+  --caption-lines: 1;
+  --sheet-top: calc(
+    var(--cable-left) + var(--cable-sag) + var(--bulb-drop) + 0.7 * var(--bulb-size) + var(--caption-gap) +
+      var(--caption-lines) * var(--fs) * var(--lh) + 12px
+  );
+
+  @media (min-width: 1024px) and (orientation: landscape) {
+    --photo-w: 100dvw;
+    --caption-lines: 2; /* the logo and the years */
+    --sheet-right: calc(var(--pole-x) - var(--pole-width) / 2 - 44px); /* the sheet stops short of the pole */
+  }
+}
+
+/* Registered, so the browser works each one out in pixels for js/scene/layout.js */
+@property --pole-x { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --pole-top { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --pole-foot-x { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --pole-width { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --cable-tie { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --cable-left { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --cable-sag { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --cable-right { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --bulb-x { syntax: "<length>+"; inherits: true; initial-value: 0px; }
+@property --bulb-drop { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --bulb-size { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --horizon { syntax: "<length>"; inherits: true; initial-value: 0px; }
+@property --grass-wave { syntax: "<length>"; inherits: true; initial-value: 0px; }

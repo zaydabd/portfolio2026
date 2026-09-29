@@ -1,120 +1,55 @@
-/* ==========================================================================
-   Design tokens: every colour, font and space on the page and in the 3D scene.
-   The CSS files use them as var(--name). The three.js models and the canvas
-   drawings read the same tokens through js/utils/theme.js, so a change here
-   reaches both. Colours the shaders use are written as rgb(… %) so the
-   lighting maths gets exactly the numbers written here.
-   ========================================================================== */
+/* Design tokens: every colour, font size and space on the page and in the 3D scene. The CSS uses them as
+   var(--name); the three.js models read the colours through js/utils/theme.js (the shaders' ones as rgb(… %),
+   so the lighting maths gets exactly these numbers). Phones first; tablets and up from 768 px. */
 :root {
   color-scheme: dark;
 
-  /* ---- Night ---- */
-  --night: #050b1c; /* page background, and the 3D scene behind the picture */
-  --sky-light: #4c6394; /* moonlit sky: soft fill on everything 3D, from above… */
-  --ground-light: #0d1810; /* …and from the field below */
+  /* Night */
+  --night: #050b1c; /* page background */
+  --sky-light: #4c6394; /* 3D fill light from the sky… */
+  --ground-light: #0d1810; /* …and from the field */
   --moonlight: #aec4ff; /* the moon's light on the pole, cable and bulbs */
 
-  /* ---- Bulbs ---- */
-  --lamp-light: #ff9a50; /* warm light the bulbs throw on the pole, cable and sockets */
-  --bulb-glass: rgb(88% 47% 12%); /* amber glass */
-  --bulb-glass-edge: rgb(
-    100% 72% 35%
-  ); /* bright outline where the glass curves away */
-  --bulb-core: rgb(100% 82% 52%); /* soft light around the filaments */
+  /* Bulbs */
+  --lamp-light: #ff9a50; /* their warm light, on the 3D models and the captions */
+  --bulb-glass: rgb(88% 47% 12%);
+  --bulb-glass-edge: rgb(100% 72% 35%);
+  --bulb-core: rgb(100% 82% 52%);
   --bulb-filament: rgb(100% 97% 88%);
-  --bulb-lit: rgb(100% 95% 82%); /* a clicked bulb whitens towards this */
-  --bulb-off: rgb(5% 5% 7%); /* switched off: dark glass… */
-  --bulb-off-edge: rgb(22% 25% 32%); /* …with a faint cool edge from the moon */
-  --halo-1: rgba(
-    255,
-    200,
-    125,
-    0.75
-  ); /* the glow around each bulb, from its centre out */
-  --halo-2: rgba(255, 166, 80, 0.45);
-  --halo-3: rgba(255, 136, 50, 0.18);
-  --halo-4: rgba(255, 122, 38, 0.06);
+  --bulb-lit: rgb(100% 95% 82%); /* the open company's bulb */
+  --bulb-off: rgb(5% 5% 7%);
+  --bulb-off-edge: rgb(22% 25% 32%);
+  --halo-1: rgba(255, 200, 125, 0.8); /* each bulb's glow, from its centre out */
+  --halo-2: rgba(255, 166, 80, 0.4);
+  --halo-3: rgba(255, 136, 50, 0.2);
+  --halo-4: rgba(255, 122, 38, 0.1);
   --halo-5: rgba(255, 120, 30, 0);
 
-  /* ---- Pole, cable and fittings ---- */
+  /* Pole, cable and fittings */
   --pole: #6a625c;
   --pole-clamp: #1e1915; /* where the cable is tied on */
   --cable: #241d18;
   --fitting: #231d19; /* connectors, wires and sockets */
-  --twine: #5b4a34; /* cords the signs hang from */
 
-  /* ---- Wooden signs ---- */
-  --wood-top: #d8ae78; /* plank colour at the top… */
-  --wood-bottom: #b3824f; /* …and at the bottom */
-  --wood-grain: rgb(
-    96,
-    58,
-    28
-  ); /* grain lines (their strength is CONFIG.signs.grain) */
-  --wood-knot: rgb(88, 50, 22);
-  --wood-knot-core: rgb(80, 44, 18);
-  --wood-ends: rgb(70, 40, 16); /* darker ends of the plank */
-  --wood-bevel: rgba(255, 232, 190, 0.3); /* light edge along the top */
-  --wood-side: rgba(
-    62,
-    36,
-    14,
-    0.5
-  ); /* the plank's thickness, along the bottom */
-  --wood-outline: rgba(58, 32, 12, 0.6);
-  --screw-eye: #a0988d; /* the metal eye the cord ties to… */
-  --screw-hole: #2a1a0e; /* …and its hole */
-  --ink: #2a170b; /* burnt-in lettering and logos */
-  --ink-burn: rgba(92, 44, 12, 0.55); /* the scorch around them */
+  /* Grass blades */
+  --grass-lamp-tint: rgb(10% 5.5% 1.5%); /* warm near the lamps… */
+  --grass-moon-tint: rgb(1% 2% 4%); /* …cool higher up */
+  --seed-head: rgb(78% 66% 26%);
 
-  /* ---- Grass blades ---- */
-  --grass-lamp-tint: rgb(
-    10% 5.5% 1.5%
-  ); /* light added to blades near the lamps */
-  --grass-moon-tint: rgb(
-    1% 2% 4%
-  ); /* cool moonlight added higher up the blades */
-  --seed-head: rgb(78% 66% 26%); /* seed stalks lean towards this yellow */
-
-  /* ---- Text: five roles. Every piece of text is one of these (see css/base.css) ----
-     name   = what something is called   (cream, 600)
-     text   = a part's main sentences    (cream, 500)
-     detail = context, labels, list descriptions (moonlight blue, 500)
-     link   = only what you can press    (lamp gold, 600)
-     moon   = names in the Moonlighting part (moon white, 600) */
+  /* Text: names and sentences in cream, details in moonlight blue, what you can press in lamp gold */
   --c-name: #f1e6d2;
   --c-detail: #b4c3dc;
   --c-link: #f3c77a;
-  --c-moon: #e2e9f3;
-
-  /* ---- Page details ---- */
-  --rule: rgba(180, 195, 220, 0.22); /* hairlines between repeated items */
-  --scrim: rgba(4, 9, 24, 0.5); /* the dark wash behind the reading sheet */
-  --shadow-sheet: 0 0 12px rgba(3, 8, 22, 0.95), 0 0 3px rgba(3, 8, 22, 0.8); /* text glow on the sheet */
-  --shadow-header: 0 0 12px rgba(3, 8, 22, 0.85); /* text glow in the top corners */
-  --focus: rgba(180, 195, 220, 0.35); /* keyboard focus ring on the sheet */
-  --tick: rgba(180, 195, 220, 0.4); /* part ticks beside the sheet (desktop) */
-  --dot: rgba(180, 195, 220, 0.45); /* chapter dots (phones and tablets) */
-  --dot-glow: rgba(243, 166, 74, 0.9); /* the open chapter's dot */
-  --moon-rule: rgba(201, 215, 237, 0.3); /* the Moonlighting part: hairlines… */
-  --moon-glow: rgba(201, 215, 237, 0.75); /* …and the glow round its moon dot */
-
-  /* ---- Type ---- */
-  --serif: "Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
-  --fs: 16px; /* the one text size: 16 px on phones, 17 px from 768 px up */
+  --fs: 1rem;
   --lh: 1.4;
-  --measure: 28em; /* about 70 characters a line */
+  --header-lines: 2; /* phones: the title under the name */
 
-  /* ---- Space: each gap grows smoothly from its 320 px value to its 1024 px value ---- */
+  /* Space: grows smoothly from its size at 320 px to its size at 1024 px */
   --gutter: clamp(16px, calc(16px + (100vw - 320px) * 40 / 704), 56px);
-  --gap-s: clamp(6px, calc(6px + (100vw - 320px) * 2 / 704), 8px);
   --gap-m: clamp(20px, calc(20px + (100vw - 320px) * 12 / 704), 32px);
-  --gap-l: clamp(32px, calc(32px + (100vw - 320px) * 24 / 704), 56px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --logo-k: 1; /* logo row scale: smaller on phones and tablets (css/phone.css) */
-}
-@media (min-width: 768px) {
-  :root {
-    --fs: 17px;
+
+  @media (min-width: 768px) {
+    --fs: 1.1rem;
+    --header-lines: 1;
   }
 }

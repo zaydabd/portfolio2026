@@ -10,5 +10,5 @@ export const skyLight = new THREE.HemisphereLight(
 );
 
 export const moon = new THREE.DirectionalLight(color("--moonlight"), 2.4);
-moon.position.copy(toWorld(402.5, 286.8, 40)); // where the moon is on plate.png
+moon.position.copy(toWorld(476.2, 233.5, 40)); // where the moon is on plate.webp
 moon.target.position.set(1, 0.8, -2.4);

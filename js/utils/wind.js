@@ -20,15 +20,24 @@ export function windAt(x, t) {
   return W.strength * (W.breeze * breeze + gust);
 }
 
-// Shaders share these uniforms (the animation loop in js/main.js updates them) and paste in WIND_GLSL
+// The wind clock, dt seconds on; it wraps at CONFIG.wind.clockWrap
+export function advanceWind(t, dt) {
+  t += dt * CONFIG.sway.speed;
+  return t > CONFIG.wind.clockWrap ? t - CONFIG.wind.clockWrap : t;
+}
+
+// Shaders share these uniforms (updateWindUniforms moves them on each frame) and paste in WIND_GLSL
 export const windUniforms = {
   uWindTime: { value: 0 },
-  uWindStrength: { value: 1 },
-  uBreeze: { value: 0.35 },
-  uGustSpeed: { value: 240 },
-  uGustSize: { value: 380 },
-  uGustEvery: { value: 8 },
+  uWindStrength: { value: CONFIG.wind.strength },
+  uBreeze: { value: CONFIG.wind.breeze },
+  uGustSpeed: { value: CONFIG.wind.gustSpeed },
+  uGustSize: { value: CONFIG.wind.gustSize },
+  uGustEvery: { value: CONFIG.wind.gustEvery },
 };
+export function updateWindUniforms(tick) {
+  windUniforms.uWindTime.value = tick.wind;
+}
 export const WIND_GLSL = /* glsl */ `
   uniform float uWindTime, uWindStrength, uBreeze, uGustSpeed, uGustSize, uGustEvery;
   float windAt(float x, float t) {

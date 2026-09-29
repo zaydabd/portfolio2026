@@ -1,14 +1,14 @@
 // Grass blades built in code, across the front of the picture.
 // One blade shape drawn thousands of times in a single call. Each copy has its own spot, size,
-// lean and colour (taken from grass.png where it stands). The wind bends it on the GPU.
+// lean and colour (taken from grass.webp where it stands). The wind bends it on the GPU.
 import * as THREE from "three";
 import { CONFIG } from "../config.js";
 import {
-  IMG_W,
-  IMG_H,
-  FOCAL,
-  CX,
-  CY,
+  PICTURE_WIDTH,
+  PICTURE_HEIGHT,
+  FOCAL_LENGTH,
+  CENTRE_X,
+  picture,
   EYE_HEIGHT,
   BLADE_NEAR,
 } from "../scene/picture.js";
@@ -17,7 +17,7 @@ import { mulberry32 } from "../utils/math.js";
 import { rgba, vec3 } from "../utils/theme.js";
 import { grassMaterial } from "./backdrop.js";
 
-export const bladeGeometry = new THREE.InstancedBufferGeometry();
+const bladeGeometry = new THREE.InstancedBufferGeometry();
 {
   const SEG = 4,
     pos = [],
@@ -62,15 +62,32 @@ for (const [name, attr] of Object.entries(bladeAttr))
   bladeGeometry.setAttribute(name, attr);
 bladeGeometry.instanceCount = 0;
 
-// The blades, lit warm near the lamps (their positions in 3D)
-let bladeMaterial = null;
-export function createBlades(lamps) {
-  bladeMaterial = new THREE.ShaderMaterial({
+// The blades: one mesh, drawn once per frame. Its material comes with the lamps (setBladeLamps).
+export const blades = new THREE.Mesh(bladeGeometry);
+blades.frustumCulled = false; // blades move in the shader
+
+// The lamps' positions in 3D: blades near them are lit warm. Called whenever the bulbs are (re)built.
+export function setBladeLamps(lamps) {
+  const old = blades.material;
+  if (old.uniforms && old.uniforms.uLamps.value.length === lamps.length) {
+    old.uniforms.uLamps.value = lamps;
+    return;
+  }
+  const far = old.uniforms ? old.uniforms.uFar.value : CONFIG.grass.depth;
+  old.dispose();
+  blades.material = bladeMaterial(lamps); // the shader has one slot per lamp
+  blades.material.uniforms.uFar.value = far;
+}
+
+function bladeMaterial(lamps) {
+  return new THREE.ShaderMaterial({
     uniforms: {
       ...windUniforms,
-      uSway: { value: 1 },
+      uSway: { value: CONFIG.sway.grass },
       uMouse: { value: new THREE.Vector2() },
-      uParallax: { value: new THREE.Vector2() }, // picture pixels: near blades, far blades
+      uParallax: {
+        value: new THREE.Vector2(CONFIG.parallax.objects, 0),
+      }, // picture pixels: near blades drift like the lights, far ones stay with the photo
       uNear: { value: BLADE_NEAR },
       uFar: { value: CONFIG.grass.depth },
       uLamps: { value: lamps },
@@ -98,11 +115,11 @@ export function createBlades(lamps) {
         vec2 bend = lean * h * v * v;                              // the foot stays put, the tip moves most
         vec3 p = aBase + across * position.x * width * 0.5
                + vec3(bend.x, v * h - 0.5 * dot(bend, bend) / max(h, 0.01), bend.y);
-        // parallax: near blades drift like the pole and bulbs, far ones like grass.png
+        // parallax: near blades drift like the pole and bulbs, far ones stay with the photo
         float depth = -aBase.z;
         float px = mix(uParallax.x, uParallax.y, smoothstep(uNear, uFar, depth));
-        p.xy += vec2(-uMouse.x, uMouse.y) * px * depth / ${FOCAL}.0;
-        // colour from grass.png, warmer near the lamps, a touch of cool moonlight higher up
+        p.xy += vec2(-uMouse.x, uMouse.y) * px * depth / ${FOCAL_LENGTH}.0;
+        // colour from grass.webp, warmer near the lamps, a touch of cool moonlight higher up
         vec3 col = mix(aColA, aColB, smoothstep(0.0, 0.85, v));
         float warm = 0.0;
         for (int i = 0; i < ${
@@ -126,12 +143,9 @@ export function createBlades(lamps) {
       }`,
     side: THREE.DoubleSide,
   });
-  const blades = new THREE.Mesh(bladeGeometry, bladeMaterial);
-  blades.frustumCulled = false; // blades move in the shader
-  return blades;
 }
 
-// Colours are read from grass.png once it has loaded: a small patch's average, and its brightest pixel (a lit leaf)
+// Colours are read from grass.webp once it has loaded: a small patch's average, and its brightest pixel (a lit leaf)
 function makeSampler(image) {
   const c = document.createElement("canvas");
   c.width = image.width;
@@ -182,7 +196,12 @@ const isPhone = () =>
   Math.min(window.innerWidth, window.innerHeight) < 600;
 const seedHead = rgba("--seed-head");
 
-// Scatter the blades over the field, coloured from the painted grass (grass.png, once loaded)
+// Each frame: the blades drift with the mouse (x and y from -1 to 1), like the pole and bulbs
+export function updateBladeMouse(blades, mouse) {
+  blades.material.uniforms.uMouse.value.set(mouse.x, mouse.y);
+}
+
+// Scatter the blades over the field, coloured from the painted grass (grass.webp, once loaded)
 export function placeBlades(grassImage) {
   const sample = makeSampler(grassImage);
   const G = CONFIG.grass,
@@ -192,13 +211,14 @@ export function placeBlades(grassImage) {
   );
   const rand = mulberry32(20260927);
   const far = Math.max(BLADE_NEAR + 1, G.depth);
-  const rowNear = CY + (EYE_HEIGHT * FOCAL) / BLADE_NEAR; // below the frame: only the tips show
-  const rowFar = CY + (EYE_HEIGHT * FOCAL) / far;
+  const horizon = picture.horizon;
+  const rowNear = horizon + (EYE_HEIGHT * FOCAL_LENGTH) / BLADE_NEAR; // below the frame: only the tips show
+  const rowFar = horizon + (EYE_HEIGHT * FOCAL_LENGTH) / far;
   const x0 = -60,
-    x1 = IMG_W + 60; // the whole picture, so the carousel can pan
+    x1 = PICTURE_WIDTH + 60; // the whole picture, so the carousel can pan
   for (let i = 0; i < count; i++) {
     const row = rowFar + (rowNear - rowFar) * Math.pow(rand(), 1.35); // more rows at the back, where blades are small
-    const d = (EYE_HEIGHT * FOCAL) / (row - CY);
+    const d = (EYE_HEIGHT * FOCAL_LENGTH) / (row - horizon);
     const px = x0 + (x1 - x0) * rand();
     const seed = d < 6 && rand() < G.seedHeads;
     const shrink = 1 - 0.6 * THREE.MathUtils.smoothstep(d, far * 0.65, far); // fade out towards the back
@@ -206,11 +226,11 @@ export function placeBlades(grassImage) {
       (seed ? 0.8 + 0.35 * rand() : 0.5 + 0.45 * rand()) * G.height * shrink;
     const w = Math.max(
       seed ? 0.014 : 0.013 + 0.012 * rand(),
-      (1.4 * d) / FOCAL
+      (1.4 * d) / FOCAL_LENGTH
     );
     const leanDir = rand() * Math.PI * 2,
       leanBy = (seed ? 0.25 : 0.2) + (seed ? 0.35 : 0.55) * rand(); // blades arch
-    A.aBase.setXYZ(i, ((px - CX) * d) / FOCAL, -EYE_HEIGHT, -d);
+    A.aBase.setXYZ(i, ((px - CENTRE_X) * d) / FOCAL_LENGTH, -EYE_HEIGHT, -d);
     A.aShape.setXYZW(i, h, w, (rand() - 0.5) * 2.2, seed ? 1 : 0);
     A.aLean.setXYZW(
       i,
@@ -219,24 +239,24 @@ export function placeBlades(grassImage) {
       rand(),
       px
     );
-    // tip colour from where the tip lands in grass.png, foot colour from where it stands (darker)
+    // tip colour from where the tip lands in grass.webp, foot colour from where it stands (darker)
     // most blades take the patch's average colour; about a third catch the light like the lit leaves
-    const at = sample(px, Math.max(708, CY + ((EYE_HEIGHT - h) * FOCAL) / d));
+    const at = sample(px, Math.max(horizon + 17, horizon + ((EYE_HEIGHT - h) * FOCAL_LENGTH) / d)); // never the sky
     const lit = seed || rand() < 0.3;
     let tip = lit
       ? at.mean.map((c, k) => c * 0.4 + at.bright[k] * 0.6)
       : at.mean;
     if (seed) tip = tip.map((c, k) => c * 0.8 + seedHead[k] * 0.2); // a little more yellow
-    const foot = sample(px, Math.min(IMG_H - 1, row)).mean;
+    const foot = sample(px, Math.min(PICTURE_HEIGHT - 1, row)).mean;
     A.aColB.setXYZ(i, tip[0], tip[1], tip[2]);
     A.aColA.setXYZ(i, foot[0] * 0.45, foot[1] * 0.45, foot[2] * 0.45);
   }
   for (const attr of Object.values(A)) attr.needsUpdate = true;
   bladeGeometry.instanceCount = count;
-  bladeMaterial.uniforms.uFar.value = far;
+  blades.material.uniforms.uFar.value = far;
   // darken the painted grass from the row where the blade tips begin
   const shadeFrom =
-    (CY + ((EYE_HEIGHT - 0.9 * G.height) * FOCAL) / far) / IMG_H;
+    (horizon + ((EYE_HEIGHT - 0.9 * G.height) * FOCAL_LENGTH) / far) / PICTURE_HEIGHT;
   grassMaterial.uniforms.uShadeFrom.value = shadeFrom;
   grassMaterial.uniforms.uShadeTo.value = Math.min(1, shadeFrom + 0.12);
   grassMaterial.uniforms.uFloorShade.value = G.floorShade;

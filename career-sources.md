@@ -85,15 +85,16 @@ The longest sentence on the page is 23 words.
 | QR Asset Management: real-time asset tracking by QR code, on a Firebase backend; Flutter | CV; DET |
 | A career break, Apr – Aug 2022, for a personal goal | LI ("Personal goal pursuit · Career break") |
 
-## Signs
-| Sign | Dates | Role | OutSystems mark |
-|---|---|---|---|
-| AvePoint | 2026 – present | Technical Lead | yes |
-| Maybank | 2024 – 2026 | Senior OutSystems Engineer | yes |
-| FPT Software | 2022 – 2024 | Software Consultant | yes |
-| Impact Business Solutions | 2021 – 2022 | Software Consultant | no |
+## Captions
+Each company's caption sits under its bulb: its logo (its name for Impact, which has none) and its years. Screen readers also hear the role.
+| Caption | Years | Role (screen readers) |
+|---|---|---|
+| AvePoint logo | 2026 – present | Technical Lead |
+| Maybank logo | 2024 – 2026 | Senior OutSystems Engineer |
+| FPT Software logo | 2022 – 2024 | Software Consultant |
+| "Impact Business Solutions" | 2021 – 2022 | Software Consultant |
 
-Phones and tablets show smaller tags with the logo only ("IMPACT" for Impact).
+Phones and tablets show the logo (or name) only.
 
 ## Changes to your documents in this version
 - **iZone load figure:** "60k enrolments sustained over an hour" (MSG) replaces the documents' 40,000 enrolments over 20 minutes (DET, PROP).
@@ -124,19 +125,18 @@ Phones and tablets show smaller tags with the logo only ("IMPACT" for Impact).
 ## How the page is set (type and layout)
 These are the rules the page follows, and where each comes from. I read these pages' text in this round.
 
-**Type: one serif (Cormorant Garamond), one size, two weights, five roles.**
+For now the sheet shows only each company's title: its logo, its client's logo and the job title (MSG: "just keep the title for each company", "Company Client Job Title"). The chapter facts above are kept for when more goes back in.
+
+**Type: one serif (Cormorant Garamond), one size, two weights, three roles.**
 | Role | Colour | Weight | Used for |
 |---|---|---|---|
-| Name | warm cream `#f1e6d2` | 600 | the role, every project name, Impact's name, your name |
-| Text | warm cream | 500 | a part's main sentences: the main project's lead, fact values, Impact's opening line |
-| Detail | moonlight blue `#b4c3dc` | 500 | dates and job type, the "where" line, fact labels, tools, tile dates, the career break, section labels, "OutSystems Technical Lead", one-line descriptions in lists |
-| Link | lamp gold `#f3c77a` | 600 | only what you can press: part and chapter links, LinkedIn |
-| Moon | moon white `#e2e9f3` | 600 | names in the Moonlighting part |
+| Name | warm cream `#f1e6d2` | 600 | the job titles, Impact's name, your name |
+| Detail | moonlight blue `#b4c3dc` | 500 | "OutSystems Technical Lead", the years under the captions |
+| Link | lamp gold `#f3c77a` | 600 | only what you can press: the captions under the lights, LinkedIn |
 
-- Size: 16 px on phones, 17 px from 768 px up. Line spacing 140%. Lines up to about 70 characters.
+- Size: 16 px (1rem) on phones, 17.6 px (1.1rem) from 768 px up. Line spacing 140%.
 - No italics, capitals or letter-spacing. Full-height numbers, so "Jan 2026 – present" is one size. No grey.
 - No arrows or other text symbols. Links are plain names; separators are commas.
-- The wooden signs keep their burnt-in capitals (drawn on a canvas, not page text).
 
 **Sources for the type rules:**
 - One typeface for all text, logos the only exception: Sundance 2022 ([Fonts In Use](https://fontsinuse.com/uses/46527/sundance-2022-visual-identity)); Sundance Institute ([Pentagram](https://www.pentagram.com/work/sundance-institute/story))
@@ -149,17 +149,15 @@ These are the rules the page follows, and where each comes from. I read these pa
 **Layout: three standard tiers.**
 | Tier | Width | Layout |
 |---|---|---|
-| Phone | under 768 px | swipe between lights, small signs, parts stacked in a card that runs into the grass, above the phone's safe area |
-| Tablet | 768–1023 px, or any upright screen 768 px or wider | as phone, content up to 720 px wide |
-| Desktop | 1024 px and up, wider than tall | signs on the cable, one part at a time, content up to 960 px wide; the sheet reaches at most 40 px into the grass, and a part too tall for a short window scrolls within itself |
+| Phone | under 768 px | swipe between lights (the chapters follow), captions with the logo only, one company's title per screen, above the phone's safe area |
+| Tablet | 768–1023 px, or any upright screen 768 px or wider | as phone, with the header on one line |
+| Desktop | 1024 px and up, wider than tall | captions with the logo and years, one company's title per screen, content up to 1152 px wide; the sheet runs from under the captions to just above the bottom of the screen |
 
-- Breakpoints 768 and 1024 px: [Tailwind theme.css](https://github.com/tailwindlabs/tailwindcss/blob/main/packages/tailwindcss/theme.css) (md 48rem, lg 64rem). Content widths 720 and 960 px: [Bootstrap _variables.scss](https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss) (container md 720, lg 960).
+- Breakpoints 768 and 1024 px: [Tailwind theme.css](https://github.com/tailwindlabs/tailwindcss/blob/main/packages/tailwindcss/theme.css) (md 48rem, lg 64rem). Content width 1140 px: [Bootstrap _variables.scss](https://github.com/twbs/bootstrap/blob/main/scss/_variables.scss) (container xl 1140); the page uses 72rem (1152 px, 1140 rounded to a whole rem).
 - Spacing grows smoothly with the screen from 320 to 1024 px: [Utopia fluid space calculator](https://utopia.fyi/space/calculator/).
 
 | Space | At 320 px | At 1024 px and up |
 |---|---|---|
 | Gutter | 16 px | 56 px |
-| Small (a name to its details) | 6 px | 8 px |
 | Medium (between items) | 20 px | 32 px |
-| Large (between blocks) | 32 px | 56 px |
 

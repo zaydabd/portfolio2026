@@ -6,15 +6,7 @@ export const smooth = (dt, tau) => 1 - Math.exp(-dt / Math.max(tau, 1e-4));
 // The part after the decimal point
 export const frac = (v) => v - Math.floor(v);
 
-// Small repeatable random numbers, so the QR pattern and each sign's grain never change
-export function seeded(n) {
-  return () => {
-    n = (Math.imul(n, 1664525) + 1013904223) >>> 0;
-    return n / 4294967296;
-  };
-}
-
-// Another repeatable generator, so the grass field looks the same each visit
+// Repeatable random numbers, so the grass field looks the same each visit
 export function mulberry32(seed) {
   return () => {
     seed = (seed + 0x6d2b79f5) | 0;

@@ -1,109 +1,180 @@
-/* The page, the five type roles, the picture and the header. Colours, fonts and spaces are in css/tokens.css. */
-html,
-body {
-  height: 100%;
-  margin: 0;
-  overflow: hidden;
-  background: var(--night);
-}
-body {
-  overscroll-behavior: none;
-}
+/* The page. Phones first; each rule holds its own changes for tablets (768 px and up) and desktop (1024 px and up,
+   held sideways: the same as js/state.js). Colours, type and space: css/tokens.css. The photo's size and where the
+   lights hang: css/scene.css. */
 
-/* Type: one size per screen, two weights, five roles */
-.type-name,
-.type-text,
-.type-detail,
-.type-link,
-.type-moon {
-  font-family: var(--serif);
-  font-size: var(--fs);
-  line-height: var(--lh);
-  font-style: normal;
-  letter-spacing: normal;
-  text-transform: none;
+/* ---- Typography: the header, the captions and the sheet are the only text ---- */
+header,
+nav,
+#chapter-sheet {
+  font: 500 var(--fs) / var(--lh) "Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
   font-variant-numeric: lining-nums;
+  color: var(--c-name);
 }
-.type-name {
+header,
+#chapter-sheet {
+  text-shadow: 0 0 12px rgba(3, 8, 22, 0.9), 0 0 3px rgba(3, 8, 22, 0.8); /* readable over the photo */
+}
+h1,
+p {
+  margin: 0;
+}
+h1 {
+  font: inherit;
+}
+.text-heading {
   font-weight: 600;
-  color: var(--c-name);
 }
-.type-text {
-  font-weight: 500;
-  color: var(--c-name);
-  text-wrap: pretty;
-}
-.type-detail {
-  font-weight: 500;
+.text-muted {
   color: var(--c-detail);
-  text-wrap: pretty;
 }
-.type-link {
+.text-link {
   font-weight: 600;
   color: var(--c-link);
 }
-.type-moon {
-  font-weight: 600;
-  color: var(--c-moon);
-}
 
-/* The 3D picture */
-#scene {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  display: block;
-  opacity: 0;
-  transition: opacity 0.8s ease;
-  touch-action: none;
-}
-#scene.ready {
-  opacity: 1;
-}
-#scene.hot {
-  cursor: pointer;
-}
-
-/* Top corners: name, title, LinkedIn */
-.who {
-  position: fixed;
-  top: calc(env(safe-area-inset-top, 0px) + 12px);
-  left: var(--gutter);
-  right: var(--gutter);
+/* ---- Header: name and title on the left, LinkedIn on the right ---- */
+header {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1; /* over the photo and the sheet */
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: var(--gap-m);
-  margin: 0;
-  text-shadow: var(--shadow-header);
-  pointer-events: none;
+  padding: calc(env(safe-area-inset-top, 0px) + 12px) calc(var(--gutter) + env(safe-area-inset-right, 0px)) 0
+    calc(var(--gutter) + env(safe-area-inset-left, 0px));
+  pointer-events: none; /* the lights under it still take the mouse */
 }
-.who p {
-  margin: 0;
-}
-.who #who-title {
-  margin-left: 0.5em;
-}
-@media (max-width: 767.98px) {
-  .who #who-title {
-    display: block;
-    margin: 0;
+header p {
+  display: flex;
+  flex-direction: column; /* phones: the title under the name */
+  column-gap: 0.5em;
+  @media (min-width: 768px) {
+    flex-direction: row;
   }
-} /* phones: the title under the name, never split */
-.who a {
+}
+header a {
   pointer-events: auto;
   text-decoration: none;
-}
-.who a:hover,
-.who a:focus-visible {
-  outline: none;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  &:hover,
+  &:focus-visible {
+    outline: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
 }
 
-/* Hidden from sight, read by screen readers */
-.sr {
+/* ---- The page: the screen, with the photo and the sheet laid over each other ---- */
+html {
+  background: var(--night);
+  overscroll-behavior: none; /* no bounce, no pull-to-refresh */
+}
+body {
+  position: relative;
+  width: 100dvw;
+  height: 100dvh;
+  margin: 0;
+  overflow: hidden;
+}
+#photo,
+main {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---- The photo, with the 3D canvas exactly over it (both --photo-w wide). Phones and tablets scroll it sideways, the
+   picture moving with the canvas; js/ui/sheet.js keeps it on the open company's bulb. ---- */
+#photo {
+  overflow: auto hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  background: url("../assets/plate.webp") 0 0 / var(--photo-w) 100% no-repeat local;
+}
+#stage-canvas {
+  display: block;
+  width: var(--photo-w);
+  height: 100%;
+  opacity: 0; /* js/main.js fades it in once the grass has loaded */
+  transition: opacity 0.8s;
+  touch-action: pan-x pan-y; /* a swipe scrolls the photo; a tap opens a bulb's company */
+}
+
+/* ---- Captions: each company's logo (or name) and years, under its bulb. js/ui/captions.js moves each one there every
+   frame and hands it the bulb's light, 0 to 1: --on, --hover and --lit. Pressing one opens its company. ---- */
+nav button {
+  --logo-k: 0.6;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--caption-gap) 6px 2px;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--c-link);
+  cursor: pointer;
+  opacity: calc(var(--on, 0) * (0.6 + 0.2 * var(--hover, 0) + 0.2 * var(--lit, 0)));
+  filter: drop-shadow(
+    0 0 calc(4px + 6px * var(--lit, 0)) color-mix(in srgb, var(--lamp-light) calc(35% + 40% * var(--lit, 0)), transparent)
+  );
+  &:focus-visible {
+    outline: 1px solid rgba(180, 195, 220, 0.4);
+    outline-offset: 2px;
+  }
+  .text-muted {
+    display: none; /* the years: desktop only */
+    @media (min-width: 1024px) and (orientation: landscape) {
+      display: block;
+    }
+  }
+}
+
+/* ---- The sheet: under the captions, down to the bottom (short of the pole on desktop), one company per screen.
+   Its scroll decides the open company (js/ui/sheet.js). ---- */
+main {
+  display: flex;
+  justify-content: center;
+  padding: var(--sheet-top) calc(var(--gutter) + env(safe-area-inset-right, 0px))
+    calc(env(safe-area-inset-bottom, 0px) + 24px) calc(var(--gutter) + env(safe-area-inset-left, 0px));
+  pointer-events: none; /* clicks on the empty sky reach the bulbs */
+  @media (min-width: 1024px) and (orientation: landscape) {
+    padding-right: calc(var(--photo-w) - var(--sheet-right));
+  }
+}
+#chapter-sheet {
+  position: relative; /* the sections' offsetTop counts from here */
+  flex: 0 1 72rem;
+  overflow-y: auto;
+  scroll-snap-type: y proximity;
+  scrollbar-width: none;
+  pointer-events: auto;
+  opacity: 0; /* js/ui/sheet.js fades it in once the lights are on */
+  transition: opacity 0.3s;
+  &:focus-visible {
+    outline: 1px solid rgba(180, 195, 220, 0.4);
+    outline-offset: -1px;
+  }
+}
+section {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--gap-m);
+  scroll-snap-align: start;
+  h1 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--gap-m);
+  }
+}
+
+/* ---- Hidden: read by screen readers, never seen (the announcer, and the names behind the logos) ---- */
+.hidden {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -112,13 +183,19 @@ body {
   white-space: nowrap;
 }
 
-/* No WebGL: the still picture instead */
-.fallback {
-  background: var(--night) center / cover no-repeat;
+/* ---- Logos: <span class="mark mark-name"></span>. Each image in assets/marks is a white shape used as a mask, so it's
+   drawn in the text colour. Every logo covers the same area, a 3.8em square scaled by --logo-k; --ratio is its image's
+   width / height. ---- */
+.mark {
+  display: inline-block;
+  width: calc(3.8em * var(--logo-k, 1) * sqrt(var(--ratio)));
+  height: calc(3.8em * var(--logo-k, 1) / sqrt(var(--ratio)));
+  background: currentColor;
+  mask: var(--mark) center / contain no-repeat;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  #scene {
-    transition: none;
-  }
-}
+.mark-avepoint { --mark: url(../assets/marks/avepoint.png); --ratio: 900 / 152; }
+.mark-sunway { --mark: url(../assets/marks/sunway.png); --ratio: 700 / 104; }
+.mark-sunway-education { --mark: url(../assets/marks/sunway-education.png); --ratio: 900 / 67; }
+.mark-maybank { --mark: url(../assets/marks/maybank.png); --ratio: 810 / 159; }
+.mark-fpt { --mark: url(../assets/marks/fpt.png); --ratio: 900 / 280; }
+.mark-petronas { --mark: url(../assets/marks/petronas.png); --ratio: 887 / 318; }

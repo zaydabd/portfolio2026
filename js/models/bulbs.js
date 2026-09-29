@@ -1,17 +1,19 @@
-// One Edison bulb model, hung 7 times along the cable: connector, wire, socket, glass and glow
+// One Edison bulb model, hung along the cable wherever css/scene.css says (--bulb-x): connector, wire, socket,
+// glass and glow
 import * as THREE from "three";
 import { CONFIG } from "../config.js";
 import { COMPANIES } from "../state.js";
 import {
-  FOCAL,
-  NIGHT_DY,
-  GLASS_R,
-  GLASS_H,
-  SOCKET_H,
+  FOCAL_LENGTH,
+  GLASS_RADIUS,
+  GLASS_HEIGHT,
+  SOCKET_HEIGHT,
   toWorld,
 } from "../scene/picture.js";
-import { POLE_X, spans, spanYAt, cableDepth, swayWeight } from "./cable.js";
-import { frac } from "../utils/math.js";
+import { canvas, camera } from "../scene/stage.js";
+import { spanYAt, swayWeight, cableSway } from "./cable.js";
+import { windAt } from "../utils/wind.js";
+import { frac, smooth } from "../utils/math.js";
 import { gradientTexture } from "../utils/textures.js";
 import { color, vec3, paint } from "../utils/theme.js";
 
@@ -132,7 +134,7 @@ const glassMaterial = new THREE.ShaderMaterial({
       col = mix(col, ${vec3(
         "--bulb-filament"
       )}, clamp(fil, 0.0, 1.0) * band * smoothstep(0.2, 0.6, facing));
-      // clicked: brighter and whiter
+      // its chapter open: brighter and whiter
       col = mix(col * (1.0 + 0.3 * uBoost), ${vec3(
         "--bulb-lit"
       )}, 0.25 * uBoost);
@@ -162,26 +164,64 @@ const glowTexture = (() => {
 })();
 const hitMaterial = new THREE.MeshBasicMaterial({ visible: false });
 
-// What a click or tap can land on: the company bulbs, and their signs (js/models/signs.js adds those)
-export const hits = [];
+// Every bulb shares these; a rebuild (js/main.js) must keep them
+for (const shared of [
+  glassGeometry,
+  socketGeometry,
+  wireGeometry,
+  sleeveGeometry,
+  knobGeometry,
+  stemGeometry,
+  hitGeometry,
+  plasticMaterial,
+  socketMaterial,
+  socketMaterial.emissiveMap,
+  glowTexture,
+  hitMaterial,
+])
+  shared.userData.shared = true;
 
-export const bulbs = CONFIG.bulbs.map((cfg, index) => {
-  const span = cfg.x > POLE_X ? spans.right : spans.left;
-  const cy = spanYAt(span, cfg.x); // cable height above this bulb
-  const gy = cfg.y + NIGHT_DY; // glass centre
-  const depth = cableDepth(cfg.x);
-  const scale = cfg.w / ((2 * GLASS_R * FOCAL) / depth);
-  const drop = ((gy - cy) * depth) / FOCAL / scale; // junction to glass centre, model units
-  const hang = Math.max(0.005, drop - SOCKET_H - GLASS_H / 2 - 0.02);
+// What a click or tap can land on: the company bulbs
+const hits = [];
+
+// Which company bulb is under a point on screen (-1 for none)
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+export function bulbAt(clientX, clientY) {
+  const r = canvas.getBoundingClientRect();
+  pointer.set(
+    ((clientX - r.left) / r.width) * 2 - 1,
+    -((clientY - r.top) / r.height) * 2 + 1
+  );
+  raycaster.setFromCamera(pointer, camera);
+  const found = raycaster.intersectObjects(hits, false);
+  return found.length ? found[0].object.userData.index : -1;
+}
+
+// The bulbs for this layout, hanging from this cable. previous: the bulbs they replace, which hand on
+// how far they've switched on, glowed and swung.
+export function buildBulbs(layout, cable, previous = []) {
+  hits.length = 0;
+  return layout.bulbs.x.map((x, index) => buildBulb(layout, cable, x, index, previous[index]));
+}
+
+function buildBulb(layout, cable, x, index, was) {
+  const span = x > cable.poleX ? cable.spans.right : cable.spans.left;
+  const cy = spanYAt(span, x); // cable height above this bulb
+  const gy = cy + layout.bulbs.drop; // glass centre
+  const depth = cable.depth;
+  const scale = layout.bulbs.size / ((2 * GLASS_RADIUS * FOCAL_LENGTH) / depth);
+  const drop = ((gy - cy) * depth) / FOCAL_LENGTH / scale; // junction to glass centre, model units
+  const hang = Math.max(0.005, drop - SOCKET_HEIGHT - GLASS_HEIGHT / 2 - 0.02);
 
   const root = new THREE.Group();
-  root.position.copy(toWorld(cfg.x, cy, depth));
+  root.position.copy(toWorld(x, cy, depth));
   root.scale.setScalar(scale);
   root.userData.home = root.position.clone();
 
   // T-connector, lined up with the cable
-  const a = toWorld(cfg.x - 6, spanYAt(span, cfg.x - 6), cableDepth(cfg.x - 6));
-  const b = toWorld(cfg.x + 6, spanYAt(span, cfg.x + 6), cableDepth(cfg.x + 6));
+  const a = toWorld(x - 6, spanYAt(span, x - 6), depth);
+  const b = toWorld(x + 6, spanYAt(span, x + 6), depth);
   const sleeve = new THREE.Mesh(sleeveGeometry, plasticMaterial);
   sleeve.quaternion.setFromUnitVectors(
     new THREE.Vector3(0, 1, 0),
@@ -203,7 +243,7 @@ export const bulbs = CONFIG.bulbs.map((cfg, index) => {
   socket.position.y = -hang;
   const material = glassMaterial.clone();
   const glass = new THREE.Mesh(glassGeometry, material);
-  glass.position.y = -hang - SOCKET_H;
+  glass.position.y = -hang - SOCKET_HEIGHT;
   glass.renderOrder = 1;
   const glowMaterial = new THREE.SpriteMaterial({
     map: glowTexture,
@@ -214,10 +254,10 @@ export const bulbs = CONFIG.bulbs.map((cfg, index) => {
     opacity: CONFIG.glow.opacity,
   });
   const glow = new THREE.Sprite(glowMaterial);
-  glow.position.y = -hang - SOCKET_H - GLASS_H * 0.55;
+  glow.position.y = -hang - SOCKET_HEIGHT - GLASS_HEIGHT * 0.55;
   glow.renderOrder = 2;
   const hit = new THREE.Mesh(hitGeometry, hitMaterial);
-  hit.position.y = -hang - SOCKET_H - GLASS_H / 2;
+  hit.position.y = -hang - SOCKET_HEIGHT - GLASS_HEIGHT / 2;
   hit.userData.index = index;
   if (index < COMPANIES) hits.push(hit);
   swing.add(wire, socket, glass, glow, hit);
@@ -228,30 +268,81 @@ export const bulbs = CONFIG.bulbs.map((cfg, index) => {
     glow,
     material,
     glowMaterial,
-    weight: swayWeight(cfg.x, span.anchors),
-    x: cfg.x,
+    weight: swayWeight(x, span.anchors),
+    x,
     // each bulb is a small pendulum with its own swing rate, so they drift out of step
     rate: 2 * Math.PI * (0.62 + 0.16 * frac(index * 0.618034)),
-    side: 0,
-    sideV: 0,
-    fore: 0,
-    foreV: 0,
-    hover: 0,
-    lit: 0,
-    on: 0,
+    side: was ? was.side : 0,
+    sideV: was ? was.sideV : 0,
+    fore: was ? was.fore : 0,
+    foreV: was ? was.foreV : 0,
+    hover: was ? was.hover : 0,
+    lit: was ? was.lit : 0,
+    on: was ? was.on : 0,
     hit,
-    gy,
-    depth,
-    scale,
-    hang,
-    sign: null,
-    signSmall: null,
-    signTag: null,
-    signMats: null,
+    hang, // the wire's length: js/ui/captions.js finds the bottom of the glass with it
   };
-});
+}
 
-// The picture row where a bulb's glass ends: the signs hang from here
-export function glassBottomRow(b) {
-  return b.gy + ((GLASS_H / 2) * b.scale * FOCAL) / b.depth;
+// Each frame: switch on one by one, swing in the wind, and glow.
+// hovered and active are bulb numbers from 0 (-1 for none): the one under the mouse, and the open chapter's.
+const baseGlow = 2 * GLASS_RADIUS * CONFIG.glow.size;
+export function updateBulbs(bulbs, tick, { hovered, active }) {
+  const { dt, since, wind } = tick;
+  const onRate = smooth(dt, CONFIG.glow.onTau);
+  const push = CONFIG.sway.bulbs;
+  const steps = Math.max(1, Math.ceil(dt * CONFIG.physics.stepsPerSecond));
+  const step = dt / steps;
+  const litRate = smooth(dt, CONFIG.glow.time / 3);
+  const hoverRate = smooth(dt, CONFIG.glow.hoverTau);
+  const P = CONFIG.physics;
+  const G = CONFIG.glow;
+
+  bulbs.forEach((b, i) => {
+    // Switch-on: bulbs light up one by one
+    const target = since > 0.35 + i * CONFIG.switchOn ? 1 : 0;
+    b.on += (target - b.on) * onRate;
+
+    // Position: follow the cable sway
+    b.root.position
+      .copy(b.root.userData.home)
+      .add(cableSway(b.x, b.weight, wind, CONFIG.sway.cable));
+
+    // Pendulum physics: spring-damper driven by wind
+    const force =
+      push *
+      (windAt(b.x, wind) +
+        P.breezeCoupling *
+          Math.sin(wind * (P.jitterFreq + P.jitterSpread * i) + P.jitterPhase * i));
+    const k = b.rate * b.rate,
+      damp = P.damping * b.rate;
+    for (let s = 0; s < steps; s++) {
+      b.sideV += (-k * b.side - damp * b.sideV + P.breezeCoupling * k * force) * step;
+      b.side += b.sideV * step;
+      b.foreV +=
+        (-k * b.fore -
+          damp * b.foreV +
+          P.foreCoupling * k * force * Math.sin(wind * P.forePhase + i)) *
+        step;
+      b.fore += b.foreV * step;
+    }
+    b.swing.rotation.z = b.side;
+    b.swing.rotation.x = b.fore;
+
+    // Hover and lit interpolation
+    b.hover += ((i === hovered && i < COMPANIES ? 1 : 0) - b.hover) * hoverRate;
+    b.lit += ((i === active ? 1 : 0) - b.lit) * litRate;
+
+    // Glow size and opacity
+    const size =
+      baseGlow *
+      (1 + (G.hover - 1) * b.hover) *
+      (1 + (G.lit - 1) * b.lit) *
+      (G.onFloor + G.onRange * b.on);
+    b.glow.scale.set(size, size, 1);
+    b.glowMaterial.opacity =
+      Math.min(1, G.opacity * (1 + G.litOpacityBoost * b.lit)) * b.on;
+    b.material.uniforms.uBoost.value = b.lit;
+    b.material.uniforms.uOn.value = b.on;
+  });
 }

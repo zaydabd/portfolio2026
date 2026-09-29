@@ -1,41 +1,18 @@
-// The cable: two spans, each a tube that sways between its anchors, with the bulbs' light on it
+// The cable: two spans, each a tube that sways between its anchors, with the bulbs' light on it.
+// Its shape comes from css/scene.css: tied to the pole, it sags across to the picture's left edge (and on past it),
+// and runs straight down past the right edge.
 import * as THREE from "three";
-import { CONFIG } from "../config.js";
 import {
-  FOCAL,
-  CX,
-  NIGHT_DY,
-  GLASS_R,
-  CABLE_R,
+  PICTURE_WIDTH,
+  FOCAL_LENGTH,
+  CENTRE_X,
+  GLASS_RADIUS,
+  CABLE_RADIUS,
   toWorld,
 } from "../scene/picture.js";
 import { windAt } from "../utils/wind.js";
 import { gradientTexture } from "../utils/textures.js";
 import { color } from "../utils/theme.js";
-
-// Where the left span ends and the right span starts (the pole)
-export const POLE_X =
-  (CONFIG.cable.left[CONFIG.cable.left.length - 1][0] +
-    CONFIG.cable.right[0][0]) /
-  2;
-
-// Depth of the cable, fitted to the bulb sizes: bigger bulbs are closer.
-export const cableDepth = (() => {
-  const pts = CONFIG.bulbs
-    .filter((b) => b.x < POLE_X)
-    .map((b) => [b.x, (FOCAL * 2 * GLASS_R) / b.w]);
-  const n = pts.length;
-  const mx = pts.reduce((s, p) => s + p[0], 0) / n,
-    my = pts.reduce((s, p) => s + p[1], 0) / n;
-  let sxy = 0,
-    sxx = 0;
-  for (const [x, y] of pts) {
-    sxy += (x - mx) * (y - my);
-    sxx += (x - mx) ** 2;
-  }
-  const slope = sxx > 0 ? sxy / sxx : 0;
-  return (x) => my + slope * (Math.min(x, POLE_X) - mx);
-})();
 
 // How much a point between two anchors sways: nothing at the anchors, most halfway
 export function swayWeight(x, [a, b]) {
@@ -43,26 +20,53 @@ export function swayWeight(x, [a, b]) {
   return s <= 0 || s >= 1 ? 0 : Math.sin(Math.PI * s);
 }
 
-const bulbXs = CONFIG.bulbs.map((b) => b.x);
+// The cable for this layout (js/scene/layout.js): its two spans, where they meet (the pole), and how far away
+// it hangs, from the bulbs' size (the cable and bulbs share one distance)
+export function buildCable(layout) {
+  const { cable: C, pole: P, bulbs: B } = layout;
+  const poleX = P.x;
+  const depth = (FOCAL_LENGTH * 2 * GLASS_RADIUS) / B.size;
+  // left: a straight line from the left edge to the pole, dipping by the sag in the middle
+  const leftY = (x) => {
+    const t = x / poleX;
+    return C.left + (C.tie - C.left) * t + 4 * C.sag * t * (1 - t);
+  };
+  // right: straight from the pole down to the right edge
+  const rightY = (x) =>
+    C.tie + ((C.right - C.tie) * (x - poleX)) / (PICTURE_WIDTH - poleX);
+  const left = [],
+    right = [];
+  for (let x = -300; x < poleX; x += 50) left.push([x, leftY(x)]);
+  left.push([poleX, C.tie]);
+  for (let x = poleX; x <= PICTURE_WIDTH + 330; x += 50) right.push([x, rightY(x)]);
+  return {
+    poleX,
+    depth,
+    spans: {
+      left: buildSpan(left, [-700, poleX], depth, B.x),
+      right: buildSpan(right, [poleX, 2300], depth, B.x),
+    },
+  };
+}
 
-function buildSpan(points, anchors) {
+function buildSpan(points, anchors, depth, bulbXs) {
   const flat = new THREE.SplineCurve(
-    points.map(([x, y]) => new THREE.Vector2(x, y + NIGHT_DY))
+    points.map(([x, y]) => new THREE.Vector2(x, y))
   ).getSpacedPoints(220);
   const path = new THREE.CatmullRomCurve3(
-    flat.map((p) => toWorld(p.x, p.y, cableDepth(p.x))),
+    flat.map((p) => toWorld(p.x, p.y, depth)),
     false,
     "centripetal"
   );
   const SEG = 360,
     RAD = 6;
-  const geometry = new THREE.TubeGeometry(path, SEG, CABLE_R, RAD, false);
+  const geometry = new THREE.TubeGeometry(path, SEG, CABLE_RADIUS, RAD, false);
   geometry.attributes.position.setUsage(THREE.DynamicDrawUsage);
   const ringX = new Float32Array(SEG + 1),
     ringW = new Float32Array(SEG + 1);
   for (let i = 0; i <= SEG; i++) {
     const p = path.getPointAt(i / SEG);
-    ringX[i] = (p.x * FOCAL) / -p.z + CX;
+    ringX[i] = (p.x * FOCAL_LENGTH) / -p.z + CENTRE_X;
     ringW[i] = swayWeight(ringX[i], anchors);
   }
   const glowMap = gradientTexture(SEG + 1, 1, (u) => {
@@ -95,11 +99,6 @@ function buildSpan(points, anchors) {
     anchors,
   };
 }
-
-export const spans = {
-  left: buildSpan(CONFIG.cable.left, [-700, POLE_X]),
-  right: buildSpan(CONFIG.cable.right, [POLE_X, 2300]),
-};
 
 // The cable's height (picture row) at picture column x
 export function spanYAt(span, x) {
