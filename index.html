@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Wan Zayd Abdullah</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap"
+    />
+    <!-- tokens.css: every colour, font size and space; scene.css: where the photo and the 3D models sit (the 3D scene
+         reads both); base.css: the page -->
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/scene.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <!-- three.js, from the CDN; every module imports it as 'three' -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js"
+        }
+      }
+    </script>
+    <script type="module" src="js/main.js"></script>
+  </head>
+  <body>
+    <header>
+      <p>
+        <span class="text-heading">Wan Zayd Abdullah</span>
+        <span class="text-muted">OutSystems Technical Lead</span>
+      </p>
+      <a
+        class="text-link"
+        href="https://www.linkedin.com/in/wan-zayd-abdullah-690033230/"
+        target="_blank"
+        rel="noopener"
+        >LinkedIn</a
+      >
+    </header>
+    <p class="hidden" id="chapter-announcer" aria-live="polite"></p>
+    <div id="photo">
+      <canvas
+        id="stage-canvas"
+        role="img"
+        aria-label="A paddy field at night under a full moon. Eight bulbs hang from a cable tied to a metal pole; the first four each stand for a company in Wan Zayd Abdullah's career."
+      ></canvas>
+      <!-- Each company's caption under its bulb (js/ui/captions.js keeps it there): its logo, or its name, and its
+           years. Pressing one opens its company; screen readers hear its aria-label. -->
+      <nav aria-label="Career chapters">
+        <button type="button" data-chapter="0" aria-label="AvePoint, Technical Lead, 2026 – present">
+          <span class="mark mark-avepoint"></span>
+          <span class="text-muted">2026 – present</span>
+        </button>
+        <button type="button" data-chapter="1" aria-label="Maybank, Senior OutSystems Engineer, 2024 – 2026">
+          <span class="mark mark-maybank"></span>
+          <span class="text-muted">2024 – 2026</span>
+        </button>
+        <button type="button" data-chapter="2" aria-label="FPT Software, Software Consultant, 2022 – 2024">
+          <span class="mark mark-fpt"></span>
+          <span class="text-muted">2022 – 2024</span>
+        </button>
+        <button type="button" data-chapter="3" aria-label="Impact Business Solutions, Software Consultant, 2021 – 2022">
+          <span class="text-link">Impact Business Solutions</span>
+          <span class="text-muted">2021 – 2022</span>
+        </button>
+      </nav>
+    </div>
+    <main>
+      <article id="chapter-sheet" tabindex="0" aria-label="Career chapter">
+        <!-- One section per company, newest first, in the same order as the captions: the company's logo, then its
+             client's, then the job title. Its data-chapter is its bulb (0 = the first); the sheet's scroll opens it. -->
+        <section data-chapter="0" aria-label="AvePoint">
+          <h1>
+            <span class="mark mark-avepoint"></span>
+            <span class="mark mark-sunway"></span>
+            <span class="mark mark-sunway-education"></span>
+            <span class="hidden">AvePoint, for Sunway and Sunway Education</span>
+          </h1>
+          <p class="text-heading">Technical Lead</p>
+        </section>
+        <section data-chapter="1" aria-label="Maybank">
+          <h1>
+            <span class="mark mark-maybank"></span>
+            <span class="hidden">Maybank</span>
+          </h1>
+          <p class="text-heading">Senior OutSystems Engineer</p>
+        </section>
+        <section data-chapter="2" aria-label="FPT Software">
+          <h1>
+            <span class="mark mark-fpt"></span>
+            <span class="mark mark-petronas"></span>
+            <span class="hidden">FPT Software, for PETRONAS</span>
+          </h1>
+          <p class="text-heading">Software Consultant</p>
+        </section>
+        <section data-chapter="3" aria-label="Impact Business Solutions">
+          <h1 class="text-heading">Impact Business Solutions</h1>
+          <p class="text-heading">Software Consultant</p>
+        </section>
+      </article>
+    </main>
+  </body>
+</html>
