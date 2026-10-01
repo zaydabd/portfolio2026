@@ -169,8 +169,15 @@ main {
   display: flex;
   flex-direction: column;
   overflow: hidden auto;
-  /* the bottom fades out, like credits rolling off */
-  mask-image: linear-gradient(to top, transparent, #000 var(--space-8));
+  /* the bottom fades out, like credits rolling off, and so does the top once it's scrolled (js/ui/sheet.js sets
+     --scrolled from 0 to 1 over the first 32px) */
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 calc(var(--scrolled, 0) * var(--space-8)),
+    #000 calc(100% - var(--space-8)),
+    transparent
+  );
   pointer-events: auto;
   opacity: 0; /* js/ui/sheet.js fades it in once the lights are on */
   transition: opacity 0.3s;
@@ -194,6 +201,23 @@ main {
   }
   nav {
     display: none;
+  }
+}
+
+/* ---- Each block fades in, rising a little, the first time it scrolls into view (js/ui/sheet.js adds .reveal when
+   the sheet appears and .revealed to each block as it arrives); with reduced motion it only fades ---- */
+.reveal :is(.credit-line, .title-card, .credit-rows > div) {
+  opacity: 0;
+  translate: 0 var(--space-4);
+  transition:
+    opacity 0.6s,
+    translate 0.6s;
+  &.revealed {
+    opacity: 1;
+    translate: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    translate: none;
   }
 }
 

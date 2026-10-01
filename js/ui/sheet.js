@@ -23,7 +23,29 @@ export function showSheet() {
   if (shown) return;
   shown = true;
   sheetEl.style.opacity = 1; // fades in (css/base.css)
+  startReveal();
   markPart();
+}
+
+// The sheet's blocks fade in the first time they scroll into view, and stay (css/base.css .reveal). Those that
+// arrive together follow one another, so the first screen cascades in as the sheet appears.
+function startReveal() {
+  const revealer = new IntersectionObserver(
+    (entries) => {
+      entries
+        .filter((e) => e.isIntersecting)
+        .forEach((e, k) => {
+          e.target.style.transitionDelay = `${k * 80}ms`;
+          e.target.classList.add("revealed");
+          revealer.unobserve(e.target);
+        });
+    },
+    { root: sheetEl, rootMargin: "0px 0px -10% 0px" } // a little above the bottom fade
+  );
+  sheetEl.classList.add("reveal");
+  sheetEl
+    .querySelectorAll(".credit-line, .title-card, .credit-rows > div")
+    .forEach((el) => revealer.observe(el));
 }
 
 // Open chapter i: scroll the sheet to its first part. Phones slide the photo straight to its bulb, and hold the
@@ -49,10 +71,19 @@ export function scrollSheet(px) {
   sheetEl.scrollBy({ top: px });
 }
 
+// On every scroll: the top edge's fade (css/base.css --scrolled, grown in over the first 32px so it doesn't pop),
+// and which part is showing
+sheetEl.addEventListener(
+  "scroll",
+  () =>
+    requestAnimationFrame(() => {
+      sheetEl.style.setProperty("--scrolled", Math.min(1, sheetEl.scrollTop / 32));
+      markPart();
+    }),
+  { passive: true }
+);
+
 // Which part is showing: the last one whose top has passed 40% down the sheet (or the last, at the very end)
-sheetEl.addEventListener("scroll", () => requestAnimationFrame(markPart), {
-  passive: true,
-});
 function markPart() {
   if (!shown) return;
   const { scrollTop, clientHeight, scrollHeight } = sheetEl;
