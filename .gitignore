@@ -2,5 +2,6 @@
 portfolio-references/
 iCloud Photos/
 
-# Build tools (package.json); dist/ is committed, as GitHub Pages serves the repo as it is
+# Build tools (package.json) and their output: GitHub Actions builds dist/ on every push (.github/workflows/pages.yml)
 node_modules/
+dist/
