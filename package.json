@@ -1,0 +1,13 @@
+{
+  "name": "portfolio2026",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild js/main.js --bundle --minify --format=esm --target=es2022 --outdir=dist",
+    "dev": "esbuild js/main.js --bundle --format=esm --target=es2022 --sourcemap --outdir=dist --servedir=. --watch"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10",
+    "three": "0.186.1"
+  }
+}

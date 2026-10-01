@@ -12,6 +12,14 @@ ul {
 }
 
 /* ---- Typography: the header, the captions and the sheet are the only text ---- */
+/* Cormorant Garamond (SIL OFL: assets/fonts/OFL.txt), cut down to weights 500–600 and to ASCII plus é, – — ‘ ’ “ ” …
+   · × and the no-break space. Any other character falls back to the next font in the list. */
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("../assets/fonts/cormorant-garamond.woff2") format("woff2");
+  font-weight: 500 600;
+  font-display: swap;
+}
 header,
 nav,
 .sheet {
@@ -178,7 +186,7 @@ main {
   }
 }
 
-/* ---- No 3D scene (no WebGL, or three.js didn't load: index.html sets .no-scene): the sheet shows straight away, and
+/* ---- No 3D scene (no WebGL, or the code didn't load: index.html sets .no-scene): the sheet shows straight away, and
    the captions, which nothing would place under their bulbs, stay hidden ---- */
 .no-scene {
   .sheet {

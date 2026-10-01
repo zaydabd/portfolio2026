@@ -1,3 +1,6 @@
 # Private: kept on this computer, never pushed to GitHub
 portfolio-references/
 iCloud Photos/
+
+# Build tools (package.json); dist/ is committed, as GitHub Pages serves the repo as it is
+node_modules/
