@@ -1,10 +1,10 @@
 # Builds the site (npm run build: js/ and three.js into dist/main.js) and publishes it on GitHub Pages, on every push
-# to portfolio2026-mini. Only what the page loads goes up: index.html, css/, assets/ and dist/.
+# to main. Only what the page loads goes up: index.html, css/, assets/ and dist/.
 name: Pages
 
 on:
   push:
-    branches: [portfolio2026-mini]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
