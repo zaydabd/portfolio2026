@@ -41,15 +41,27 @@
   --c-detail: #b4c3dc;
   --c-link: #f3c77a;
   --fs: 1rem;
+  --fs-role: calc(var(--fs) * 2); /* the sheet's job titles */
+  --fs-label: calc(var(--fs) * 0.7); /* the sheet's small uppercase labels */
   --lh: 1.4;
   --header-lines: 2; /* phones: the title under the name */
 
-  /* Space: grows smoothly from its size at 320 px to its size at 1024 px */
-  --gutter: clamp(16px, calc(16px + (100vw - 320px) * 40 / 704), 56px);
-  --gap-m: clamp(20px, calc(20px + (100vw - 320px) * 12 / 704), 32px);
+  /* Space: one scale on a 4 px grid; each name is its multiple of 4 px (at the default text size). In rem, so it
+     follows the reader's text size. Every gap, padding and margin on the page is one of these, used as it is. */
+  --space-1: 0.25rem; /*  4 */
+  --space-2: 0.5rem; /*  8 */
+  --space-4: 1rem; /* 16 */
+  --space-6: 1.5rem; /* 24 */
+  --space-8: 2rem; /* 32 */
+  --space-12: 3rem; /* 48 */
+  --gutter: var(--space-4); /* the page's side margins: phones… */
 
   @media (min-width: 768px) {
     --fs: 1.1rem;
     --header-lines: 1;
+    --gutter: var(--space-8); /* …tablets… */
+  }
+  @media (min-width: 1024px) and (orientation: landscape) {
+    --gutter: var(--space-12); /* …and desktop */
   }
 }

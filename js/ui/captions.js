@@ -4,6 +4,7 @@
 import * as THREE from "three";
 import { canvas, camera } from "../scene/stage.js";
 import { SOCKET_HEIGHT, GLASS_HEIGHT } from "../scene/picture.js";
+import { FIRST_BULB } from "../state.js";
 
 export const captionEls = [...document.querySelectorAll("nav button")];
 
@@ -12,7 +13,7 @@ export function updateCaptions(bulbs) {
   const width = canvas.clientWidth,
     height = canvas.clientHeight;
   captionEls.forEach((el, i) => {
-    const b = bulbs[i];
+    const b = bulbs[i + FIRST_BULB];
     // the bottom of the glass, in the bulb's own units: under the connector, the wire, the socket and the glass
     point.set(0, -0.02 - b.hang - SOCKET_HEIGHT - GLASS_HEIGHT, 0);
     b.root.localToWorld(point).project(camera);

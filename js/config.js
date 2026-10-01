@@ -1,7 +1,7 @@
 /* ==========================================================================
    WAN ZAYD ABDULLAH: the settings you might want to change.
    The words are all in index.html: the name, role and LinkedIn in the top corners, each company's caption under
-   its bulb, and its section in the sheet (bulbs 1–4, left to right, newest first; career-sources.md says where each
+   its bulb, and its section in the sheet (bulbs 2–5, left to right, newest first; career-sources.md says where each
    fact comes from). To add a company: its caption and its section in index.html (one bulb each: --bulb-x in
    css/scene.css).
    Colours, fonts and spacing are in css/tokens.css; where the photo and each 3D model sit is in css/scene.css.

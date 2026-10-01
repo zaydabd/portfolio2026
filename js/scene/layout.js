@@ -1,15 +1,22 @@
-// Where each 3D model sits: the inputs in css/scene.css. Each is a length from the photo's top-left corner, and
-// the browser works it out in pixels (they're registered with @property); this turns them into picture pixels,
-// the frame the models are built in. It only reads the CSS, it never writes styles.
+// Where each 3D model sits: the inputs in css/scene.css. Each is a length from the photo's top-left corner; the
+// browser works it out in pixels, and this turns them into picture pixels, the frame the models are built in. It
+// only reads the page's CSS: the one style it writes is on its own hidden probe.
 import { PICTURE_WIDTH, PICTURE_HEIGHT } from "./picture.js";
-import { token } from "../utils/theme.js";
+
+// The probe: a hidden grid in the body, which takes a length (or a list of them) as its columns, because a grid
+// reports its columns in pixels. In the body, so the scene's cqw and cqh measure the body's safe area.
+const probe = document.body.appendChild(document.createElement("div"));
+probe.setAttribute("aria-hidden", "true");
+probe.style.cssText = "position: absolute; display: grid; visibility: hidden; pointer-events: none";
 
 // A length input, or a list of them, in screen pixels
 function pixels(name) {
-  const values = token(name).split(/\s+/).filter(Boolean).map(parseFloat);
+  probe.style.gridTemplateColumns = `var(${name})`;
+  const resolved = getComputedStyle(probe).gridTemplateColumns;
+  const values = resolved.split(/\s+/).filter(Boolean).map(parseFloat);
   if (!values.length || values.some((v) => !Number.isFinite(v)))
     throw new Error(
-      `css/scene.css: ${name} should be a length (or lengths), not "${token(name)}"`
+      `css/scene.css: ${name} should be a length (or lengths), not "${resolved}"`
     );
   return values;
 }

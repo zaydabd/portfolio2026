@@ -26,7 +26,10 @@
         }
       }
     </script>
-    <script type="module" src="js/main.js"></script>
+    <!-- Without the 3D scene (no WebGL, or the CDN didn't answer) the page still shows the sheet: css/base.css .no-scene -->
+    <script type="module">
+      import("./js/main.js").catch(() => document.documentElement.classList.add("no-scene"));
+    </script>
   </head>
   <body>
     <header>
@@ -43,16 +46,17 @@
       >
     </header>
     <p class="hidden" id="chapter-announcer" aria-live="polite"></p>
-    <div id="photo">
+    <div id="photo" class="photo">
       <canvas
         id="stage-canvas"
+        class="stage"
         role="img"
-        aria-label="A paddy field at night under a full moon. Eight bulbs hang from a cable tied to a metal pole; the first four each stand for a company in Wan Zayd Abdullah's career."
+        aria-label="A paddy field at night under a full moon. Eight bulbs hang from a cable tied to a metal pole; the second to fifth each stand for a company in Wan Zayd Abdullah's career."
       ></canvas>
       <!-- Each company's caption under its bulb (js/ui/captions.js keeps it there): its logo, or its name, and its
            years. Pressing one opens its company; screen readers hear its aria-label. -->
       <nav aria-label="Career chapters">
-        <button type="button" data-chapter="0" aria-label="AvePoint, Technical Lead, 2026 – present">
+        <button type="button" data-chapter="0" aria-label="AvePoint, OutSystems Technical Lead, 2026 – present">
           <span class="mark mark-avepoint"></span>
           <span class="text-muted">2026 – present</span>
         </button>
@@ -60,47 +64,273 @@
           <span class="mark mark-maybank"></span>
           <span class="text-muted">2024 – 2026</span>
         </button>
-        <button type="button" data-chapter="2" aria-label="FPT Software, Software Consultant, 2022 – 2024">
+        <button type="button" data-chapter="2" aria-label="FPT Software, OutSystems Developer, 2022 – 2024">
           <span class="mark mark-fpt"></span>
           <span class="text-muted">2022 – 2024</span>
         </button>
-        <button type="button" data-chapter="3" aria-label="Impact Business Solutions, Software Consultant, 2021 – 2022">
+        <button type="button" data-chapter="3" aria-label="Impact Business Solutions, Software Developer, 2021 – 2022">
           <span class="text-link">Impact Business Solutions</span>
           <span class="text-muted">2021 – 2022</span>
         </button>
       </nav>
     </div>
     <main>
-      <article id="chapter-sheet" tabindex="0" aria-label="Career chapter">
-        <!-- One section per company, newest first, in the same order as the captions: the company's logo, then its
-             client's, then the job title. Its data-chapter is its bulb (0 = the first); the sheet's scroll opens it. -->
+      <article id="chapter-sheet" class="sheet" tabindex="0" aria-label="Experience">
+        <h1 class="sheet-label label">Experience</h1>
+        <!-- One section per role, newest first, in the same order as the captions. Its data-chapter is its bulb's
+             chapter (0 = the first company bulb); the sheet's scroll opens it. Each opens on its title card: the role,
+             label/value rows (a logo stands for its company's name, which screen readers still hear), the lead and
+             the outcome. Then its credits, ending with the tools. -->
         <section data-chapter="0" aria-label="AvePoint">
-          <h1>
-            <span class="mark mark-avepoint"></span>
-            <span class="mark mark-sunway"></span>
-            <span class="mark mark-sunway-education"></span>
-            <span class="hidden">AvePoint, for Sunway and Sunway Education</span>
-          </h1>
-          <p class="text-heading">Technical Lead</p>
+          <h2 class="credit-line label"><span>01 / 04</span> AvePoint</h2>
+          <div class="title-card">
+            <div>
+              <p class="role">OutSystems Technical Lead</p>
+              <dl class="meta">
+                <div>
+                  <dt>Employer</dt>
+                  <dd><span class="mark mark-avepoint"></span><span class="hidden">AvePoint</span></dd>
+                </div>
+                <div><dt>Client</dt><dd>Sunway Digital Hub</dd></div>
+                <div><dt>End client</dt><dd>Sunway University</dd></div>
+                <div><dt>Dates</dt><dd>Jan 2026 – present</dd></div>
+              </dl>
+            </div>
+            <div>
+              <p class="lead">
+                Sunway University's student portal, iZone, fell over at every enrolment peak and looked its age. I lead
+                the rebuild on OutSystems ODC.
+              </p>
+              <p class="outcome">
+                Deployed to live, and held up under a load test of 40,000 enrolments over a sustained 20 minutes.
+              </p>
+            </div>
+          </div>
+          <div class="credits">
+            <dl class="credit-rows">
+              <div>
+                <dt>Architecture</dt>
+                <dd>
+                  <p>Headless services, shared integration libraries and Microsoft single sign-on</p>
+                  <p>Mapped out in C4 diagrams and technical design docs</p>
+                </dd>
+              </div>
+              <div>
+                <dt>Peak load</dt>
+                <dd><p>How the portal handles large numbers of students enrolling at the same moment</p></dd>
+              </div>
+              <div>
+                <dt>Team</dt>
+                <dd>
+                  <p>Lead two OutSystems developers and write code alongside them</p>
+                  <p>Within a project team of 10+</p>
+                </dd>
+              </div>
+              <div>
+                <dt>Delivery</dt>
+                <dd>
+                  <p>Feature scope with the business analysts</p>
+                  <p>Delivery run in Jira</p>
+                </dd>
+              </div>
+              <div>
+                <dt>Engagement</dt>
+                <dd><p>Senior Technical Lead, Apr 2026 – present</p></dd>
+              </div>
+              <div>
+                <dt>Tools</dt>
+                <dd>
+                  <ul class="tools">
+                    <li><span class="icon icon-outsystems"></span>OutSystems ODC</li>
+                    <li><span class="icon icon-postgresql"></span>Aurora PostgreSQL</li>
+                  </ul>
+                </dd>
+              </div>
+            </dl>
+          </div>
         </section>
         <section data-chapter="1" aria-label="Maybank">
-          <h1>
-            <span class="mark mark-maybank"></span>
-            <span class="hidden">Maybank</span>
-          </h1>
-          <p class="text-heading">Senior OutSystems Engineer</p>
+          <h2 class="credit-line label"><span>02 / 04</span> Maybank</h2>
+          <div class="title-card">
+            <div>
+              <p class="role">Senior OutSystems Engineer</p>
+              <dl class="meta">
+                <div>
+                  <dt>Employer</dt>
+                  <dd><span class="mark mark-maybank"></span><span class="hidden">Maybank</span> (internal)</dd>
+                </div>
+                <div><dt>Team</dt><dd>Platform</dd></div>
+                <div><dt>Dates</dt><dd>Sep 2024 – Jan 2026</dd></div>
+              </dl>
+            </div>
+            <div>
+              <p class="lead">
+                I built the shared OutSystems pieces other teams at the bank build on. On several of them I was both
+                technical lead and product owner.
+              </p>
+              <p class="outcome">
+                Digital Form passed 80 forms by its fifth MVP, with thousands of users and submissions. CAB-Q took a
+                daily approval process from 6 hours down to 30 minutes.
+              </p>
+            </div>
+          </div>
+          <div class="credits">
+            <dl class="credit-rows">
+              <div>
+                <dt>Digital Form</dt>
+                <dd>
+                  <p>Led it, owned the product and wrote the code</p>
+                  <p>A form builder that plugs into GSAM, HRIS, MStatus and MPowered, grown over five MVP cycles</p>
+                </dd>
+              </div>
+              <div>
+                <dt>CAB-Q</dt>
+                <dd>
+                  <p>Led delivery, doubling as the business analyst</p>
+                  <p>The app used to approve deployments across Maybank</p>
+                </dd>
+              </div>
+              <div>
+                <dt>Audit Log</dt>
+                <dd><p>A standard audit trail, adopted by every OutSystems app in the bank</p></dd>
+              </div>
+              <div>
+                <dt>Tokenizer</dt>
+                <dd><p>Secures public display strings with an encrypted database</p></dd>
+              </div>
+              <div>
+                <dt>Standards</dt>
+                <dd><p>Modular middleware and presentational components, borrowed from traditional coding</p></dd>
+              </div>
+              <div>
+                <dt>Tools</dt>
+                <dd>
+                  <ul class="tools">
+                    <li><span class="icon icon-outsystems"></span>OutSystems O11</li>
+                    <li><span class="icon icon-postgresql"></span>PostgreSQL</li>
+                  </ul>
+                </dd>
+              </div>
+            </dl>
+          </div>
         </section>
-        <section data-chapter="2" aria-label="FPT Software">
-          <h1>
-            <span class="mark mark-fpt"></span>
-            <span class="mark mark-petronas"></span>
-            <span class="hidden">FPT Software, for PETRONAS</span>
-          </h1>
-          <p class="text-heading">Software Consultant</p>
+        <section data-chapter="2" aria-label="FPT Software Malaysia">
+          <h2 class="credit-line label"><span>03 / 04</span> FPT Software Malaysia</h2>
+          <div class="title-card">
+            <div>
+              <p class="role">OutSystems Developer</p>
+              <dl class="meta">
+                <div>
+                  <dt>Employer</dt>
+                  <dd><span class="mark mark-fpt"></span><span class="hidden">FPT Software</span> Malaysia</dd>
+                </div>
+                <div>
+                  <dt>Client</dt>
+                  <dd><span class="mark mark-petronas"></span><span class="hidden">PETRONAS</span> Digital</dd>
+                </div>
+                <div><dt>Product</dt><dd>MyInsights</dd></div>
+                <div><dt>Dates</dt><dd>Sep 2022 – Sep 2024</dd></div>
+              </dl>
+            </div>
+            <div>
+              <p class="lead">
+                One of four developers on MyInsights, which flags exceptions and anomalies in finance, assets,
+                maintenance and procurement data, so auditors no longer hunt for them by hand.
+              </p>
+              <p class="outcome">Auditors moved their exception work off files and paper and into the system.</p>
+            </div>
+          </div>
+          <div class="credits">
+            <dl class="credit-rows">
+              <div>
+                <dt>Access</dt>
+                <dd><p>User management and permissions, each role tied to its own business rules</p></dd>
+              </div>
+              <div>
+                <dt>Screens</dt>
+                <dd><p>The auditing module, built from the designers' Figma files</p></dd>
+              </div>
+              <div>
+                <dt>Audit engine</dt>
+                <dd><p>Part of the audit rule logic and data sync, tuned for millions of records</p></dd>
+              </div>
+              <div>
+                <dt>Refactor</dt>
+                <dd><p>Several modules moved from a monolith to a decentralised structure</p></dd>
+              </div>
+              <div>
+                <dt>Tools</dt>
+                <dd>
+                  <ul class="tools">
+                    <li><span class="icon icon-outsystems"></span>OutSystems O11</li>
+                    <li><span class="icon icon-postgresql"></span>PostgreSQL</li>
+                  </ul>
+                </dd>
+              </div>
+            </dl>
+            <aside class="side-role" aria-label="Alongside, part-time: Flutter Developer">
+              <p class="label">Alongside, part-time</p>
+              <p class="text-heading">Flutter Developer</p>
+              <div class="shimmer" aria-hidden="true"><span></span><span></span><span></span></div>
+              <dl class="meta">
+                <div><dt>Company</dt><dd>Adam Digital Assets</dd></div>
+                <div><dt>Running</dt><dd>May 2024 – Jul 2024</dd></div>
+                <div><dt>Hours</dt><dd>Part-time</dd></div>
+                <div>
+                  <dt>Tools</dt>
+                  <dd><span class="icon icon-flutter"></span>Flutter</dd>
+                </div>
+              </dl>
+              <p>
+                With one other developer, I wrote the requirements for, designed and built a mosque signage app with
+                management features, plus a matching website.
+              </p>
+            </aside>
+          </div>
         </section>
         <section data-chapter="3" aria-label="Impact Business Solutions">
-          <h1 class="text-heading">Impact Business Solutions</h1>
-          <p class="text-heading">Software Consultant</p>
+          <h2 class="credit-line label"><span>04 / 04</span> Impact Business Solutions</h2>
+          <div class="title-card">
+            <div>
+              <p class="role">Software Developer</p>
+              <dl class="meta">
+                <div><dt>Employer</dt><dd>Impact Business Solutions</dd></div>
+                <div><dt>Terms</dt><dd>Contract</dd></div>
+                <div><dt>Dates</dt><dd>Apr 2021 – May 2022</dd></div>
+              </dl>
+            </div>
+            <div>
+              <p class="lead">
+                Two quite different projects: a data dashboard for a VIP presentation, and a mobile asset tracker.
+              </p>
+            </div>
+          </div>
+          <div class="credits">
+            <dl class="credit-rows">
+              <div>
+                <dt>VIP dashboard</dt>
+                <dd>
+                  <p>Sarawak datasets turned into visualisations with Power BI and QGIS</p>
+                  <p>Data processed and analysed to feed a static web dashboard</p>
+                </dd>
+              </div>
+              <div>
+                <dt>Asset tracker</dt>
+                <dd><p>A QR-based asset tracking app with real-time tracking, on Flutter and Firebase</p></dd>
+              </div>
+              <div>
+                <dt>Tools</dt>
+                <dd>
+                  <ul class="tools">
+                    <li>Power BI</li>
+                    <li><span class="icon icon-qgis"></span>QGIS</li>
+                    <li><span class="icon icon-flutter"></span>Flutter</li>
+                    <li><span class="icon icon-firebase"></span>Firebase</li>
+                  </ul>
+                </dd>
+              </div>
+            </dl>
+          </div>
         </section>
       </article>
     </main>

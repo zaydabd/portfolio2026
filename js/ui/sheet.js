@@ -3,7 +3,7 @@
 // announcer and, on phones, the photo follow it. Inputs (js/ui/input.js) never set the chapter; they move the scroll
 // with goToChapter, pageSheet and scrollSheet. On phones the photo's sideways scroll is synced back the other way:
 // a swipe that comes to rest on another company's bulb opens that chapter.
-import { state, COMPANIES } from "../state.js";
+import { state, COMPANIES, FIRST_BULB } from "../state.js";
 import { bulbLeft } from "../scene/layout.js";
 import { captionEls } from "./captions.js";
 
@@ -84,13 +84,13 @@ onRest(sheetEl, () => {
 
 /* ---------- Phones and tablets: the photo's sideways scroll, in step with the chapters ---------- */
 
-// Where the photo scrolls to put bulb i in the middle of the screen (as near as its edges allow)
+// Where the photo scrolls to put chapter i's bulb in the middle of the screen (as near as its edges allow)
 function panFor(i) {
   const max = photoEl.scrollWidth - photoEl.clientWidth;
-  return Math.min(max, Math.max(0, bulbLeft(i) - photoEl.clientWidth / 2));
+  return Math.min(max, Math.max(0, bulbLeft(i + FIRST_BULB) - photoEl.clientWidth / 2));
 }
 
-// Slide the photo so bulb i is in the middle (on desktop the photo fits the screen, and nothing moves)
+// Slide the photo so chapter i's bulb is in the middle (on desktop the photo fits the screen, and nothing moves)
 export function panToBulb(i, { instant = false } = {}) {
   photoEl.scrollTo({ left: panFor(i), behavior: behavior(instant) });
 }

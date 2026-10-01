@@ -2,24 +2,26 @@
    held sideways: the same as js/state.js). Colours, type and space: css/tokens.css. The photo's size and where the
    lights hang: css/scene.css. */
 
+/* ---- Reset: no browser spacing, so every gap comes from the scale in css/tokens.css; no list bullets ---- */
+* {
+  margin: 0;
+  padding: 0;
+}
+ul {
+  list-style: none;
+}
+
 /* ---- Typography: the header, the captions and the sheet are the only text ---- */
 header,
 nav,
-#chapter-sheet {
+.sheet {
   font: 500 var(--fs) / var(--lh) "Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
   font-variant-numeric: lining-nums;
   color: var(--c-name);
 }
 header,
-#chapter-sheet {
+.sheet {
   text-shadow: 0 0 12px rgba(3, 8, 22, 0.9), 0 0 3px rgba(3, 8, 22, 0.8); /* readable over the photo */
-}
-h1,
-p {
-  margin: 0;
-}
-h1 {
-  font: inherit;
 }
 .text-heading {
   font-weight: 600;
@@ -34,21 +36,20 @@ h1 {
 
 /* ---- Header: name and title on the left, LinkedIn on the right ---- */
 header {
-  position: absolute;
-  inset: 0 0 auto;
+  position: relative;
   z-index: 1; /* over the photo and the sheet */
+  align-self: start;
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: var(--gap-m);
-  padding: calc(env(safe-area-inset-top, 0px) + 12px) calc(var(--gutter) + env(safe-area-inset-right, 0px)) 0
-    calc(var(--gutter) + env(safe-area-inset-left, 0px));
+  gap: var(--space-4);
+  padding: var(--space-4) var(--gutter) 0;
   pointer-events: none; /* the lights under it still take the mouse */
 }
 header p {
   display: flex;
   flex-direction: column; /* phones: the title under the name */
-  column-gap: 0.5em;
+  column-gap: var(--space-2);
   @media (min-width: 768px) {
     flex-direction: row;
   }
@@ -64,33 +65,43 @@ header a {
   }
 }
 
-/* ---- The page: the screen, with the photo and the sheet laid over each other ---- */
+/* ---- The page: the screen, with the photo, the header and the sheet stacked in one cell. The body keeps all three
+   inside the safe area (clear of a phone's notch and home bar: index.html's viewport-fit=cover); the night colour
+   fills the strips outside it. ---- */
 html {
   background: var(--night);
-  overscroll-behavior: none; /* no bounce, no pull-to-refresh */
+  overscroll-behavior: none; /* no bounce, no pull-to-refresh (iOS may still rubber-band the page) */
 }
 body {
-  position: relative;
+  box-sizing: border-box;
+  display: grid;
+  grid: minmax(0, 1fr) / minmax(0, 1fr);
   width: 100dvw;
   height: 100dvh;
-  margin: 0;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px)
+    env(safe-area-inset-left, 0px);
   overflow: hidden;
+  container-type: size; /* css/scene.css sizes the photo from this box (cqw, cqh) */
 }
-#photo,
+.photo,
+header,
 main {
-  position: absolute;
-  inset: 0;
+  grid-area: 1 / 1;
 }
 
 /* ---- The photo, with the 3D canvas exactly over it (both --photo-w wide). Phones and tablets scroll it sideways, the
    picture moving with the canvas; js/ui/sheet.js keeps it on the open company's bulb. ---- */
-#photo {
+.photo {
+  position: relative; /* the captions are placed from its corner */
   overflow: auto hidden;
   overscroll-behavior-x: contain;
-  scrollbar-width: none;
   background: url("../assets/plate.webp") 0 0 / var(--photo-w) 100% no-repeat local;
+  scrollbar-width: none; /* hidden scrollbar, as on the sheet (below) */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
-#stage-canvas {
+.stage {
   display: block;
   width: var(--photo-w);
   height: 100%;
@@ -109,8 +120,8 @@ nav button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: var(--caption-gap) 6px 2px;
+  gap: var(--space-1);
+  padding: var(--caption-gap) var(--space-2) var(--space-1);
   border: 0;
   background: none;
   font: inherit;
@@ -121,7 +132,7 @@ nav button {
     0 0 calc(4px + 6px * var(--lit, 0)) color-mix(in srgb, var(--lamp-light) calc(35% + 40% * var(--lit, 0)), transparent)
   );
   &:focus-visible {
-    outline: 1px solid rgba(180, 195, 220, 0.4);
+    outline: 2px solid var(--c-detail);
     outline-offset: 2px;
   }
   .text-muted {
@@ -135,41 +146,211 @@ nav button {
 /* ---- The sheet: under the captions, down to the bottom (short of the pole on desktop), one company per screen.
    Its scroll decides the open company (js/ui/sheet.js). ---- */
 main {
+  position: relative; /* over the photo */
   display: flex;
   justify-content: center;
-  padding: var(--sheet-top) calc(var(--gutter) + env(safe-area-inset-right, 0px))
-    calc(env(safe-area-inset-bottom, 0px) + 24px) calc(var(--gutter) + env(safe-area-inset-left, 0px));
+  padding: var(--sheet-top) var(--gutter) var(--space-6);
   pointer-events: none; /* clicks on the empty sky reach the bulbs */
   @media (min-width: 1024px) and (orientation: landscape) {
     padding-right: calc(var(--photo-w) - var(--sheet-right));
   }
 }
-#chapter-sheet {
+.sheet {
   position: relative; /* the sections' offsetTop counts from here */
   flex: 0 1 72rem;
-  overflow-y: auto;
-  scroll-snap-type: y proximity;
-  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden auto;
+  /* the bottom fades out, like credits rolling off */
+  mask-image: linear-gradient(to top, transparent, #000 var(--space-8));
   pointer-events: auto;
   opacity: 0; /* js/ui/sheet.js fades it in once the lights are on */
   transition: opacity 0.3s;
+  /* scrollbar-width: Baseline newly available (Dec 2024); ::-webkit-scrollbar covers older Chrome and Safari, and can
+     go once it's widely available (~Jun 2027) */
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   &:focus-visible {
-    outline: 1px solid rgba(180, 195, 220, 0.4);
-    outline-offset: -1px;
+    outline: 2px solid var(--c-detail);
+    outline-offset: -2px;
   }
 }
+
+/* ---- No 3D scene (no WebGL, or three.js didn't load: index.html sets .no-scene): the sheet shows straight away, and
+   the captions, which nothing would place under their bulbs, stay hidden ---- */
+.no-scene {
+  .sheet {
+    opacity: 1;
+  }
+  nav {
+    display: none;
+  }
+}
+
+/* ---- The Experience section: one <section> per role, like a page of film credits. Each opens on its title card
+   (the role, who and when, what the job was and how it ended) and then its full credits. ---- */
+/* Small uppercase labels: "Experience", each role's credit line, and the label beside every value */
+.label,
+dt {
+  font-size: var(--fs-label);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+.sheet-label {
+  margin-bottom: var(--space-4);
+  color: var(--c-detail);
+}
+
 section {
-  min-height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: var(--gap-m);
-  scroll-snap-align: start;
-  h1 {
+  gap: var(--space-6);
+  & + section {
+    margin-top: var(--space-12); /* between roles */
+  }
+  &:last-child {
+    min-height: 100%; /* so the last role can still scroll up to the top */
+  }
+}
+
+/* "01 / 04  AvePoint", then a gold rule to the edge (tablets and up) */
+.credit-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--c-link);
+  &::after {
+    content: "";
+    flex: 1;
+    display: none;
+    border-top: 1px solid color-mix(in srgb, var(--c-link) 35%, transparent);
+    @media (min-width: 768px) {
+      display: block;
+    }
+  }
+}
+
+/* Two blocks side by side on desktop, stacked otherwise. Left-aligned: the left one is only as wide as its content, so
+   the right one starts just after it. */
+.title-card,
+.credits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  @media (min-width: 1024px) and (orientation: landscape) {
+    flex-direction: row;
+    gap: var(--space-8);
+  }
+}
+.title-card > :last-child {
+  flex: 1; /* the lead and outcome take the rest of the line */
+}
+.title-card > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.role {
+  font-size: var(--fs-role);
+  line-height: 1.05;
+  text-wrap: balance; /* Baseline newly available (May 2024); elsewhere titles just wrap normally */
+}
+.outcome {
+  color: var(--c-link);
+}
+
+/* Label/value rows: each label beside its value, left-aligned. The label column is as wide as the list's longest
+   label, so every value in a list starts at the same place, right after it. */
+.meta,
+.credit-rows {
+  display: grid;
+  grid-template-columns: max-content auto;
+  column-gap: var(--space-4);
+  > div {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+  }
+}
+.meta {
+  --logo-k: 0.6; /* the same size as the logos under the bulbs */
+  row-gap: var(--space-2);
+  dt {
+    color: var(--c-detail);
+  }
+  dd {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--gap-m);
+    gap: var(--space-2);
+  }
+}
+.credit-rows {
+  > div {
+    padding: var(--space-4) 0;
+    border-top: 1px solid color-mix(in srgb, var(--c-detail) 22%, transparent);
+    &:last-child {
+      border-bottom: 1px solid color-mix(in srgb, var(--c-detail) 22%, transparent);
+    }
+  }
+  dt {
+    color: var(--c-link);
+  }
+}
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+}
+
+/* A part-time role alongside FPT, lit like moonlight on the paddy water: a glowing title over three shimmer lines */
+.side-role {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--c-detail);
+  > .label {
+    color: var(--moonlight);
+  }
+  > .text-heading {
+    color: var(--moonlight);
+    text-shadow: 0 0 16px color-mix(in srgb, var(--moonlight) 60%, transparent), 0 0 3px rgba(3, 8, 22, 0.8);
+  }
+}
+.shimmer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  span {
+    align-self: center;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--moonlight) 90%, transparent) 30% 60%,
+      transparent
+    );
+    box-shadow: 0 0 8px color-mix(in srgb, var(--moonlight) 70%, transparent);
+    & + span {
+      width: 70%;
+      opacity: 0.55;
+      box-shadow: none;
+    }
+    & + span + span {
+      width: 40%;
+      opacity: 0.33;
+    }
   }
 }
 
@@ -183,19 +364,45 @@ section {
   white-space: nowrap;
 }
 
-/* ---- Logos: <span class="mark mark-name"></span>. Each image in assets/marks is a white shape used as a mask, so it's
-   drawn in the text colour. Every logo covers the same area, a 3.8em square scaled by --logo-k; --ratio is its image's
-   width / height. ---- */
+/* ---- Logos: <span class="mark mark-name"></span>. Each image in assets/marks is a one-colour shape (SVG; PNG for the
+   Sunway two) used as a mask, so it's drawn in the text colour. Every logo covers the same area, a 3.8em square scaled
+   by --logo-k; --ratio is its image's width / height (an SVG's viewBox). ---- */
 .mark {
   display: inline-block;
+  flex: none;
   width: calc(3.8em * var(--logo-k, 1) * sqrt(var(--ratio)));
   height: calc(3.8em * var(--logo-k, 1) / sqrt(var(--ratio)));
   background: currentColor;
   mask: var(--mark) center / contain no-repeat;
 }
-.mark-avepoint { --mark: url(../assets/marks/avepoint.png); --ratio: 900 / 152; }
+.mark-avepoint { --mark: url(../assets/marks/avepoint.svg); --ratio: 185 / 31; }
 .mark-sunway { --mark: url(../assets/marks/sunway.png); --ratio: 700 / 104; }
 .mark-sunway-education { --mark: url(../assets/marks/sunway-education.png); --ratio: 900 / 67; }
-.mark-maybank { --mark: url(../assets/marks/maybank.png); --ratio: 810 / 159; }
-.mark-fpt { --mark: url(../assets/marks/fpt.png); --ratio: 900 / 280; }
-.mark-petronas { --mark: url(../assets/marks/petronas.png); --ratio: 887 / 318; }
+.mark-maybank { --mark: url(../assets/marks/maybank.svg); --ratio: 898.3 / 176; }
+.mark-fpt { --mark: url(../assets/marks/fpt.svg); --ratio: 328.2 / 102; }
+.mark-petronas { --mark: url(../assets/marks/petronas.svg); --ratio: 216.7 / 77.5; }
+
+/* ---- Tool icons: <span class="icon icon-name"></span>, the same mask technique as the logos, 1em square. Each image in
+   assets/icons is a one-colour SVG (Simple Icons, CC0; OutSystems' ring from its brand kit). ---- */
+.icon {
+  flex: none;
+  width: 1em;
+  height: 1em;
+  background: currentColor;
+  mask: var(--icon) center / contain no-repeat;
+}
+.icon-outsystems { --icon: url(../assets/icons/outsystems.svg); }
+.icon-postgresql { --icon: url(../assets/icons/postgresql.svg); }
+.icon-qgis { --icon: url(../assets/icons/qgis.svg); }
+.icon-flutter { --icon: url(../assets/icons/flutter.svg); }
+.icon-firebase { --icon: url(../assets/icons/firebase.svg); }
+
+/* Forced colours (Windows High Contrast) repaint every background as Canvas, which would hide the masked logos and
+   icons: draw them in the text colour instead */
+@media (forced-colors: active) {
+  .mark,
+  .icon {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+}

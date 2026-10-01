@@ -2,7 +2,7 @@
 // glass and glow
 import * as THREE from "three";
 import { CONFIG } from "../config.js";
-import { COMPANIES } from "../state.js";
+import { COMPANIES, FIRST_BULB } from "../state.js";
 import {
   FOCAL_LENGTH,
   GLASS_RADIUS,
@@ -258,8 +258,9 @@ function buildBulb(layout, cable, x, index, was) {
   glow.renderOrder = 2;
   const hit = new THREE.Mesh(hitGeometry, hitMaterial);
   hit.position.y = -hang - SOCKET_HEIGHT - GLASS_HEIGHT / 2;
-  hit.userData.index = index;
-  if (index < COMPANIES) hits.push(hit);
+  const chapter = index - FIRST_BULB; // only the company bulbs can be pressed
+  hit.userData.index = chapter;
+  if (chapter >= 0 && chapter < COMPANIES) hits.push(hit);
   swing.add(wire, socket, glass, glow, hit);
 
   return {
@@ -285,7 +286,7 @@ function buildBulb(layout, cable, x, index, was) {
 }
 
 // Each frame: switch on one by one, swing in the wind, and glow.
-// hovered and active are bulb numbers from 0 (-1 for none): the one under the mouse, and the open chapter's.
+// hovered and active are chapter numbers from 0 (-1 for none): the one under the mouse, and the open one.
 const baseGlow = 2 * GLASS_RADIUS * CONFIG.glow.size;
 export function updateBulbs(bulbs, tick, { hovered, active }) {
   const { dt, since, wind } = tick;
@@ -329,9 +330,12 @@ export function updateBulbs(bulbs, tick, { hovered, active }) {
     b.swing.rotation.z = b.side;
     b.swing.rotation.x = b.fore;
 
-    // Hover and lit interpolation
-    b.hover += ((i === hovered && i < COMPANIES ? 1 : 0) - b.hover) * hoverRate;
-    b.lit += ((i === active ? 1 : 0) - b.lit) * litRate;
+    // Hover and lit interpolation: only a company's bulb answers (the others hold no chapter, and hovered and
+    // active are -1 at rest)
+    const c = i - FIRST_BULB;
+    const isCompany = c >= 0 && c < COMPANIES;
+    b.hover += ((isCompany && c === hovered ? 1 : 0) - b.hover) * hoverRate;
+    b.lit += ((isCompany && c === active ? 1 : 0) - b.lit) * litRate;
 
     // Glow size and opacity
     const size =

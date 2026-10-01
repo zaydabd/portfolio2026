@@ -6,8 +6,11 @@ export const state = {
   carousel: false, // phones and tablets: swipe along the lights, parts stacked in a card
 };
 
-// Bulbs 1 to COMPANIES each hold a chapter: one section per company in index.html's sheet
+// Each company's chapter has a bulb: one section per company in index.html's sheet
 export const COMPANIES = document.querySelectorAll("#chapter-sheet section").length;
+
+// The companies hang on bulbs 2–5, the middle of the cable: chapter i is bulb i + FIRST_BULB (from 0)
+export const FIRST_BULB = 1;
 
 // Desktop: 1024 px and up, wider than tall. Everything else (phones and tablets) shares the swipe layout (`carousel`).
 // The same media query as the CSS's desktop rules (css/base.css, css/scene.css).

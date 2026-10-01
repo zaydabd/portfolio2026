@@ -12,7 +12,7 @@ import {
 export const canvas = document.getElementById("stage-canvas");
 
 // Transparent, so the photo behind the canvas shows through. Without WebGL this throws, and the page keeps
-// the photo and the header.
+// the photo, the header and the sheet (index.html marks it .no-scene).
 export const renderer = new THREE.WebGLRenderer({
   canvas,
   antialias: true,
